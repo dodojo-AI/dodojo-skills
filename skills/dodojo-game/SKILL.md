@@ -63,8 +63,8 @@ scrolls with the Note. From the top:
    play area: whose turn it is or the score, the level, the clock. Show who is
    to move in form (a lit name plate, the colour of their pieces), not only in
    words.
-2. **The play area**, as large as the column allows: the full width minus the
-   16px gutters on a phone; on a computer at most about 560px wide, so the
+2. **The play area**, as large as the column allows: on a phone, the page's
+   width less its 16px gutters; on a computer at most about 560px wide, so the
    status, the play area and the controls fit in one window together. A
    square board stays square; a playfield that needs height gets a fixed
    aspect ratio. This is also the Note's cover, so before anyone plays it
@@ -78,6 +78,17 @@ scrolls with the Note. From the top:
    and the history, the full rules. Put the long parts in `<details>`. Never
    put rules, an introduction or settings above the game.
 
+- Design for the narrowest phone. In a dodojo Note on a phone the page gets
+  the screen's width less 32px (328px on a 360px phone, 358px on a 390px
+  one), so inside the page's gutters the status strip, the play area and the
+  controls have about 296px (opened on its own in a phone browser, the page
+  has the whole screen, so about 328px inside its gutters). Make names,
+  levels and labels fit that: two name plates with their scores fit in the
+  strip, a third column of status beside them does not, so a message such as
+  "thinking" or the move number goes on a plate or in the line under the
+  board. Keep labels on one line (`white-space: nowrap`, a
+  shorter word) rather than letting a button wrap. `preview_webpage`'s phone
+  views are about 15px narrower still, so what fits there fits on the phone.
 - Nothing moves while people play. Give the status line a fixed height, keep
   messages inside it, and show a result over the play area (a banner laid on
   the board, away from the winning line), not in a block that pushes the board
