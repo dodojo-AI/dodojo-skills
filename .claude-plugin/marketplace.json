@@ -1,6 +1,6 @@
 {
   "name": "dodojo-skills",
-  "description": "Open agent skills from dodojo. First up: dodojo-travel, trip pages checked for your dates, with a map and real photos.",
+  "description": "Open agent skills from dodojo: dodojo-travel, trip pages checked for your dates with a map and real photos, and dodojo-game, games you play on one page.",
   "owner": {
     "name": "dodojo",
     "email": "contact@dodojo.ai",
@@ -11,9 +11,10 @@
       "name": "dodojo-skills",
       "source": "./",
       "strict": false,
-      "description": "dodojo-travel: plan a trip or a day out as a phone-first page with checked hours and tickets, a map of each day and real photos; saves into dodojo or stands on its own.",
+      "description": "dodojo-travel: plan a trip or a day out as a phone-first page with checked hours and tickets, a map of each day and real photos. dodojo-game: make a game people play on a phone or a computer, with the game first, a computer opponent and every move kept. Both save into dodojo or stand on their own.",
       "skills": [
-        "./skills/dodojo-travel"
+        "./skills/dodojo-travel",
+        "./skills/dodojo-game"
       ]
     }
   ]

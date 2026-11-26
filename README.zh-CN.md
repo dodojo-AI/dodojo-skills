@@ -18,6 +18,18 @@
 
 示例（都由 Agent 按 skill 真实做出）：[里斯本的一个周六](examples/dodojo-travel/lisbon-saturday/)（英文）、[京都东山一日步行](examples/dodojo-travel/kyoto-higashiyama/)（中文）。
 
+## dodojo-game
+
+[`skills/dodojo-game`](skills/dodojo-game/SKILL.md) 做一个手机和电脑上都能玩的游戏：棋类、牌类、益智、街机、文字游戏，或者一台手机传着玩的聚会游戏。
+
+- 游戏放在最上面：细细一条对局条、棋盘和按钮一屏装下，玩法、设置、战绩和规则放在下面，下棋时界面不跳；
+- 触屏、鼠标、键盘点下去马上有反应，反馈和事情大小相称，声音用 Web Audio 在页面里现做；
+- 电脑对手分档且真的不一样强，存之前让各档互相对下检查过；
+- 每一步都存着，下到一半关掉，换台设备打开也停在同一手；在 dodojo 团队空间里，大家用各自的设备轮流下；
+- 画面取自游戏本身的材质（榧木棋盘、黑石和贝壳白子、绿色台呢），深浅色都做。
+
+示例（按 skill 做出）：[榧木棋盘五子棋](examples/dodojo-game/gomoku/)（中文），可以跟三档电脑下，也可以两个人用一台手机下，带复盘和战绩。
+
 ## 安装
 
 用 [skills CLI](https://github.com/vercel-labs/skills)：
@@ -33,14 +45,14 @@ npx skills add dodojo-AI/dodojo-skills
 /plugin install dodojo-skills@dodojo-skills
 ```
 
-也可以把 `skills/dodojo-travel` 文件夹直接拷进 Agent 的 skills 目录（`~/.claude/skills/`、`.agents/skills/` 等）。每个 skill 文件夹都是自包含的。
+也可以把某个 skill 文件夹（比如 `skills/dodojo-travel`）直接拷进 Agent 的 skills 目录（`~/.claude/skills/`、`.agents/skills/` 等）。每个 skill 文件夹都是自包含的。
 
 ## 配合 dodojo
 
 让 Agent 连接 dodojo 的 MCP：`https://www.dodojo.ai/api/mcp`（OAuth，登录一次），或装 [dodojo 插件](https://github.com/dodojo-AI/dodojo-plugin)。dodojo 桌面版里的 Agent 已经连好。连上之后：
 
-- 先搜你的记忆（订单、收藏、以前的游记），在此基础上做；
-- 页面存成网页笔记：在首页里以页面顶部为封面，手机和电脑上都能完整打开，每天的地图会画出来，勾过的清单会记住；
+- 先搜你的记忆（做行程时是订单、收藏、以前的游记），在此基础上做；
+- 页面存成网页笔记：在首页里以页面顶部为封面，手机和电脑上都能完整打开，每天的地图会画出来，勾过的清单和下到哪一手都会记住；
 - 要点同时写进笔记正文，搜索能找到。
 
 不连 dodojo 也能用：页面存成本地文件夹（`.html` 和照片），任何浏览器都能打开，以后也能原样放进 dodojo。

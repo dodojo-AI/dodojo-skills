@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Game · dodojo skills</title>
+<meta name="description" content="Make a game people play on a phone or a computer as one webpage - a board or card game, a puzzle, an arcade or reflex game, a word game, a party game passed around one phone - with the game first and the rules after it, input that answers at once, sound made in the page, a computer opponent with real levels, a game kept move by move, and a look taken from the game's own world - saved into dodojo as a webpage Note, or as a standalone .html file. Use for 小游戏, 棋类, 益智, 两人同屏 and any request to make a game.">
+<link rel="icon" href="../assets/icon.png">
+<link rel="stylesheet" href="../assets/site.css">
+<script>try{var l=localStorage.getItem("dodojo-skills-lang")}catch(e){}document.documentElement.dataset.lang=l==="zh"?"zh":"en"</script>
+</head>
+<body>
+<div class="wrap">
+<header class="bar">
+  <a class="brand" href="../index.html"><img src="../assets/icon.png" alt="" width="28" height="28" style="border-radius:7px">dodojo <span>/ skills</span></a>
+  <nav>
+    <span class="seg" role="group" aria-label="Language"><button type="button" data-set-lang="zh">中文</button><button type="button" data-set-lang="en">EN</button></span>
+    <a class="pill-button" href="https://github.com/dodojo-AI/dodojo-skills">GitHub ↗</a>
+  </nav>
+</header>
+
+<a class="crumb" href="../index.html">← <span data-l="zh">全部技能</span><span data-l="en">All skills</span></a>
+<section class="skill-head">
+  <h1><span class="mono">dodojo-game</span><span data-l="zh">小游戏</span><span data-l="en">Game</span></h1>
+  <p><span data-l="zh">棋类、益智、街机、两人同屏：游戏放在最上面，点下去马上有手感和声音，电脑对手分档，每一步都存着，画面取自游戏本身的材质。</span><span data-l="en">Board games, puzzles, arcade and pass-and-play: the game on top, input and sound that answer at once, a computer opponent with real levels, every move kept, and a look taken from the game's own materials.</span></p>
+  <div class="install"><code>npx skills add dodojo-AI/dodojo-skills --skill dodojo-game</code><button type="button" data-copy="npx skills add dodojo-AI/dodojo-skills --skill dodojo-game"><span data-l="zh">复制</span><span data-l="en">Copy</span></button></div>
+</section>
+<div data-examples>
+<div class="example" data-example="gomoku">
+<section class="flow" aria-label="Gomoku on a kaya board, against the computer or a friend">
+  <div class="stage">
+    <div class="stage-label"><b>1</b><span data-l="zh">喂给它</span><span data-l="en">Give it</span></div>
+    <div class="ask"><q lang="zh-CN">做一个五子棋，可以一个人跟电脑下，也可以两个人用同一台手机轮流下。棋局要能存着，下次接着下。</q><small data-l="en">Make a gomoku game I can play against the computer or with a friend on one phone, and keep the game so we can finish it later.</small></div>
+    <dl class="facts">
+      <div><dt><span data-l="zh">输入</span><span data-l="en">Input</span></dt><dd><span data-l="zh">想玩什么、几个人、在哪儿玩；连上 dodojo 时，还有你以前做过的版本</span><span data-l="en">What to play, how many people and where; plus earlier versions in dodojo when connected</span></dd></div>
+      <div><dt><span data-l="zh">产出</span><span data-l="en">Output</span></dt><dd><span data-l="zh">一页打开就能玩的游戏：对局条、棋盘或场地、一排按钮，规则、设置和战绩放在下面</span><span data-l="en">A page you play: a status strip, the board or playfield and its controls, with rules, settings and records below</span></dd></div>
+      
+    </dl>
+  </div>
+  <div class="stage">
+    <div class="stage-label"><b>2</b><span data-l="zh">它怎么做</span><span data-l="en">How it works</span></div>
+    <ol class="steps">
+<li class=""><span class="n">1</span><div><b><span data-l="zh">先把游戏定下来</span><span data-l="en">Pin down the game</span></b><span class="detail"><span data-l="zh">谁玩、在哪儿玩、玩多久，规则和变体写清楚；要两个人的游戏加上分档的电脑对手</span><span data-l="en">who plays, where and for how long, the exact rules and variant, and a computer opponent if two people are needed.</span></span></div></li>
+<li class=""><span class="n">2</span><div><b><span data-l="zh">游戏放在最上面</span><span data-l="en">Lay it out with the game first</span></b><span class="detail"><span data-l="zh">细细一条对局条、游戏区、紧贴着的一排按钮，然后才是玩法、设置、战绩和规则</span><span data-l="en">a slim status strip, the play area, the controls under it, and only then how to play, settings, records and rules.</span></span></div></li>
+<li class=""><span class="n">3</span><div><b><span data-l="zh">从游戏的世界来设计</span><span data-l="en">Design from the game's world</span></b><span class="detail"><span data-l="zh">棋盘和棋子的材质、深浅两套配色，先写成方案再写代码</span><span data-l="en">the material of the board and pieces, a palette for light and dark, written as a plan before any code.</span></span></div></li>
+<li class=""><span class="n">4</span><div><b><span data-l="zh">做好输入和反馈</span><span data-l="en">Build input and feedback</span></b><span class="detail"><span data-l="zh">鼠标、触屏、键盘都能玩，反馈和事情大小相称，声音用 Web Audio 现做，动画从不让人等</span><span data-l="en">pointer, touch and keyboard, feedback in proportion to the moment, sound made with Web Audio, motion that never makes people wait.</span></span></div></li>
+<li class=""><span class="n">5</span><div><b><span data-l="zh">让人想再来一局</span><span data-l="en">Make another round tempting</span></b><span class="detail"><span data-l="zh">看得见的目标和纪录、公平的规则、难度曲线、像样的结局和复盘</span><span data-l="en">visible goals and records, fair play, a difficulty curve, an ending that is a moment and a way to look back.</span></span></div></li>
+<li class=""><span class="n">6</span><div><b><span data-l="zh">把棋局存住</span><span data-l="en">Keep the game</span></b><span class="detail"><span data-l="zh">每一步都存进页面状态，换台设备打开也停在同一手</span><span data-l="en">every move saved with the page's state, so it reopens on the same move on any device.</span></span></div></li>
+<li class="dodojo"><span class="n">7</span><div><b><span data-l="zh">下完一局再存</span><span data-l="en">Play it, then save</span> <span class="tag">dodojo</span></b><span class="detail"><span data-l="zh">每种模式用鼠标、触屏、键盘各下完整一局，手机宽度和深浅色都看过，再存成正文简短的 dodojo 笔记</span><span data-l="en">whole games in every mode with mouse, touch and keyboard, screenshots at phone width in both themes, then a dodojo Note with a short body.</span></span></div></li>
+    </ol>
+    <p class="from-skill"><span data-l="zh">步骤取自 SKILL.md 的 Workflow 一节，skill 改了，这里跟着变。金色步骤是和 dodojo 打交道的地方。</span><span data-l="en">Steps are read from the Workflow section of SKILL.md, so this page changes with the skill. Gold steps are where dodojo comes in.</span></p>
+  </div>
+  <div class="stage phone" data-phone>
+    <div class="toggles">
+      <div class="stage-label"><b>3</b><span data-l="zh">做出来</span><span data-l="en">What comes out</span></div>
+      <span class="seg" role="group" aria-label="Theme"><button type="button" data-scheme="light"><span data-l="zh">浅色</span><span data-l="en">Light</span></button><button type="button" data-scheme="dark"><span data-l="zh">深色</span><span data-l="en">Dark</span></button></span>
+    </div>
+    <div class="device"><div class="screen"><iframe data-src="../examples/dodojo-game/gomoku/index.html?theme=light" title="Gomoku on a kaya board, against the computer or a friend"></iframe></div></div>
+    <a class="open-link" href="../examples/dodojo-game/gomoku/index.html?theme=light" target="_blank" rel="noopener"><span data-l="zh">单独打开这页 ↗</span><span data-l="en">Open the page on its own ↗</span></a>
+  </div>
+</section>
+<section class="section">
+  <h2><span data-l="zh">存进 dodojo 之后</span><span data-l="en">Once it is in dodojo</span></h2>
+  <p class="sub"><span data-l="zh">左边是它在首页里的卡片（封面就是页面顶部那一块），右边是 Agent 一起写进笔记正文的要点，方便搜索和不打开页面时看。</span><span data-l="en">Left, its card in the library (the cover is the top of the page); right, the key facts the agent writes into the Note's body, so search finds them and they read without the page.</span></p>
+  <div class="indodojo">
+    <a class="tile" href="../examples/dodojo-game/gomoku/index.html?theme=light">
+  <div class="cover"><iframe data-src="../examples/dodojo-game/gomoku/index.html?theme=light" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe></div>
+  <h3><span data-l="zh">五子棋：榧木棋盘，跟电脑或两人下</span><span data-l="en">五子棋：榧木棋盘，跟电脑或两人下</span></h3>
+  <div class="meta"><span>Claude</span>·<span><span data-l="zh">11月26日</span><span data-l="en">Nov 26</span></span></div>
+  
+</a>
+    <article class="note" lang="zh-CN"><h4>五子棋</h4><p>15 路五子棋：跟电脑下（入门 / 进阶 / 高手），或两个人在同一台设备上轮流下。黑先，横竖斜连成五子就赢，不设禁手，每局结束交换先手。</p>
+<p>每一手都存在这篇笔记里，关掉再开、换台设备都能接着下；战绩和最快胜也记在这里。</p><div class="attach"><span class="chip">📎 index.html</span></div></article>
+  </div>
+</section>
+
+</div>
+</div>
+<section class="section">
+  <h2><span data-l="zh">Skill 里有什么</span><span data-l="en">What is in the skill</span></h2>
+  <p class="sub"><span data-l="zh">整个文件夹就是 skill：Agent 先读 SKILL.md，需要时再读 references。</span><span data-l="en">The folder is the skill: the agent reads SKILL.md first and the references when it needs them.</span></p>
+  <ul class="files">
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-game/SKILL.md">SKILL.md</a><span><span data-l="zh">199 行</span><span data-l="en">199 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-game/references/build.md">references/build.md</a><span><span data-l="zh">162 行</span><span data-l="en">162 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-game/references/design.md">references/design.md</a><span><span data-l="zh">82 行</span><span data-l="en">82 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-game/references/frame.md">references/frame.md</a><span><span data-l="zh">135 行</span><span data-l="en">135 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-game/references/fundamentals.md">references/fundamentals.md</a><span><span data-l="zh">46 行</span><span data-l="en">46 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-game/references/save-to-dodojo.md">references/save-to-dodojo.md</a><span><span data-l="zh">54 行</span><span data-l="en">54 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-game/scripts/shoot.mjs">scripts/shoot.mjs</a><span><span data-l="zh">82 行</span><span data-l="en">82 lines</span></span></li>
+  </ul>
+</section>
+<section class="section">
+  <h2><span data-l="zh">其他技能</span><span data-l="en">Other skills</span></h2>
+  <div class="next"><a href="dodojo-travel.html"><b><span data-l="zh">旅行页</span><span data-l="en">Trip page</span></b><small class="mono">dodojo-travel</small></a></div>
+</section>
+<footer class="foot">
+  <div><span data-l="zh">MIT 开源 · 页面由 skill 生成，可视化由 <code>scripts/build-site.mjs</code> 从 skill 文件自动生成</span><span data-l="en">MIT licensed · Pages made by the skills; this gallery is generated from the skill files by <code>scripts/build-site.mjs</code></span></div>
+  <div><a href="https://github.com/dodojo-AI/dodojo-skills">dodojo-AI/dodojo-skills</a> · <a href="https://www.dodojo.ai">dodojo.ai</a> · <a href="https://github.com/dodojo-AI/dodojo-plugin">dodojo plugin</a></div>
+</footer>
+</div>
+<script src="../assets/site.js"></script>
+</body>
+</html>

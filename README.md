@@ -31,6 +31,29 @@ Examples, each made by an agent following the skill:
 [a Saturday in Lisbon](examples/dodojo-travel/lisbon-saturday/) and
 [a day walking Kyoto's Higashiyama](examples/dodojo-travel/kyoto-higashiyama/) (in Chinese).
 
+## dodojo-game
+
+[`skills/dodojo-game`](skills/dodojo-game/SKILL.md) makes a game people play on
+a phone or a computer: a board or card game, a puzzle, an arcade game, a word
+game, a party game passed around one phone.
+
+- the game first: a slim status strip, the board and its controls on one
+  screen, with how to play, settings, records and rules below, and nothing
+  that moves during play;
+- input that answers at once (touch, mouse and keyboard), feedback in
+  proportion to the moment, sound made in the page with Web Audio;
+- a computer opponent with levels that really differ, checked against each
+  other before saving;
+- every move kept, so a game left halfway reopens on the same move, on any
+  device; in a dodojo team space, people take turns from their own devices;
+- a look taken from the game's own materials (a kaya board, slate and shell
+  stones, green felt), in light and dark.
+
+Example, made by following the skill:
+[gomoku on a kaya board](examples/dodojo-game/gomoku/) (in Chinese), against
+the computer at three levels or two people on one phone, with replay and a
+record of wins.
+
 ## Install
 
 With the [skills CLI](https://github.com/vercel-labs/skills):
@@ -46,7 +69,7 @@ In Claude Code, as a plugin:
 /plugin install dodojo-skills@dodojo-skills
 ```
 
-Or copy `skills/dodojo-travel` into your agent's skills folder
+Or copy a skill folder, such as `skills/dodojo-travel`, into your agent's skills folder
 (`~/.claude/skills/`, `.agents/skills/`, …). Each skill folder is
 self-contained.
 
@@ -56,11 +79,11 @@ Connect your agent to dodojo's MCP server, `https://www.dodojo.ai/api/mcp`
 (OAuth, sign in once), or install the [dodojo plugin](https://github.com/dodojo-AI/dodojo-plugin).
 The agent in the dodojo desktop app is already connected. Then the skill:
 
-- searches your memories first (bookings, saved places, notes from earlier
-  trips) and builds on them;
+- searches your memories first (for a trip: bookings, saved places, notes
+  from earlier trips) and builds on them;
 - saves the page as a webpage Note: it shows in your library with the top of
   the page as its cover, opens full height on your phone and computer, draws
-  each day's map, and remembers what you tick;
+  each day's map, and remembers what you tick and where a game stands;
 - writes the key facts into the Note's text, so search finds them.
 
 Without dodojo, the page is saved as a local folder (the `.html` and its

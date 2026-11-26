@@ -1,0 +1,9 @@
+{
+  "lang": "zh",
+  "title": "五子棋：榧木棋盘，跟电脑或两人下",
+  "title_en": "Gomoku on a kaya board, against the computer or a friend",
+  "prompt": "做一个五子棋，可以一个人跟电脑下，也可以两个人用同一台手机轮流下。棋局要能存着，下次接着下。",
+  "prompt_en": "Make a gomoku game I can play against the computer or with a friend on one phone, and keep the game so we can finish it later.",
+  "inputs": [],
+  "checked": "2026-11-26"
+}

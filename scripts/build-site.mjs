@@ -223,7 +223,7 @@ ${skill.examples.map(example => tile("", skill, example, {
 <section class="hero">
   <p class="eyebrow">${t("开源 Agent Skills", "Open Agent Skills")}</p>
   <h1>${t("让 AI 做的东西，<br>值得留下来", "Make what your AI makes<br>worth keeping")}</h1>
-  <p class="lede">${t("dodojo 的开源 Agent Skills。第一个是 dodojo-travel：把一趟行程做成路上能用的一页，营业时间和门票按出行当天核实，路线不走回头路，配真实照片和地图。每个 skill 都是一套做法而不是模板。连上 dodojo，它会先翻你存过的东西，做好后直接存进你的记忆库。", "Open agent skills from dodojo. The first, dodojo-travel, turns a trip into a page you follow on the road: hours and tickets checked for your dates, a route that never backtracks, real photos and a map. Each skill is a way of working, not a template. Connected to dodojo, it starts from what you already keep and saves the result into your library.")}</p>
+  <p class="lede">${t("dodojo 的开源 Agent Skills。dodojo-travel 把一趟行程做成路上能用的一页，营业时间和门票按出行当天核实，路线不走回头路，配真实照片和地图；dodojo-game 做一页打开就能玩的游戏，游戏在最上面，电脑对手分档，每一步都存着。每个 skill 都是一套做法而不是模板。连上 dodojo，它会先翻你存过的东西，做好后直接存进你的记忆库。", "Open agent skills from dodojo. dodojo-travel turns a trip into a page you follow on the road: hours and tickets checked for your dates, a route that never backtracks, real photos and a map. dodojo-game makes a game you play on one page: the game on top, a computer opponent with real levels, every move kept. Each skill is a way of working, not a template. Connected to dodojo, it starts from what you already keep and saves the result into your library.")}</p>
   ${install(`npx skills add ${content.repo}`)}
   <p class="works">${t("适用于 Claude Code、Codex、Cursor 等支持 Agent Skills 的工具 · MIT 开源", "Works in Claude Code, Codex, Cursor and other tools that support Agent Skills · MIT licensed")}</p>
 </section>
@@ -244,7 +244,7 @@ ${rows}
   <h2>${t("配合 dodojo 用", "With dodojo")}</h2>
   <p class="sub">${t("在 Agent 里连接 dodojo 的 MCP（<code>https://www.dodojo.ai/api/mcp</code>，登录一次），skill 就能搜你的记忆、把页面存成笔记。dodojo 桌面版里的 Agent 已经连好。不连也能用：页面存成本地文件。", "Connect your agent to dodojo's MCP server (<code>https://www.dodojo.ai/api/mcp</code>, sign in once) and the skills can search your memories and save pages as Notes. The agent in the dodojo desktop app is already connected. Without it, pages are saved as local files.")}</p>
 </section>`;
-  return page({ title: "dodojo skills", description: "Open agent skills from dodojo, starting with dodojo-travel: trip pages checked for your dates, with a map and real photos.", body, depth: 0 });
+  return page({ title: "dodojo skills", description: "Open agent skills from dodojo: dodojo-travel, trip pages checked for your dates with a map and real photos, and dodojo-game, games you play on one page.", body, depth: 0 });
 }
 
 function pngSize(path) {
