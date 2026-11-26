@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="dodojo-page-id" content="kyoto-higashiyama-2026-12-12">
+<title>京都东山一日步行</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&display=swap">
+<style>dodojo-stop{display:block;margin:.5em 0}dodojo-stop::before{content:attr(time) ' ' attr(name) ' ';font-weight:600}dodojo-stop img{display:block;width:96px;height:72px;object-fit:cover;border-radius:8px}</style>
+<style>
+/* layout: one column that walks downhill like the day does - cover photo, the day's map, then a wooden name board per stop from morning light to lantern light */
+/* color: plaster-wall paper, sumi ink, 丹 vermilion of the shrine gates as the accent, lantern amber only for the evening light-up */
+/* type: Noto Serif SC (Mincho-like, as on temple boards) for names and big numbers, sparingly; the app's sans for reading; tabular digits for times and yen */
+:root {
+  --paper: var(--dodojo-bg, #efedea);
+  --panel: var(--dodojo-surface, #fbfaf8);
+  --ink: var(--dodojo-fg, #1f1b19);
+  --soft: var(--dodojo-muted-fg, #615a55);
+  --line: var(--dodojo-border, rgba(31, 27, 25, .14));
+  --shu: #b03a1f;
+  --shu-ink: #ffffff;
+  --toro: #8f5f0c;
+  --display: "Noto Serif SC", "Songti SC", "STSong", "Hiragino Mincho ProN", serif;
+  --body: var(--dodojo-font-sans, system-ui, -apple-system, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", sans-serif);
+  --radius: var(--dodojo-radius, 12px);
+}
+:root[data-dodojo-theme="dark"] {
+  --paper: var(--dodojo-bg, #151312);
+  --panel: var(--dodojo-surface, #1f1c1a);
+  --ink: var(--dodojo-fg, #eee9e4);
+  --soft: var(--dodojo-muted-fg, #aca39c);
+  --line: var(--dodojo-border, rgba(238, 233, 228, .14));
+  --shu: #ef7d5f;
+  --shu-ink: #1f1c1a;
+  --toro: #eab35a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dodojo-theme]) {
+    --paper: #151312; --panel: #1f1c1a; --ink: #eee9e4; --soft: #aca39c;
+    --line: rgba(238, 233, 228, .14); --shu: #ef7d5f; --shu-ink: #1f1c1a; --toro: #eab35a;
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; padding: 0 16px 40px; background: var(--paper); color: var(--ink);
+  font: 16px/1.7 var(--body); line-break: strict; overflow-wrap: anywhere;
+}
+main { max-width: 680px; margin: 0 auto; display: grid; gap: 36px; }
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--shu); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--shu); outline-offset: 2px; }
+h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.3; margin: 0; text-wrap: balance; }
+h2 { font-size: 22px; }
+h3 { font-size: 19px; }
+p { margin: 0; }
+.num, .when, .facts dd, td, .tag { font-variant-numeric: tabular-nums; }
+.small { font-size: 13px; color: var(--soft); line-height: 1.6; }
+section { display: grid; gap: 14px; min-width: 0; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--soft); }
+
+/* cover */
+.cover { display: grid; gap: 14px; margin: 0 -16px; }
+.cover figure { margin: 0; position: relative; }
+.cover img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.cover figcaption {
+  position: absolute; inset: auto 0 0 0; padding: 40px 16px 14px;
+  background: linear-gradient(to top, rgba(18, 15, 13, .82), rgba(18, 15, 13, .55) 55%, rgba(18, 15, 13, 0));
+  color: #fbfaf8; display: grid; gap: 4px;
+}
+.cover .date { font-size: 13px; letter-spacing: .06em; opacity: .92; }
+.cover .route { font-family: var(--display); font-weight: 700; font-size: 19px; line-height: 1.45; text-wrap: balance; }
+.cover .route i { font-style: normal; opacity: .7; padding: 0 .15em; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0 16px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.facts div { padding: 10px 8px 10px 0; min-width: 0; }
+.facts div + div { padding-left: 10px; border-left: 1px solid var(--line); }
+.facts dt { font-size: 12px; color: var(--soft); letter-spacing: .04em; }
+.facts dd { margin: 0; font-family: var(--display); font-weight: 700; font-size: 21px; line-height: 1.25; white-space: nowrap; }
+.facts dd.sub { font-family: var(--body); font-weight: 400; font-size: 12px; color: var(--soft); white-space: normal; margin-top: 2px; }
+.facts .lit { color: var(--toro); }
+
+.intro { display: grid; gap: 10px; }
+.flags { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.flags li { display: grid; grid-template-columns: 4.6em minmax(0, 1fr); gap: 10px; align-items: baseline; }
+
+/* markers */
+.tag { display: inline-block; font-size: 12.5px; line-height: 1.5; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+.tag.pay { border-color: var(--ink); }
+.tag.free { color: var(--soft); }
+.tag.lit { background: var(--toro); border-color: var(--toro); color: var(--panel); }
+.tag.shut { border-color: var(--shu); color: var(--shu); }
+.tag.go { background: var(--shu); border-color: var(--shu); color: var(--shu-ink); }
+.flags .tag { justify-self: start; }
+
+/* day */
+.dayhead { display: grid; gap: 8px; }
+.dayhead .eyebrow { color: var(--shu); }
+.daylink { display: flex; align-items: center; justify-content: center; min-height: 48px; padding: 10px 16px; border-radius: var(--radius); background: var(--shu); color: var(--shu-ink); text-decoration: none; font-weight: 600; text-align: center; }
+dodojo-map { display: block; }
+
+/* stops */
+.stops { display: grid; gap: 0; }
+.stop { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.stop .shot { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.stop-body { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; padding: 16px 16px 18px; }
+.board {
+  writing-mode: vertical-rl; text-orientation: upright; font-family: var(--display); font-weight: 700;
+  font-size: 19px; letter-spacing: .18em; line-height: 1; align-self: start; justify-self: center;
+  background: var(--ink); color: var(--panel); padding: 12px 9px; border-radius: 3px;
+}
+.board.shrine { background: var(--shu); color: var(--shu-ink); }
+.stop-main { display: grid; gap: 8px; min-width: 0; }
+.when { font-size: 13px; color: var(--soft); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--shu); color: var(--shu-ink); font-weight: 700; font-size: 12.5px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tip { font-size: 14.5px; color: var(--soft); }
+.tip b { color: var(--ink); font-weight: 600; margin-right: .4em; }
+.links { font-size: 14.5px; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.links a { display: inline-flex; align-items: center; min-height: 32px; }
+
+.leg { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; padding: 6px 16px; font-size: 14px; color: var(--soft); }
+.leg::before { content: ""; justify-self: center; width: 0; border-left: 2px dotted var(--line); min-height: 100%; }
+.leg p { padding: 8px 0; }
+.leg a { white-space: nowrap; }
+.leg.ride { margin: 0; }
+.ride-card { background: transparent; border: 1px dashed var(--line); border-radius: var(--radius); padding: 14px 16px; display: grid; gap: 6px; font-size: 14.5px; }
+.ride-card .when { color: var(--ink); font-weight: 600; font-size: 14px; }
+.route-no { display: inline-block; min-width: 2.6em; text-align: center; font-weight: 700; padding: 0 6px; border-radius: 4px; border: 1.5px solid var(--ink); font-size: 13px; }
+
+/* food */
+.food { display: grid; gap: 12px; }
+.dish { display: grid; gap: 6px; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
+.dish h3 { font-size: 17px; }
+.dish h3 span { display: block; font-family: var(--body); font-weight: 400; font-size: 13px; color: var(--soft); margin-top: 2px; }
+.dish p { font-size: 14.5px; }
+
+/* lists */
+.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+.check { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.check label { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: center; min-height: 48px; padding: 8px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+.check input { width: 22px; height: 22px; margin: 0; accent-color: var(--shu); }
+.check input:checked + span { color: var(--soft); text-decoration: line-through; text-decoration-color: var(--shu); }
+dl.facts-list { margin: 0; display: grid; gap: 12px; }
+dl.facts-list div { display: grid; gap: 2px; }
+dl.facts-list dt { font-weight: 600; }
+dl.facts-list dd { margin: 0; font-size: 15px; }
+textarea { width: 100%; min-height: 72px; font: 16px/1.5 var(--body); color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; resize: vertical; }
+
+/* totals */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; }
+td { padding: 8px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+td:last-child { text-align: right; white-space: nowrap; padding-left: 12px; }
+tr.sum td { font-weight: 700; border-bottom: 2px solid var(--ink); }
+tr.opt td { color: var(--soft); font-size: 14px; }
+
+.sources { font-size: 13px; color: var(--soft); margin: 0; padding-left: 1.1em; display: grid; gap: 6px; }
+.credits { font-size: 12px; color: var(--soft); line-height: 1.6; }
+@media (min-width: 720px) {
+  body { padding-top: 16px; }
+  .cover { margin: 0; }
+  .cover figure { border-radius: var(--radius); overflow: hidden; }
+  .facts { margin: 0; }
+}
+</style>
+</head>
+<body>
+<main>
+
+<header class="cover">
+  <figure>
+    <img src="attachment:yasaka-dori.jpg" alt="清晨的八坂通，石板坡和町家尽头立着八坂塔" width="1280" height="853">
+    <figcaption>
+      <span class="date">2026年12月12日（土）· 京都 東山 · 一个人步行</span>
+      <span class="route">清水寺<i>→</i>三年坂・二年坂<i>→</i>建仁寺<i>→</i>祇园<i>→</i>八坂神社<i>→</i>高台寺点灯</span>
+    </figcaption>
+  </figure>
+  <dl class="facts">
+    <div><dt>日落</dt><dd>16:46</dd><dd class="sub"><span class="lit">17:00</span> 高台寺点灯</dd></div>
+    <div><dt>12 月常年</dt><dd>3.5–11.6°</dd><dd class="sub">最低–最高 °C</dd></div>
+    <div><dt>门票 + 车费</dt><dd>2,560<small style="font-size:13px"> 円</small></dd><dd class="sub">都不用预约</dd></div>
+  </dl>
+</header>
+
+<section class="intro" aria-label="说明">
+  <p>按你说的排：一个人、住京都站附近、全天步行，只有去程和回程坐市巴士 206。全天走约 8 公里（含寺内，估算），上坡集中在上午。</p>
+  <p class="small">天气写的是京都 12 月常年值（日本气象厅 1991–2020 平年值：月降水 57.3 mm、日照 134 小时）。离出发还有 17 天，12/2 以后再看 <a href="https://www.jma.go.jp/bosai/forecast/#area_type=offices&amp;area_code=260000">气象厅京都府预报</a>。</p>
+  <ul class="flags">
+    <li><span class="tag lit">夜间开放</span><span>高台寺秋季夜间特别拜观开到 12/13，12 日当晚 17:00 点灯、21:30 停止入场。所以高台寺放在最后，天黑前进去。</span></li>
+    <li><span class="tag shut">闭门</span><span>清水寺境内的地主神社在修缮，2022 年起闭门。</span></li>
+    <li><span class="tag">12/14</span><span>「今年の漢字」12 月 14 日（周一）才在清水寺发布，12 日看不到。</span></li>
+    <li><span class="tag">礼仪</span><span>花见小路两侧的私人小巷别进，巷口有写着罚款 1 万円的告示；舞伎经过时别追拍。</span></li>
+  </ul>
+</section>
+
+<section aria-labelledby="day">
+  <div class="dayhead">
+    <span class="eyebrow">12月12日（土）· 由南往北，再绕回高台寺</span>
+    <h2 id="day">上午先上清水寺，顺坡走进祇园，傍晚等高台寺点灯</h2>
+  </div>
+  <a class="daylink" href="https://www.google.com/maps/dir/?api=1&amp;origin=%E6%B8%85%E6%B0%B4%E5%AF%BA%20%E4%BA%AC%E9%83%BD&amp;destination=%E9%AB%98%E5%8F%B0%E5%AF%BA%20%E4%BA%AC%E9%83%BD&amp;travelmode=walking&amp;waypoints=%E7%94%A3%E5%AF%A7%E5%9D%82%20%E4%BA%AC%E9%83%BD%7C%E4%BA%8C%E5%AF%A7%E5%9D%82%20%E4%BA%AC%E9%83%BD%7C%E6%B3%95%E8%A6%B3%E5%AF%BA%20%E5%85%AB%E5%9D%82%E3%81%AE%E5%A1%94%20%E4%BA%AC%E9%83%BD%7C%E5%BB%BA%E4%BB%81%E5%AF%BA%20%E4%BA%AC%E9%83%BD%7C%E7%B7%8F%E6%9C%AC%E5%AE%B6%E3%81%AB%E3%81%97%E3%82%93%E3%81%9D%E3%81%B0%E6%9D%BE%E8%91%89%20%E6%9C%AC%E5%BA%97%20%E4%BA%AC%E9%83%BD%7C%E5%B7%BD%E6%A9%8B%20%E7%A5%87%E5%9C%92%20%E4%BA%AC%E9%83%BD%7C%E5%85%AB%E5%9D%82%E7%A5%9E%E7%A4%BE%20%E4%BA%AC%E9%83%BD%7C%E7%9F%B3%E5%A1%80%E5%B0%8F%E8%B7%AF%20%E4%BA%AC%E9%83%BD">在 Google 地图打开全天步行路线</a>
+
+  <dodojo-map route mode="walking">
+    <dodojo-stop time="08:16">京都站前 D2 乘市巴士 206 到五条坂（约 16 分，230 円），再上坡走约 10 分</dodojo-stop>
+    <dodojo-stop lat="34.99483" lng="135.78500" time="08:45" name="清水寺" place="清水寺, 京都">本堂舞台、奥之院、音羽瀑布，约 90 分。拝観料 500 円
+      <img src="attachment:kiyomizu-dera.jpg" alt="从奥之院回望清水寺本堂和舞台"></dodojo-stop>
+    <dodojo-stop lat="34.99647" lng="135.78093" time="10:20" name="三年坂・二年坂" place="産寧坂, 京都">石板坡和町家，在かさぎ屋喝一碗红豆汤
+      <img src="attachment:ninenzaka.jpg" alt="清晨的二年坂石板路和町家"></dodojo-stop>
+    <dodojo-stop lat="34.99855" lng="135.77924" time="11:05" name="八坂塔" place="法観寺 八坂の塔, 京都">八坂通坡顶看五重塔，塔下可买咖啡
+      <img src="attachment:yasaka-dori.jpg" alt="八坂通和八坂塔"></dodojo-stop>
+    <dodojo-stop lat="35.00099" lng="135.77366" time="11:35" name="建仁寺" place="建仁寺, 京都">京都最古老的禅寺，法堂天井的双龙图，约 60 分。800 円
+      <img src="attachment:kennin-ji.jpg" alt="建仁寺法堂天井的双龙图"></dodojo-stop>
+    <dodojo-stop lat="35.00369" lng="135.77224" time="12:45" name="松葉 本店" place="総本家にしんそば松葉 本店, 京都">午饭：にしんそば（鲱鱼荞麦面）</dodojo-stop>
+    <dodojo-stop lat="35.00558" lng="135.77450" time="13:45" name="祇园白川・巽桥" place="巽橋, 京都">白川沿岸的石板路和茶屋，约 30 分</dodojo-stop>
+    <dodojo-stop lat="35.00361" lng="135.77861" time="14:25" name="八坂神社" place="八坂神社, 京都">舞殿的提灯和国宝本殿，后面是圆山公园。免费
+      <img src="attachment:yasaka-jinja.jpg" alt="八坂神社朱红色的西楼门"></dodojo-stop>
+    <dodojo-stop lat="35.00076" lng="135.78111" time="15:45" name="高台寺" place="高台寺, 京都" sunset="16:46">经石塀小路过去。先看天光里的庭园，17:00 点灯后看竹林。800 円
+      <img src="attachment:kodai-ji.jpg" alt="高台寺点灯后的竹林"></dodojo-stop>
+    <dodojo-stop time="17:45">东山安井乘市巴士 206 回京都站（约 20 分，230 円），站旁吃拉面</dodojo-stop>
+  </dodojo-map>
+</section>
+
+<section aria-labelledby="detail">
+  <h2 id="detail">每一站怎么走</h2>
+  <div class="stops">
+
+    <div class="ride-card">
+      <p class="when">08:16 · 京都站前 D2 乗り場 → 五条坂</p>
+      <p>坐市巴士 <span class="route-no">206</span>（往 三十三間堂・清水寺・祇園・北大路BT），到「五条坂」约 16 分，230 円。下车沿五条坂、茶わん坂上坡约 10 分到清水寺仁王门。周六这班前后还有 8:01、8:08、8:31。</p>
+      <p class="links"><a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E4%BA%AC%E9%83%BD%E9%A7%85&amp;destination=%E4%BA%94%E6%9D%A1%E5%9D%82%20%E3%83%90%E3%82%B9%E5%81%9C%20%E4%BA%AC%E9%83%BD&amp;travelmode=transit">公交路线</a><a href="https://www2.city.kyoto.lg.jp/kotsu/busdia/hyperdia/06124204.htm">206 京都站前时刻表</a><a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E4%BA%94%E6%9D%A1%E5%9D%82%20%E3%83%90%E3%82%B9%E5%81%9C%20%E4%BA%AC%E9%83%BD&amp;destination=%E6%B8%85%E6%B0%B4%E5%AF%BA%20%E4%BA%AC%E9%83%BD&amp;travelmode=walking">五条坂到清水寺步行</a></p>
+    </div>
+    <div class="leg"><p>上坡约 10 分</p></div>
+
+    <article class="stop">
+      <img class="shot" src="attachment:kiyomizu-dera.jpg" alt="冬天从奥之院回望清水寺本堂和舞台，背后是京都市区" width="1280" height="960">
+      <div class="stop-body">
+        <p class="board" lang="ja">清水寺</p>
+        <div class="stop-main">
+          <p class="when"><span class="n">1</span>08:45–10:15 · 约 90 分</p>
+          <h3>清水寺</h3>
+          <p class="tags"><span class="tag pay">拝観料 500 円</span><span class="tag">12 月 6:00–18:00</span></p>
+          <p>悬在山崖上的「清水の舞台」。9 点前团客还少：先上本堂舞台，再走到奥之院回头看舞台和整片京都城，最后下到音羽瀑布。</p>
+          <p class="tip"><b>提示</b>地主神社修缮闭门中。舞台上不能用三脚架、独脚架和无人机。</p>
+          <p class="links"><a href="https://www.kiyomizudera.or.jp/">清水寺官网</a><a href="https://www.google.com/maps/search/?api=1&amp;query=%E6%B8%85%E6%B0%B4%E5%AF%BA%20%E4%BA%AC%E9%83%BD">在地图上看</a></p>
+        </div>
+      </div>
+    </article>
+    <div class="leg"><p>步行约 5 分 · 下清水坂，到三年坂路口 · <a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E6%B8%85%E6%B0%B4%E5%AF%BA%20%E4%BA%AC%E9%83%BD&amp;destination=%E7%94%A3%E5%AF%A7%E5%9D%82%20%E4%BA%AC%E9%83%BD&amp;travelmode=walking">路线</a></p></div>
+
+    <article class="stop">
+      <img class="shot" src="attachment:ninenzaka.jpg" alt="清晨的二年坂，石板路两旁是木造町家和纸伞" width="1280" height="853">
+      <div class="stop-body">
+        <p class="board" lang="ja">産寧坂</p>
+        <div class="stop-main">
+          <p class="when"><span class="n">2</span>10:20–11:05 · 约 45 分</p>
+          <h3>三年坂・二年坂</h3>
+          <p class="tags"><span class="tag free">免费</span><span class="tag">かさぎ屋 10:00 开</span></p>
+          <p>1976 年划为「産寧坂伝統的建造物群保存地区」，石阶两旁是木造町家。往北走下三年坂的石阶，接着就是二年坂。走累了在二年坂的かさぎ屋坐下，喝一碗京都ぜんざい（烤年糕红豆汤）。</p>
+          <p class="tip"><b>提示</b>石阶下雨很滑。老说法是在三年坂摔跤三年内要倒霉，京都人从前会带个葫芦当护身符。</p>
+          <p class="links"><a href="https://www.google.com/maps/search/?api=1&amp;query=%E7%94%A3%E5%AF%A7%E5%9D%82%20%E4%BA%AC%E9%83%BD">三年坂在地图上</a><a href="https://www.google.com/maps/search/?api=1&amp;query=%E4%BA%8C%E5%AF%A7%E5%9D%82%20%E4%BA%AC%E9%83%BD">二年坂在地图上</a></p>
+        </div>
+      </div>
+    </article>
+    <div class="leg"><p>步行约 3 分 · 二年坂北端转进八坂通 · <a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E4%BA%8C%E5%AF%A7%E5%9D%82%20%E4%BA%AC%E9%83%BD&amp;destination=%E6%B3%95%E8%A6%B3%E5%AF%BA%20%E5%85%AB%E5%9D%82%E3%81%AE%E5%A1%94%20%E4%BA%AC%E9%83%BD&amp;travelmode=walking">路线</a></p></div>
+
+    <article class="stop">
+      <div class="stop-body">
+        <p class="board" lang="ja">法観寺</p>
+        <div class="stop-main">
+          <p class="when"><span class="n">3</span>11:05–11:20 · 约 15 分</p>
+          <h3>八坂塔（法観寺）</h3>
+          <p class="tags"><span class="tag free">外观免费</span><span class="tag">塔内 400 円 · 开放不定</span></p>
+          <p>封面那张就是这里：八坂通的石板坡和町家，尽头立着五重塔。塔下就是 % Arabica，可以买杯咖啡边走边喝。</p>
+          <p class="tip"><b>提示</b>塔内开放日和时间都不固定（各家写法从 10:00–15:00 到 10:00–16:00 不等），想进去先打 075-551-2417 问。小学生以下不能进。</p>
+          <p class="links"><a href="https://www.google.com/maps/search/?api=1&amp;query=%E6%B3%95%E8%A6%B3%E5%AF%BA%20%E5%85%AB%E5%9D%82%E3%81%AE%E5%A1%94%20%E4%BA%AC%E9%83%BD">在地图上看</a></p>
+        </div>
+      </div>
+    </article>
+    <div class="leg"><p>步行约 11 分 · 约 750 m · 沿八坂通下坡往西，过东大路通 · <a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E6%B3%95%E8%A6%B3%E5%AF%BA%20%E5%85%AB%E5%9D%82%E3%81%AE%E5%A1%94%20%E4%BA%AC%E9%83%BD&amp;destination=%E5%BB%BA%E4%BB%81%E5%AF%BA%20%E4%BA%AC%E9%83%BD&amp;travelmode=walking">路线</a></p></div>
+
+    <article class="stop">
+      <img class="shot" src="attachment:kennin-ji.jpg" alt="建仁寺法堂天井上的双龙图" width="1280" height="960">
+      <div class="stop-body">
+        <p class="board" lang="ja">建仁寺</p>
+        <div class="stop-main">
+          <p class="when"><span class="n">4</span>11:35–12:35 · 约 60 分</p>
+          <h3>建仁寺</h3>
+          <p class="tags"><span class="tag pay">拝観料 800 円</span><span class="tag">10:00–17:00 · 16:30 停止入场</span></p>
+          <p>京都最古老的禅寺。法堂天井是小泉淳作 2002 年为建寺 800 年画的《双龙图》；方丈里看潮音庭和「○△□乃庭」。</p>
+          <p class="tip"><b>提示</b>进方丈要脱鞋，12 月木地板很冰，穿厚袜子。雨天袜子湿透可能被拒入。庭园和作品可以拍，禁止自拍杆、三脚架。2027 年 1 月 1 日起门票涨到 1,000 円，你去时还是 800 円。</p>
+          <p class="links"><a href="https://www.kenninji.jp/">建仁寺官网</a><a href="https://www.google.com/maps/search/?api=1&amp;query=%E5%BB%BA%E4%BB%81%E5%AF%BA%20%E4%BA%AC%E9%83%BD">在地图上看</a></p>
+        </div>
+      </div>
+    </article>
+    <div class="leg"><p>步行约 10 分 · 约 700 m · 沿花见小路往北到四条通，再往西到四条大桥 · <a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E5%BB%BA%E4%BB%81%E5%AF%BA%20%E4%BA%AC%E9%83%BD&amp;destination=%E7%B7%8F%E6%9C%AC%E5%AE%B6%E3%81%AB%E3%81%97%E3%82%93%E3%81%9D%E3%81%B0%E6%9D%BE%E8%91%89%20%E6%9C%AC%E5%BA%97%20%E4%BA%AC%E9%83%BD&amp;travelmode=walking">路线</a></p></div>
+
+    <article class="stop">
+      <div class="stop-body">
+        <p class="board" lang="ja">松葉</p>
+        <div class="stop-main">
+          <p class="when"><span class="n">5</span>12:45–13:35 · 午饭</p>
+          <h3>総本家にしんそば松葉 本店</h3>
+          <p class="tags"><span class="tag">にしんそば 1,650 円</span><span class="tag">10:30–21:00 · 周三休</span></p>
+          <p>1861 年创业，にしんそば（甜炖鲱鱼放在热荞麦面上）的老店，12 月吃正好暖身。店在南座西隔壁，南座 12/1–24 在演年末的歌舞伎「顔見世」。</p>
+          <p class="tip"><b>提示</b>周六饭点可能要排队。价格和营业时间来自旅游网站，以店内为准。</p>
+          <p class="links"><a href="https://www.google.com/maps/search/?api=1&amp;query=%E7%B7%8F%E6%9C%AC%E5%AE%B6%E3%81%AB%E3%81%97%E3%82%93%E3%81%9D%E3%81%B0%E6%9D%BE%E8%91%89%20%E6%9C%AC%E5%BA%97%20%E4%BA%AC%E9%83%BD">在地图上看</a></p>
+        </div>
+      </div>
+    </article>
+    <div class="leg"><p>步行约 6 分 · 约 400 m · 过四条通往北 · <a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E7%B7%8F%E6%9C%AC%E5%AE%B6%E3%81%AB%E3%81%97%E3%82%93%E3%81%9D%E3%81%B0%E6%9D%BE%E8%91%89%20%E6%9C%AC%E5%BA%97%20%E4%BA%AC%E9%83%BD&amp;destination=%E5%B7%BD%E6%A9%8B%20%E7%A5%87%E5%9C%92%20%E4%BA%AC%E9%83%BD&amp;travelmode=walking">路线</a></p></div>
+
+    <article class="stop">
+      <div class="stop-body">
+        <p class="board" lang="ja">白川</p>
+        <div class="stop-main">
+          <p class="when"><span class="n">6</span>13:45–14:15 · 约 30 分</p>
+          <h3>祇园白川・巽桥</h3>
+          <p class="tags"><span class="tag free">免费</span></p>
+          <p>白川沿岸的石板路、垂柳和茶屋，小小的巽桥和辰巳大明神，比四条通安静得多。</p>
+          <p class="tip"><b>提示</b>茶屋和私人小巷别闯；看到舞伎让路即可，别追着拍。</p>
+          <p class="links"><a href="https://www.google.com/maps/search/?api=1&amp;query=%E5%B7%BD%E6%A9%8B%20%E7%A5%87%E5%9C%92%20%E4%BA%AC%E9%83%BD">在地图上看</a></p>
+        </div>
+      </div>
+    </article>
+    <div class="leg"><p>步行约 7 分 · 约 500 m · 回到四条通往东，走到尽头的朱红楼门 · <a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E5%B7%BD%E6%A9%8B%20%E7%A5%87%E5%9C%92%20%E4%BA%AC%E9%83%BD&amp;destination=%E5%85%AB%E5%9D%82%E7%A5%9E%E7%A4%BE%20%E4%BA%AC%E9%83%BD&amp;travelmode=walking">路线</a></p></div>
+
+    <article class="stop">
+      <img class="shot" src="attachment:yasaka-jinja.jpg" alt="四条通尽头朱红色的八坂神社西楼门" width="1280" height="820">
+      <div class="stop-body">
+        <p class="board shrine" lang="ja">八坂神社</p>
+        <div class="stop-main">
+          <p class="when"><span class="n">7</span>14:25–15:20 · 约 55 分</p>
+          <h3>八坂神社 + 圆山公园</h3>
+          <p class="tags"><span class="tag free">参拜免费 · 24 小时</span><span class="tag">社务所 9:00–17:00</span></p>
+          <p>祇园祭的神社。从西楼门进，舞殿挂满花街和附近料亭献的提灯；本殿 2020 年列为国宝。往东穿过去就是圆山公园。</p>
+          <p class="tip"><b>提示</b>要御朱印的话，社务所 17:00 收。出去时走南楼门，往南就是下河原通。</p>
+          <p class="links"><a href="https://www.yasaka-jinja.or.jp/">八坂神社官网</a><a href="https://www.google.com/maps/search/?api=1&amp;query=%E5%85%AB%E5%9D%82%E7%A5%9E%E7%A4%BE%20%E4%BA%AC%E9%83%BD">在地图上看</a></p>
+        </div>
+      </div>
+    </article>
+    <div class="leg"><p>步行约 12 分 · 约 750 m · 南楼门 → 下河原通 → 石塀小路 → ねねの道 · <a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E5%85%AB%E5%9D%82%E7%A5%9E%E7%A4%BE%20%E4%BA%AC%E9%83%BD&amp;destination=%E9%AB%98%E5%8F%B0%E5%AF%BA%20%E4%BA%AC%E9%83%BD&amp;travelmode=walking&amp;waypoints=%E7%9F%B3%E5%A1%80%E5%B0%8F%E8%B7%AF%20%E4%BA%AC%E9%83%BD">路线</a></p></div>
+
+    <article class="stop">
+      <img class="shot" src="attachment:kodai-ji.jpg" alt="高台寺点灯后的竹林，从下往上看" width="1280" height="1923" style="aspect-ratio: 4 / 3; object-position: 50% 40%;">
+      <div class="stop-body">
+        <p class="board" lang="ja">高台寺</p>
+        <div class="stop-main">
+          <p class="when"><span class="n">8</span>15:45–17:30 · 约 105 分</p>
+          <h3>高台寺</h3>
+          <p class="tags"><span class="tag pay">拝観料 800 円</span><span class="tag lit">17:00 点灯</span><span class="tag">9:00 开，今晚到 22:00</span></p>
+          <p>丰臣秀吉的正室北政所（宁宁）1606 年为秀吉建的寺。日落 16:46 前先看庭园、开山堂和臥龍廊；17:00 点灯后庭园和竹林亮起来，方丈前庭还有光影投影。</p>
+          <p class="tip"><b>提示</b>夜间拜观最后入场 21:30，22:00 关门。想顺便看隔壁同样点灯的圆德院，买两寺通票 1,200 円。</p>
+          <p class="links"><a href="https://www.kodaiji.com/">高台寺官网</a><a href="https://www.google.com/maps/search/?api=1&amp;query=%E9%AB%98%E5%8F%B0%E5%AF%BA%20%E4%BA%AC%E9%83%BD">在地图上看</a><a href="https://www.google.com/maps/search/?api=1&amp;query=%E7%9F%B3%E5%A1%80%E5%B0%8F%E8%B7%AF%20%E4%BA%AC%E9%83%BD">石塀小路在地图上</a></p>
+        </div>
+      </div>
+    </article>
+    <div class="leg"><p>步行约 7 分 · 约 450 m · 下坡到东大路通的「東山安井」站 · <a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E9%AB%98%E5%8F%B0%E5%AF%BA%20%E4%BA%AC%E9%83%BD&amp;destination=%E6%9D%B1%E5%B1%B1%E5%AE%89%E4%BA%95%20%E3%83%90%E3%82%B9%E5%81%9C%20%E4%BA%AC%E9%83%BD&amp;travelmode=walking">路线</a></p></div>
+
+    <div class="ride-card">
+      <p class="when">17:45 · 東山安井 → 京都站前</p>
+      <p>坐市巴士 <span class="route-no">206</span>（往 博物館・三十三間堂・京都駅），约 20 分（傍晚看路况），230 円。周六 17–19 点大约每 7–9 分一班，19 点后每 12–16 分一班。到站后走 4 分去本家第一旭吃拉面。</p>
+      <p class="links"><a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E6%9D%B1%E5%B1%B1%E5%AE%89%E4%BA%95%20%E3%83%90%E3%82%B9%E5%81%9C%20%E4%BA%AC%E9%83%BD&amp;destination=%E4%BA%AC%E9%83%BD%E9%A7%85&amp;travelmode=transit">公交路线</a><a href="https://www2.city.kyoto.lg.jp/kotsu/busdia/hyperdia/12630005.htm">206 東山安井时刻表</a><a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E4%BA%AC%E9%83%BD%E9%A7%85&amp;destination=%E6%9C%AC%E5%AE%B6%E7%AC%AC%E4%B8%80%E6%97%AD%20%E3%81%9F%E3%81%8B%E3%81%B0%E3%81%97%E6%9C%AC%E5%BA%97%20%E4%BA%AC%E9%83%BD&amp;travelmode=walking">京都站到第一旭步行</a></p>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="food">
+  <h2 id="food">吃什么</h2>
+  <div class="food">
+    <div class="dish">
+      <h3>かさぎ屋<span>二年坂 · 10:40 前后</span></h3>
+      <p>点京都ぜんざい：炭火烤过的年糕配丹波大纳言红豆，汤清淡。也有おはぎ。</p>
+      <p class="small">10:00–17:00（16:40 最后点单），周二休，周六营业。不用订。价格没查到。 · <a href="https://www.google.com/maps/search/?api=1&amp;query=%E3%81%8B%E3%81%95%E3%81%8E%E5%B1%8B%20%E4%BA%8C%E5%AF%A7%E5%9D%82%20%E4%BA%AC%E9%83%BD">地图</a></p>
+    </div>
+    <div class="dish">
+      <h3>% Arabica 京都东山<span>八坂塔下 · 11:10 前后</span></h3>
+      <p>八坂塔正下方的咖啡店，买杯拿铁边走边喝。</p>
+      <p class="small">约 9:00–18:00，不定休（有的网站写 8:00 开）。 · <a href="https://www.google.com/maps/search/?api=1&amp;query=%25%20Arabica%20%E4%BA%AC%E9%83%BD%E6%9D%B1%E5%B1%B1">地图</a></p>
+    </div>
+    <div class="dish">
+      <h3>松葉 本店<span>四条大桥东 · 午饭</span></h3>
+      <p>点にしんそば（1,650 円）：甜炖的身欠きニシン（鲱鱼干）盖在热荞麦面上。</p>
+      <p class="small">10:30–21:00（20:30 最后点单），周三休。不用订，饭点可能排队。 · <a href="https://www.google.com/maps/search/?api=1&amp;query=%E7%B7%8F%E6%9C%AC%E5%AE%B6%E3%81%AB%E3%81%97%E3%82%93%E3%81%9D%E3%81%B0%E6%9D%BE%E8%91%89%20%E6%9C%AC%E5%BA%97%20%E4%BA%AC%E9%83%BD">地图</a></p>
+    </div>
+    <div class="dish">
+      <h3>本家第一旭 たかばし本店<span>京都站步行 4 分 · 晚饭</span></h3>
+      <p>京都站边的老字号拉面。ラーメン 980 円，特製ラーメン 1,230 円。</p>
+      <p class="small">6:00–25:00（凌晨 1 点），周四休。饭点常排队。 · <a href="https://www.google.com/maps/search/?api=1&amp;query=%E6%9C%AC%E5%AE%B6%E7%AC%AC%E4%B8%80%E6%97%AD%20%E3%81%9F%E3%81%8B%E3%81%B0%E3%81%97%E6%9C%AC%E5%BA%97%20%E4%BA%AC%E9%83%BD">地图</a></p>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="rain">
+  <h2 id="rain">下雨的话</h2>
+  <ul class="plain">
+    <li>顺序不变，三年坂、二年坂只走不逛，石阶慢慢下。</li>
+    <li>多带一双干袜子：建仁寺说明过，雨天袜子明显湿透可能不让进；进去后在方丈和法堂多待一会儿。</li>
+    <li>祇园白川缩短到 10 分钟，提早到高台寺（9:00 就开），在有屋檐的方丈和廊下慢慢看，等 17:00 点灯。</li>
+    <li>雨天巴士更慢，回程留出 30 分钟。</li>
+  </ul>
+</section>
+
+<section aria-labelledby="check">
+  <h2 id="check">出门前勾一勾</h2>
+  <div class="check">
+    <label><input type="checkbox" data-dodojo-key="c-cash"><span>现金和硬币，IC 卡（ICOCA / Suica）余额至少 460 円</span></label>
+    <label><input type="checkbox" data-dodojo-key="c-socks"><span>厚袜子一双 + 备用一双（进寺院殿内要脱鞋）</span></label>
+    <label><input type="checkbox" data-dodojo-key="c-shoes"><span>防滑、走得久的鞋（三年坂石阶）</span></label>
+    <label><input type="checkbox" data-dodojo-key="c-battery"><span>充电宝，手机电量够拍到晚上</span></label>
+    <label><input type="checkbox" data-dodojo-key="c-forecast"><span>12/2 以后看一眼京都天气预报，冷就加围巾手套</span></label>
+    <label><input type="checkbox" data-dodojo-key="c-hotel"><span>酒店名和日文地址填进下面「实用」里</span></label>
+    <label><input type="checkbox" data-dodojo-key="c-hokanji"><span>（可选）想进八坂塔内部，前一天打电话问开不开</span></label>
+  </div>
+</section>
+
+<section aria-labelledby="info">
+  <h2 id="info">实用</h2>
+  <dl class="facts-list">
+    <div><dt>市巴士怎么坐</dt><dd>后门上车、前门下车，下车时在司机旁的车费箱付 230 円：现金，或把 IC 卡贴在读卡处「哔」一声。1,000 円纸币可以直接投进去找零，2,000 円以上的纸币要先换开。</dd></div>
+    <div><dt>另一种去程</dt><dd>周末有观光特急 EX100：京都站前 D1 乗り場，500 円，不停小站，到五条坂约 12 分；但首班 9:12，比这份计划晚。</dd></div>
+    <div><dt>钱</dt><dd>日本不收小费。今天门票和车费合计 2,560 円，见下面的「花费」。</dd></div>
+    <div><dt>紧急</dt><dd>报警 110，急救和火警 119。Japan Visitor Hotline（日本观光局多语种热线，24 小时，有中文）：050-3816-2787。</dd></div>
+    <div><dt>酒店地址（打车时给司机看）</dt><dd><textarea data-dodojo-key="hotel-address" aria-label="酒店名和日文地址" placeholder="酒店名 + 日文地址"></textarea></dd></div>
+  </dl>
+</section>
+
+<section aria-labelledby="cost">
+  <h2 id="cost">花费（日元）</h2>
+  <div class="table-wrap">
+    <table>
+      <tbody>
+        <tr><td>市巴士 206 去程</td><td>230 円</td></tr>
+        <tr><td>清水寺</td><td>500 円</td></tr>
+        <tr><td>建仁寺</td><td>800 円</td></tr>
+        <tr><td>高台寺</td><td>800 円</td></tr>
+        <tr><td>市巴士 206 回程</td><td>230 円</td></tr>
+        <tr class="sum"><td>门票 + 车费</td><td>2,560 円</td></tr>
+        <tr><td>午饭 にしんそば</td><td>1,650 円</td></tr>
+        <tr><td>晚饭 ラーメン</td><td>980 円</td></tr>
+        <tr class="sum"><td>全天（不含甜品和咖啡）</td><td>5,190 円</td></tr>
+        <tr class="opt"><td>可选：高台寺改买两寺通票（含圆德院）</td><td>+400 円</td></tr>
+        <tr class="opt"><td>可选：八坂塔内部</td><td>+400 円</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section aria-labelledby="src">
+  <h2 id="src">查证来源</h2>
+  <p class="small">以下都在 2026-11-25 查过；营业时间会变，出发前点进去再看一眼。</p>
+  <ul class="sources">
+    <li>清水寺 2026 年开门时间（12/1–31 为 6:00–18:00）：<a href="https://www.kiyomizudera.or.jp/access.php">清水寺 参拜·交通案内</a>；门票 500 円：<a href="https://ja.kyoto.travel/event/single.php?event_id=4608">京都观光官方网站</a></li>
+    <li>地主神社闭门：<a href="https://ja.kyoto.travel/event/single.php?event_id=5115">京都观光官方网站</a>；今年的汉字 12/14 发布：<a href="https://www.kanken.or.jp/kotoshinokanji/">日本汉字能力检定协会</a></li>
+    <li>高台寺时间、门票、通票：<a href="https://www.kodaiji.com/haikan.html">高台寺 拝観案内</a>；2026 秋季夜间拜观 10/23–12/13：<a href="https://www.kodaiji.com/">高台寺官网</a>、<a href="https://ja.kyoto.travel/event/single.php?event_id=5528">京都观光官方网站</a></li>
+    <li>建仁寺时间与门票：<a href="https://www.kenninji.jp/access/">建仁寺 アクセス</a>；2027 年涨价：<a href="https://www.kenninji.jp/news/?p=2352">公告</a>；雨天入场：<a href="https://www.kenninji.jp/news/?p=2305">公告</a>；拍照规定：<a href="https://www.kenninji.jp/around/">巡る</a></li>
+    <li>八坂神社社务所时间：<a href="https://www.yasaka-jinja.or.jp/about/">八坂神社</a>；24 小时参拜：<a href="https://rurubu.jp/andmore/spot/80026751">るるぶ</a>；本殿国宝：<a href="https://ja.wikipedia.org/wiki/%E5%85%AB%E5%9D%82%E7%A5%9E%E7%A4%BE">维基百科</a></li>
+    <li>八坂塔（非官方，开放不定）：<a href="https://rurubu.jp/andmore/spot/80026733">るるぶ</a>；三年坂保存地区与传说：<a href="https://ja.wikipedia.org/wiki/%E7%94%A3%E5%AF%A7%E5%9D%82">维基百科</a>；高台寺沿革：<a href="https://ja.wikipedia.org/wiki/%E9%AB%98%E5%8F%B0%E5%AF%BA">维基百科</a></li>
+    <li>市巴士 206 时刻（2026-03-20 实施）：<a href="https://www2.city.kyoto.lg.jp/kotsu/busdia/hyperdia/06124204.htm">京都站前</a>、<a href="https://www2.city.kyoto.lg.jp/kotsu/busdia/hyperdia/12630005.htm">東山安井</a>；乘车方法和 230 円：<a href="https://www.city.kyoto.lg.jp/kotsu/page/0000324695.html">京都市交通局</a>；206 到五条坂约 16 分：<a href="https://kyoto.travel/en/travel-inspiration/taking-the-limited-express-bus-from-kyoto-station-to-kiyomizudera-temple/">Kyoto City Official Travel Guide</a>；EX100：<a href="https://www2.city.kyoto.lg.jp/kotsu/webguide/ja/bus/limited_express.html">京都市交通局</a></li>
+    <li>日出 6:55、日落 16:46：<a href="https://eco.mtk.nao.ac.jp/koyomi/dni/2026/s2712.html">国立天文台 历计算室（京都，2026 年 12 月）</a>；12 月平年值：<a href="https://www.data.jma.go.jp/obd/stats/etrn/view/nml_sfc_ym.php?prec_no=61&amp;block_no=47759">日本气象厅</a></li>
+    <li>祇园私道告示：<a href="https://www.timeout.jp/tokyo/ja/news/kyoto-to-limit-tourist-access-in-the-historical-gion-geisha-district-031424">Time Out Tokyo</a>；南座顔見世 12/1–24：<a href="https://ja.kyoto.travel/event/single.php?event_id=5748">京都观光官方网站</a></li>
+    <li>松葉：<a href="https://www.gltjp.com/ja/directory/item/13230/">GLTJP</a>；かさぎ屋：<a href="https://rurubu.jp/andmore/spot/80026978">るるぶ</a>；% Arabica：<a href="https://rurubu.jp/andmore/spot/80095556">るるぶ</a>；本家第一旭：<a href="https://www.honke-daiichiasahi.com/shop.html">官网</a>；热线：<a href="https://www.japan.travel/en/plan/hotline/">JNTO</a></li>
+  </ul>
+</section>
+
+<p class="credits">照片来自 Wikimedia Commons：封面、二年坂 <a href="https://commons.wikimedia.org/wiki/File:Yasaka-dori_early_morning_with_street_lanterns_and_the_Tower_of_Yasaka_(Hokan-ji_Temple),_Kyoto,_Japan.jpg">Basile Morin</a>、<a href="https://commons.wikimedia.org/wiki/File:Pedestrian_road_with_pavements_and_paper_umbrellas,_Higashiyama-ku,_Kyoto,_Japan,_early_morning.jpg">Basile Morin</a>（CC BY-SA 4.0）；清水寺 <a href="https://commons.wikimedia.org/wiki/File:Historical_Kyoto_Kiyomizu_dera_2005_2_10.jpg">Nicholas Wang</a>（CC BY-SA 2.0，2005 年 2 月）；建仁寺 <a href="https://commons.wikimedia.org/wiki/File:Twin_Dragons_Ceiling_Painting_-_by_Koizumi_Junsaku_-_Hodo_Hall_-_Kennin-ji_Zen_Temple_-_Kyoto_-_Japan_-_01_(47929397987).jpg">Adam Jones</a>（CC BY-SA 2.0）；八坂神社 <a href="https://commons.wikimedia.org/wiki/File:Nishiromon_Gate,_Yasaka_Shrine,_Kyoto,_West_view_20190416_1.jpg">DXR</a>（CC BY-SA 4.0）；高台寺 <a href="https://commons.wikimedia.org/wiki/File:Banboo_forest_in_Kodaiji-temple_(11039052346).jpg">Takashi Hososhima</a>（CC BY-SA 2.0）。</p>
+
+</main>
+<script>
+// Outside dodojo, show the attached photos from the folder beside the page.
+if (!window.dodojo) document.querySelectorAll('[src^="attachment:"]').forEach(el => { el.src = el.getAttribute('src').slice(11); });
+</script>
+</body>
+</html>

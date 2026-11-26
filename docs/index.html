@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>dodojo skills</title>
+<meta name="description" content="Open agent skills from dodojo, starting with dodojo-travel: trip pages checked for your dates, with a map and real photos.">
+<link rel="icon" href="assets/icon.png">
+<link rel="stylesheet" href="assets/site.css">
+<script>try{var l=localStorage.getItem("dodojo-skills-lang")}catch(e){}document.documentElement.dataset.lang=l==="zh"?"zh":"en"</script>
+</head>
+<body>
+<div class="wrap">
+<header class="bar">
+  <a class="brand" href="index.html"><img src="assets/icon.png" alt="" width="28" height="28" style="border-radius:7px">dodojo <span>/ skills</span></a>
+  <nav>
+    <span class="seg" role="group" aria-label="Language"><button type="button" data-set-lang="zh">中文</button><button type="button" data-set-lang="en">EN</button></span>
+    <a class="pill-button" href="https://github.com/dodojo14/dodojo-skills">GitHub ↗</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <p class="eyebrow"><span data-l="zh">开源 Agent Skills</span><span data-l="en">Open Agent Skills</span></p>
+  <h1><span data-l="zh">让 AI 做的东西，<br>值得留下来</span><span data-l="en">Make what your AI makes<br>worth keeping</span></h1>
+  <p class="lede"><span data-l="zh">dodojo 的开源 Agent Skills。第一个是 dodojo-travel：把一趟行程做成路上能用的一页，营业时间和门票按出行当天核实，路线不走回头路，配真实照片和地图。每个 skill 都是一套做法而不是模板。连上 dodojo，它会先翻你存过的东西，做好后直接存进你的记忆库。</span><span data-l="en">Open agent skills from dodojo. The first, dodojo-travel, turns a trip into a page you follow on the road: hours and tickets checked for your dates, a route that never backtracks, real photos and a map. Each skill is a way of working, not a template. Connected to dodojo, it starts from what you already keep and saves the result into your library.</span></p>
+  <div class="install"><code>npx skills add dodojo14/dodojo-skills</code><button type="button" data-copy="npx skills add dodojo14/dodojo-skills"><span data-l="zh">复制</span><span data-l="en">Copy</span></button></div>
+  <p class="works"><span data-l="zh">适用于 Claude Code、Codex、Cursor 等支持 Agent Skills 的工具 · MIT 开源</span><span data-l="en">Works in Claude Code, Codex, Cursor and other tools that support Agent Skills · MIT licensed</span></p>
+</section>
+<section class="section">
+  <h2><span data-l="zh">技能</span><span data-l="en">Skills</span></h2>
+  <p class="sub"><span data-l="zh">每张卡片都是 skill 真实做出来的页面，显示方式和 dodojo 首页一样：页面顶部就是封面。点开看它怎么做。</span><span data-l="en">Each card is a page a skill actually made, shown the way dodojo's library shows it: the top of the page is the cover. Open one to see how it was made.</span></p>
+
+<article class="skill-row">
+  <header>
+    <h3><span data-l="zh">旅行页</span><span data-l="en">Trip page</span> <span class="mono">dodojo-travel</span></h3>
+    <p><span data-l="zh">一日游、城市行程、自驾、吃喝路线：按出行当天查营业时间、门票和交通，排出不走回头路的路线，配真实照片和地图。</span><span data-l="en">Day trips, city itineraries, road trips and food crawls: hours, tickets and transport checked for the actual dates, a route that never backtracks, real photos and a map.</span></p>
+    <a class="open-link" href="skills/dodojo-travel.html"><span data-l="zh">看它怎么做 →</span><span data-l="en">See how it works →</span></a>
+  </header>
+  <div class="library">
+<a class="tile" href="skills/dodojo-travel.html#lisbon-saturday">
+  <div class="cover"><iframe data-src="examples/dodojo-travel/lisbon-saturday/index.html?theme=light" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe></div>
+  <h3>Lisbon Saturday, Alfama to Belém</h3>
+  <div class="meta"><span><span data-l="zh">英文示例</span><span data-l="en">In English</span></span>·<span><span data-l="zh">11月25日</span><span data-l="en">Nov 25</span></span></div>
+  
+</a>
+<a class="tile" href="skills/dodojo-travel.html#kyoto-higashiyama">
+  <div class="cover"><iframe data-src="examples/dodojo-travel/kyoto-higashiyama/index.html?theme=light" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe></div>
+  <h3>京都东山一日步行（12/12 周六）</h3>
+  <div class="meta"><span><span data-l="zh">中文示例</span><span data-l="en">In Chinese</span></span>·<span><span data-l="zh">11月25日</span><span data-l="en">Nov 25</span></span></div>
+  
+</a>
+  </div>
+</article>
+</section>
+<section class="section">
+  <h2><span data-l="zh">一个 skill 怎么变成一页</span><span data-l="en">How a skill becomes a page</span></h2>
+  <ol class="how">
+    <li><b><span data-l="zh">你说一句话</span><span data-l="en">You ask</span></b><span><span data-l="zh">「帮我排个京都东山一日游」。连上 dodojo 时，Agent 先翻你存过的订单、收藏和笔记。</span><span data-l="en">"Plan me a day in Kyoto's Higashiyama." With dodojo connected, the agent first looks through your bookings, saved places and notes.</span></span></li>
+    <li><b><span data-l="zh">Agent 按 skill 做事</span><span data-l="en">The agent follows the skill</span></b><span><span data-l="zh">skill 写的是方法：查什么、怎么排、设计怎么定、做完怎么检查。不是模板，所以每个主题长得不一样。</span><span data-l="en">A skill is a method: what to check, how to plan, how to design and how to check the result. Not a template, so every subject gets its own look.</span></span></li>
+    <li><b><span data-l="zh">得到一页能用的东西</span><span data-l="en">You get a page to keep</span></b><span><span data-l="zh">一个 HTML 文件，任何浏览器都能打开。存进 dodojo 就是一条网页笔记，勾过的清单会记住。</span><span data-l="en">One HTML file that opens in any browser. In dodojo it is a webpage Note that remembers what you ticked.</span></span></li>
+  </ol>
+</section>
+<section class="section">
+  <h2><span data-l="zh">配合 dodojo 用</span><span data-l="en">With dodojo</span></h2>
+  <p class="sub"><span data-l="zh">在 Agent 里连接 dodojo 的 MCP（<code>https://www.dodojo.ai/api/mcp</code>，登录一次），skill 就能搜你的记忆、把页面存成笔记。dodojo 桌面版里的 Agent 已经连好。不连也能用：页面存成本地文件。</span><span data-l="en">Connect your agent to dodojo's MCP server (<code>https://www.dodojo.ai/api/mcp</code>, sign in once) and the skills can search your memories and save pages as Notes. The agent in the dodojo desktop app is already connected. Without it, pages are saved as local files.</span></p>
+</section>
+<footer class="foot">
+  <div><span data-l="zh">MIT 开源 · 页面由 skill 生成，可视化由 <code>scripts/build-site.mjs</code> 从 skill 文件自动生成</span><span data-l="en">MIT licensed · Pages made by the skills; this gallery is generated from the skill files by <code>scripts/build-site.mjs</code></span></div>
+  <div><a href="https://github.com/dodojo14/dodojo-skills">dodojo14/dodojo-skills</a> · <a href="https://www.dodojo.ai">dodojo.ai</a> · <a href="https://github.com/dodojo14/dodojo-plugin">dodojo plugin</a></div>
+</footer>
+</div>
+<script src="assets/site.js"></script>
+</body>
+</html>

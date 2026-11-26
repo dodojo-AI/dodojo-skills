@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="dodojo-page-id" content="lisbon-saturday-2026-12-12">
+<title>Lisbon Saturday, Alfama to Belém</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Bodoni+Moda:opsz,wght@6..96,500..800&amp;display=swap">
+<style>dodojo-stop{display:block;margin:.5em 0}dodojo-stop::before{content:attr(time) ' ' attr(name) ' ';font-weight:600}dodojo-stop img{display:block;width:96px;height:72px;object-fit:cover;border-radius:8px}</style>
+<style>
+/* layout: a day read like a Lisbon tram line - azulejo-tile numbers for the stops, Carris-coloured chips for the 28E and 15E legs, and Rossio's wave pavement marking where the day starts and ends */
+/* plan: glaze white and cobalt from azulejos; basalt and limestone from the calçada; Bodoni Moda (old shop-sign serif) for names, Barlow Condensed for times, prices and line numbers, the app's sans for reading */
+:root {
+  --paper: var(--dodojo-bg, #f3f5f8);
+  --panel: var(--dodojo-surface, #ffffff);
+  --ink: var(--dodojo-fg, #13203a);
+  --soft: var(--dodojo-muted-fg, #55627a);
+  --line: var(--dodojo-border, rgba(19, 32, 58, .14));
+  --accent: #1d4ea3;          /* azulejo cobalt */
+  --accent-ink: #ffffff;
+  --glaze: #dfe7f5;           /* pale glaze between the cobalt */
+  --basalt: #1c1c1e;          /* calçada black */
+  --lioz: #efebe2;            /* calçada limestone */
+  --l28: #f7a300;             /* Carris 28E, from its timetable */
+  --l28-ink: #1a1200;
+  --l15: #ed2b8d;             /* Carris 15E, from its timetable */
+  --l15-ink: #ffffff;
+  --display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --label: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+}
+:root[data-dodojo-theme="dark"] {
+  --paper: var(--dodojo-bg, #0d1424);
+  --panel: var(--dodojo-surface, #152035);
+  --ink: var(--dodojo-fg, #e8ecf4);
+  --soft: var(--dodojo-muted-fg, #a3adc2);
+  --line: var(--dodojo-border, rgba(232, 236, 244, .14));
+  --accent: #8fb1f2;
+  --accent-ink: #0d1424;
+  --glaze: #24365c;
+  --basalt: #0a0a0b;
+  --lioz: #cfcabe;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dodojo-theme]) {
+    --paper: #0d1424; --panel: #152035; --ink: #e8ecf4; --soft: #a3adc2;
+    --line: rgba(232, 236, 244, .14); --accent: #8fb1f2; --accent-ink: #0d1424;
+    --glaze: #24365c; --basalt: #0a0a0b; --lioz: #cfcabe;
+  }
+}
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+img { max-width: 100%; height: auto; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink);
+  font-family: var(--dodojo-font-sans, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif);
+  font-size: 16px; line-height: 1.55; }
+main { max-width: 720px; margin: 0 auto; display: grid; gap: 28px; }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+h2, h3, h4 { font-family: var(--display); font-weight: 700; text-wrap: balance; margin: 0; letter-spacing: -.005em; }
+h2 { font-size: 1.75rem; line-height: 1.15; }
+h3 { font-size: 1.55rem; line-height: 1.15; }
+h4 { font-size: 1.4rem; line-height: 1.2; }
+p { margin: 0; }
+.label { font-family: var(--label); font-weight: 600; font-size: .86rem; letter-spacing: .07em; text-transform: uppercase; color: var(--soft); }
+.num { font-family: var(--label); font-variant-numeric: tabular-nums; font-weight: 600; }
+.small { font-size: .82rem; color: var(--soft); line-height: 1.45; }
+
+/* opening */
+.opening { display: grid; gap: 14px; }
+.cover { margin: 0; position: relative; }
+.cover img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 4px; }
+.cover figcaption { margin-top: 4px; }
+.lede { font-family: var(--display); font-weight: 700; font-size: 1.95rem; line-height: 1.12; text-wrap: balance; letter-spacing: -.01em; }
+.route-line { font-family: var(--label); font-weight: 500; font-size: 1.02rem; letter-spacing: .02em; color: var(--soft); line-height: 1.5; }
+.route-line b { color: var(--ink); font-weight: 600; }
+.glance { margin: 0; display: grid; grid-template-columns: 5.6rem minmax(0, 1fr); gap: 10px 12px; padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.glance dt { font-family: var(--label); font-weight: 600; font-size: .86rem; letter-spacing: .07em; text-transform: uppercase; color: var(--accent); padding-top: 2px; }
+.glance dd { margin: 0; min-width: 0; }
+.glance dd .small { display: block; margin-top: 2px; }
+
+/* Rossio's "mar largo" calçada */
+.calcada { display: grid; gap: 6px; }
+.calcada svg { display: block; width: 100%; height: 30px; border-radius: 2px; }
+
+/* the day */
+.day { display: grid; gap: 34px; }
+.area { display: grid; gap: 16px; }
+.area-head { display: grid; gap: 4px; padding-top: 14px; border-top: 3px solid var(--ink); }
+.area-head .go { display: inline-flex; align-items: center; justify-self: start; min-height: 44px; font-weight: 600; }
+.day-head { display: grid; gap: 6px; }
+dodojo-map { display: block; }
+.stops { display: grid; gap: 0; }
+.stop { display: grid; gap: 12px; padding: 20px 0; border-top: 1px solid var(--line); }
+.stop-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; align-items: center; }
+.stop-head .tile { grid-row: 1 / span 2; }
+.stop-head .when { text-transform: none; letter-spacing: .04em; }
+.tile { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 3px;
+  background:
+    radial-gradient(circle at 0 0, var(--glaze) 0 8px, transparent 8.5px),
+    radial-gradient(circle at 100% 0, var(--glaze) 0 8px, transparent 8.5px),
+    radial-gradient(circle at 0 100%, var(--glaze) 0 8px, transparent 8.5px),
+    radial-gradient(circle at 100% 100%, var(--glaze) 0 8px, transparent 8.5px),
+    var(--accent);
+  color: var(--accent-ink); font-family: var(--display); font-weight: 800; font-size: 1.3rem; line-height: 1; }
+.stop-head .when { grid-column: 2; }
+.stop-head h4 { grid-column: 2; }
+.stamp { grid-column: 2; justify-self: start; display: inline-block; margin-top: 6px; padding: 3px 8px 2px; border: 1.5px solid currentColor; border-radius: 3px;
+  font-family: var(--label); font-weight: 700; font-size: .84rem; letter-spacing: .07em; text-transform: uppercase; }
+.stamp.book { color: var(--accent); }
+.stamp.timed { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.stamp.free, .stamp.pay { color: var(--soft); }
+.photo { margin: 0; }
+.photo img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 4px; background: var(--glaze); }
+.photo figcaption { margin-top: 4px; }
+.facts { margin: 0; display: grid; grid-template-columns: 4.6rem minmax(0, 1fr); gap: 6px 12px; }
+.facts dt { font-family: var(--label); font-weight: 600; font-size: .86rem; letter-spacing: .06em; text-transform: uppercase; color: var(--soft); padding-top: 2px; }
+.facts dd { margin: 0; min-width: 0; }
+.tip { padding: 10px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; }
+.tip b { font-family: var(--label); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; font-size: .86rem; color: var(--accent); margin-right: 4px; }
+.links { display: flex; flex-wrap: wrap; gap: 0 18px; }
+.links a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; }
+
+/* legs between stops */
+.leg { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 2px 12px; align-items: start; padding: 12px 0 4px; border-top: 1px dashed var(--line); }
+.leg .mode { font-family: var(--label); font-weight: 700; font-size: .84rem; letter-spacing: .07em; text-transform: uppercase; color: var(--soft); padding-top: 3px; }
+.leg .line { justify-self: start; }
+.leg-body { min-width: 0; display: grid; }
+.leg .go { display: inline-flex; align-items: center; justify-self: start; min-height: 44px; font-weight: 600; }
+.line { display: inline-grid; place-items: center; min-width: 44px; height: 28px; padding: 0 6px; border-radius: 14px;
+  font-family: var(--label); font-weight: 700; font-size: 1.05rem; letter-spacing: .02em; }
+.l28 { background: var(--l28); color: var(--l28-ink); }
+.l15 { background: var(--l15); color: var(--l15-ink); }
+
+/* other sections */
+section.block { display: grid; gap: 12px; }
+.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+.food { margin: 0; padding: 0; list-style: none; display: grid; gap: 0; }
+.food li { display: grid; grid-template-columns: 3.4rem minmax(0, 1fr); gap: 2px 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.food li:last-child { border-bottom: 1px solid var(--line); }
+.food .num { color: var(--accent); padding-top: 1px; }
+.checks { display: grid; gap: 0; }
+.check { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: center; min-height: 48px; padding: 6px 0; border-top: 1px solid var(--line); cursor: pointer; }
+.check:last-child { border-bottom: 1px solid var(--line); }
+.check input { width: 22px; height: 22px; margin: 0; accent-color: var(--accent); }
+.check input:checked + span { color: var(--soft); text-decoration: line-through; text-decoration-color: var(--accent); }
+.field { display: grid; gap: 6px; }
+.field textarea { width: 100%; min-height: 72px; padding: 10px 12px; font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; resize: vertical; }
+.costs { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.costs td { padding: 8px 0; border-top: 1px solid var(--line); vertical-align: top; }
+.costs td:last-child { text-align: right; white-space: nowrap; padding-left: 12px; font-family: var(--label); font-weight: 600; font-size: 1.05rem; }
+.costs tr.sub td { font-weight: 600; }
+.costs tr.total td { border-top: 2px solid var(--ink); font-weight: 700; }
+.costs tr.total td:last-child { font-size: 1.25rem; color: var(--accent); }
+.sources { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: .86rem; color: var(--soft); }
+.sources a { overflow-wrap: anywhere; }
+@media (min-width: 640px) {
+  .lede { font-size: 2.5rem; }
+  .stop-head { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .stamp { grid-column: 3; grid-row: 1 / span 2; margin-top: 0; }
+}
+</style>
+</head>
+<body>
+<main>
+
+<section class="opening" aria-label="The day at a glance">
+  <figure class="cover">
+    <img src="attachment:portas-do-sol.jpg" width="1280" height="853" alt="Alfama's tiled roofs and the church of Santo Estêvão falling away to the Tejo, seen from Portas do Sol on a winter morning">
+    <figcaption class="small">Alfama from Portas do Sol, a January morning. Photo: José Luiz, CC BY-SA 3.0</figcaption>
+  </figure>
+  <p class="label">Saturday 12 December 2026 · from Rossio</p>
+  <p class="lede">Castle at nine, Alfama by noon, Belém at sunset.</p>
+  <p class="route-line"><b>Portas do Sol</b> → <b>Castle</b> → Alfama → Sé → lunch → <span class="line l15">15E</span> → <b>Pastéis de Belém</b> → <b>Jerónimos</b> → <b>Torre at sunset</b> → <span class="line l15">15E</span> → ginja and dinner by Rossio</p>
+  <dl class="glance">
+    <dt>Light</dt>
+    <dd>Sunrise 07:45, <strong>sunset 17:15</strong>, dark by 17:45.</dd>
+    <dt>Weather</dt>
+    <dd>Usual December, not a forecast: about 15&nbsp;°C by day and 9&nbsp;°C at night, rain on about 10 days of the month.
+      <span class="small">59 / 48&nbsp;°F. IPMA climate normal 1991–2020, Lisboa. Check the real forecast from about ten days before: <a href="https://www.ipma.pt/en/otempo/prev.localidade.hora/">IPMA forecast</a>.</span></dd>
+    <dt>Book now</dt>
+    <dd>Jerónimos <span class="num">15:00</span> and Torre de Belém <span class="num">16:30</span> (timed, often sold out on the day), the castle ticket, lunch at Prado, dinner at Casa do Alentejo.</dd>
+    <dt>That day</dt>
+    <dd>Rossio's Christmas market is on (until 21 December).</dd>
+    <dt>Spend</dt>
+    <dd><strong>64,75&nbsp;€</strong> in tickets and transport for one adult; food extra.</dd>
+    <dt>Assumed</dt>
+    <dd>One adult at a steady pace, no step-free needs; about 9&nbsp;km on foot, steep and cobbled all morning, flat by the river in the afternoon.</dd>
+  </dl>
+</section>
+
+<div class="calcada">
+  <svg aria-hidden="true" viewBox="0 0 360 30" preserveAspectRatio="xMidYMid slice" focusable="false">
+    <defs>
+      <pattern id="marlargo" width="60" height="30" patternUnits="userSpaceOnUse">
+        <rect width="60" height="30" style="fill: var(--lioz)"/>
+        <path d="M0 11 C 10 3, 20 3, 30 11 S 50 19, 60 11 L 60 21 C 50 29, 40 29, 30 21 S 10 13, 0 21 Z" style="fill: var(--basalt)"/>
+      </pattern>
+    </defs>
+    <rect width="360" height="30" fill="url(#marlargo)"/>
+  </svg>
+  <p class="small">Rossio's wave pavement, <i>calçada</i> in black basalt and white limestone: where the day starts and ends.</p>
+</div>
+
+<section class="day" aria-labelledby="day-title">
+  <div class="day-head">
+    <p class="label">Saturday 12 December · one day</p>
+    <h2 id="day-title">Tram up, Alfama down, Belém for the sunset</h2>
+    <p>Tram 28E lifts you to the top of the old town before the castle opens; the morning is all downhill on foot. After lunch the 15E runs along the river to Belém for two pastéis, the monastery and the tower at sunset, then back to Rossio for a ginja and dinner.</p>
+  </div>
+
+  <section class="area" aria-labelledby="area-morning">
+    <div class="area-head">
+      <p class="label">Morning · 08:23 – 13:35</p>
+      <h3 id="area-morning">Alfama and the Baixa</h3>
+      <p>Up by tram 28E, then all downhill on foot: viewpoint, castle, Alfama's lanes, the cathedral and lunch.</p>
+      <a class="go" href="https://www.google.com/maps/dir/?api=1&amp;origin=Miradouro%20das%20Portas%20do%20Sol%2C%20Lisboa&amp;destination=Prado%2C%20Travessa%20das%20Pedras%20Negras%202%2C%20Lisboa&amp;travelmode=walking&amp;waypoints=Castelo%20de%20S%C3%A3o%20Jorge%2C%20Lisboa%7CLargo%20do%20Chafariz%20de%20Dentro%2C%20Lisboa%7CS%C3%A9%20de%20Lisboa%2C%20Lisboa">The morning walk in Google Maps</a>
+    </div>
+
+    <dodojo-map route mode="walking">
+      <dodojo-stop time="08:23">Tram 28E from Martim Moniz (6 min walk from Rossio) to Lg. Portas Sol, about 20 min</dodojo-stop>
+      <dodojo-stop lat="38.71235" lng="-9.13037" time="08:45" name="Portas do Sol" place="Miradouro das Portas do Sol, Lisboa">Viewpoint over Alfama; first pastel de nata at Manteigaria
+        <img src="attachment:portas-do-sol.jpg" alt="Alfama roofs and the Tejo from Portas do Sol"></dodojo-stop>
+      <dodojo-stop lat="38.71393" lng="-9.13348" time="09:15" name="Castelo de São Jorge" place="Castelo de São Jorge, Lisboa">Walls and towers, 1 h 30. Ticket 17 €
+        <img src="attachment:castelo.jpg" alt="Stone tower and ramparts of the Castelo de São Jorge"></dodojo-stop>
+      <dodojo-stop lat="38.71122" lng="-9.12807" time="11:30" name="Largo do Chafariz de Dentro" place="Largo do Chafariz de Dentro, Lisboa">Bottom of Alfama after 45 min in its lanes</dodojo-stop>
+      <dodojo-stop lat="38.70982" lng="-9.13280" time="11:50" name="Sé de Lisboa" place="Sé de Lisboa, Lisboa">Cathedral, choir and tower balcony. Ticket 7 €
+        <img src="attachment:se.jpg" alt="The twin towers of the Sé de Lisboa with a tram on the street below"></dodojo-stop>
+      <dodojo-stop lat="38.71056" lng="-9.13502" time="12:20" name="Prado" place="Prado, Travessa das Pedras Negras 2, Lisboa">Lunch, booked</dodojo-stop>
+    </dodojo-map>
+
+    <div class="stops">
+
+      <div class="leg">
+        <span class="line l28">28E</span>
+        <div class="leg-body"><p>08:15 walk 6&nbsp;min from Rossio to <strong>Martim Moniz</strong>, the first stop. Saturday trams leave at <span class="num">08:07, 08:15, 08:23, 08:32</span>; take the 08:23 and get off at <strong>Lg. Portas Sol</strong>, about 20&nbsp;min up through Graça.</p><a class="go" href="https://www.google.com/maps/dir/?api=1&amp;origin=Rossio%2C%20Lisboa&amp;destination=Miradouro%20das%20Portas%20do%20Sol%2C%20Lisboa&amp;travelmode=transit">Directions</a></div>
+      </div>
+
+      <article class="stop" id="morning-1">
+        <header class="stop-head">
+          <span class="tile" aria-hidden="true">1</span>
+          <p class="label when">08:45 – 09:10 · 25 min</p>
+          <h4>Portas do Sol</h4>
+          <span class="stamp free">Free · nata at the counter</span>
+        </header>
+        <p>The terrace at the top of Alfama, the view in the photo above: roofs, church towers and the Tejo, with the sun up since 07:45 and still low over the river. Breakfast is on the square at <strong>Manteigaria</strong>, Largo Portas do Sol 90, which bakes its pastéis de nata on the spot from 08:00. It is a counter, so eat yours at the viewpoint wall: nata number one of the day.</p>
+        <dl class="facts">
+          <dt>Open</dt><dd>Viewpoint always; Manteigaria daily 08:00–22:00</dd>
+          <dt>Price</dt><dd>Viewpoint free; Manteigaria does not list prices online</dd>
+        </dl>
+        <p class="tip"><b>Tip</b>Miradouro de Santa Luzia, with its tiled walls and pergola, is a minute downhill from here.</p>
+        <p class="links">
+          <a href="https://manteigaria.com/en/as-nossas-fabricas/portas-do-sol/">Manteigaria Portas do Sol</a>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=Miradouro%20das%20Portas%20do%20Sol%2C%20Lisboa">Google Maps</a>
+        </p>
+      </article>
+
+      <div class="leg">
+        <span class="mode">Walk</span>
+        <div class="leg-body"><p>5–8&nbsp;min, about 350&nbsp;m uphill to the castle gate on Rua de Santa Cruz do Castelo.</p><a class="go" href="https://www.google.com/maps/dir/?api=1&amp;origin=Miradouro%20das%20Portas%20do%20Sol%2C%20Lisboa&amp;destination=Castelo%20de%20S%C3%A3o%20Jorge%2C%20Lisboa&amp;travelmode=walking">Directions</a></div>
+      </div>
+
+      <article class="stop" id="morning-2">
+        <header class="stop-head">
+          <span class="tile" aria-hidden="true">2</span>
+          <p class="label when">09:15 – 10:45 · 1 h 30</p>
+          <h4>Castelo de São Jorge</h4>
+          <span class="stamp book">Buy ahead · not timed</span>
+        </header>
+        <figure class="photo">
+          <img src="attachment:castelo.jpg" width="1280" height="853" alt="A square stone tower and the crenellated ramparts of the castle under a clear January sky">
+          <figcaption class="small">The ramparts in January. Photo: Ingo Mehling, CC BY-SA 4.0</figcaption>
+        </figure>
+        <p>The castle crowns the hill above Alfama. Walk the walls and towers for the long view over the Baixa's grid of streets to the river, and arrive early, while the courtyards are still quiet.</p>
+        <dl class="facts">
+          <dt>Open</dt><dd>09:00–18:00 (November–February), last entry 17:30. Closed 24, 25 and 31 December.</dd>
+          <dt>Ticket</dt><dd>17&nbsp;€ adult; 13–25: 8,50&nbsp;€; 65+: 14&nbsp;€; 12 and under free. Buying online skips the ticket-office queue.</dd>
+        </dl>
+        <p class="tip"><b>Tip</b>The Camera Obscura (guided, included) runs 11:00–13:00 in December, weather permitting. To see it, stay until 11:00 and cut the Alfama wander short.</p>
+        <p class="links">
+          <a href="https://castelosaojorge.bol.pt/">Tickets (official BOL)</a>
+          <a href="https://castelodesaojorge.pt/en/plan-your-visit/schedules/">Hours</a>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=Castelo%20de%20S%C3%A3o%20Jorge%2C%20Lisboa">Google Maps</a>
+        </p>
+      </article>
+
+      <div class="leg">
+        <span class="mode">Walk</span>
+        <div class="leg-body"><p>45&nbsp;min with wandering (10&nbsp;min direct, about 750&nbsp;m), all downhill. Go back past Portas do Sol and take the stairways towards the river; Largo de São Miguel and Rua de São Pedro lead to the square.</p><a class="go" href="https://www.google.com/maps/dir/?api=1&amp;origin=Castelo%20de%20S%C3%A3o%20Jorge%2C%20Lisboa&amp;destination=Largo%20do%20Chafariz%20de%20Dentro%2C%20Lisboa&amp;travelmode=walking">Directions</a></div>
+      </div>
+
+      <article class="stop" id="morning-3">
+        <header class="stop-head">
+          <span class="tile" aria-hidden="true">3</span>
+          <p class="label when">11:30 – 11:40 · 10 min</p>
+          <h4>Alfama: Largo do Chafariz de Dentro</h4>
+          <span class="stamp free">Free</span>
+        </header>
+        <p>The lanes open out at the bottom of Alfama onto the square named for its public fountain (<i>chafariz</i>). The Museu do Fado is on the corner if you want an hour of Lisbon's song.</p>
+        <dl class="facts">
+          <dt>Museum</dt><dd>Museu do Fado, Tuesday–Sunday 10:00–18:00, last entry 17:30; 5&nbsp;€</dd>
+        </dl>
+        <p class="tip"><b>Tip</b>Alfama's paving is polished limestone and turns slick in rain: wear shoes with grip.</p>
+        <p class="links">
+          <a href="https://www.museudofado.pt/en/visit">Museu do Fado</a>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=Largo%20do%20Chafariz%20de%20Dentro%2C%20Lisboa">Google Maps</a>
+        </p>
+      </article>
+
+      <div class="leg">
+        <span class="mode">Walk</span>
+        <div class="leg-body"><p>10&nbsp;min, about 600&nbsp;m west and gently uphill by Rua de São João da Praça.</p><a class="go" href="https://www.google.com/maps/dir/?api=1&amp;origin=Largo%20do%20Chafariz%20de%20Dentro%2C%20Lisboa&amp;destination=S%C3%A9%20de%20Lisboa%2C%20Lisboa&amp;travelmode=walking">Directions</a></div>
+      </div>
+
+      <article class="stop" id="morning-4">
+        <header class="stop-head">
+          <span class="tile" aria-hidden="true">4</span>
+          <p class="label when">11:50 – 12:15 · 25 min</p>
+          <h4>Sé de Lisboa</h4>
+          <span class="stamp pay">Pay at the door</span>
+        </header>
+        <figure class="photo">
+          <img src="attachment:se.jpg" width="1280" height="1562" style="object-position: 50% 35%" alt="The cathedral's twin crenellated towers and rose window, a tram rounding the bend below">
+          <figcaption class="small">The Sé from the tram bend. Photo: Vernaccia, CC BY 2.0</figcaption>
+        </figure>
+        <p>Lisbon's cathedral, fortress-like with twin towers. The visitor ticket climbs to the upper choir and the balcony between the bell towers, and includes the Treasury museum.</p>
+        <dl class="facts">
+          <dt>Open</dt><dd>November–April, Monday–Saturday 10:00–18:00; last entry 30&nbsp;min before closing. Closed Sundays and holy days.</dd>
+          <dt>Ticket</dt><dd>7&nbsp;€ adult; 7–12: 5&nbsp;€; under 7 free</dd>
+        </dl>
+        <p class="tip"><b>Tip</b>The 28E and 12E trams stop right outside on the bend: the classic Lisbon tram photo.</p>
+        <p class="links">
+          <a href="https://www.sedelisboa.pt/bilheteira/">Sé tickets and hours</a>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=S%C3%A9%20de%20Lisboa%2C%20Lisboa">Google Maps</a>
+        </p>
+      </article>
+
+      <div class="leg">
+        <span class="mode">Walk</span>
+        <div class="leg-body"><p>4&nbsp;min, about 280&nbsp;m down to Travessa das Pedras Negras.</p><a class="go" href="https://www.google.com/maps/dir/?api=1&amp;origin=S%C3%A9%20de%20Lisboa%2C%20Lisboa&amp;destination=Prado%2C%20Travessa%20das%20Pedras%20Negras%202%2C%20Lisboa&amp;travelmode=walking">Directions</a></div>
+      </div>
+
+      <article class="stop" id="morning-5">
+        <header class="stop-head">
+          <span class="tile" aria-hidden="true">5</span>
+          <p class="label when">12:20 – 13:35 · lunch</p>
+          <h4>Prado</h4>
+          <span class="stamp book">Book a table</span>
+        </header>
+        <p>A farm-to-table restaurant listed in the MICHELIN Guide (price band €€), cooking from small Portuguese producers. The menu follows the season, so order from what they have that day.</p>
+        <dl class="facts">
+          <dt>Open</dt><dd>Saturday lunch from 12:00 (MICHELIN Guide; its editions disagree on when lunch ends, so ask when you book)</dd>
+          <dt>Book</dt><dd>By phone: +351 21 053 4649. Travessa das Pedras Negras 2.</dd>
+        </dl>
+        <p class="links">
+          <a href="https://guide.michelin.com/en/lisboa-region/lisboa/restaurant/prado">Prado in the MICHELIN Guide</a>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=Prado%2C%20Travessa%20das%20Pedras%20Negras%202%2C%20Lisboa">Google Maps</a>
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="area" aria-labelledby="area-belem">
+    <div class="area-head">
+      <p class="label">Afternoon · 13:47 – 17:30</p>
+      <h3 id="area-belem">Belém, by the river</h3>
+      <p>Tram 15E out along the Tejo, then on foot from the bakery to the monastery and the tower at sunset.</p>
+      <a class="go" href="https://www.google.com/maps/dir/?api=1&amp;origin=Past%C3%A9is%20de%20Bel%C3%A9m%2C%20Rua%20de%20Bel%C3%A9m%2084%2C%20Lisboa&amp;destination=Torre%20de%20Bel%C3%A9m%2C%20Lisboa&amp;travelmode=walking&amp;waypoints=Mosteiro%20dos%20Jer%C3%B3nimos%2C%20Lisboa">The Belém walk in Google Maps</a>
+    </div>
+
+    <dodojo-map route mode="walking">
+      <dodojo-stop time="13:47">Tram 15E from Pç. Comércio to Mosteiro Jerónimos, about 35 min</dodojo-stop>
+      <dodojo-stop lat="38.69748" lng="-9.20332" time="14:25" name="Pastéis de Belém" place="Pastéis de Belém, Rua de Belém 84, Lisboa">Second nata, the 1837 original. 1,60 € each
+        <img src="attachment:pasteis-de-belem.jpg" alt="The take-away counter at Pastéis de Belém"></dodojo-stop>
+      <dodojo-stop lat="38.69775" lng="-9.20559" time="15:00" name="Mosteiro dos Jerónimos" place="Mosteiro dos Jerónimos, Lisboa">Cloister, 15:00 entry. Ticket 18 €
+        <img src="attachment:jeronimos.jpg" alt="Two storeys of carved arcades in the Jerónimos cloister"></dodojo-stop>
+      <dodojo-stop lat="38.69159" lng="-9.21593" time="16:30" name="Torre de Belém" place="Torre de Belém, Lisboa" sunset="17:15">16:30 entry, stay for the sunset. Ticket 15 €
+        <img src="attachment:torre-de-belem.jpg" alt="Torre de Belém against a late-afternoon winter sky"></dodojo-stop>
+    </dodojo-map>
+
+    <div class="stops">
+
+      <div class="leg">
+        <span class="line l15">15E</span>
+        <div class="leg-body"><p>From Prado, walk 6&nbsp;min to the <strong>Pç. Comércio</strong> stop and take the 15E towards Algés; on Saturdays it runs every 10–12&nbsp;min. Ride about 35&nbsp;min (Carris timetable estimate) to <strong>Mosteiro Jerónimos</strong>, then walk 2&nbsp;min back east to the bakery.</p><a class="go" href="https://www.google.com/maps/dir/?api=1&amp;origin=Prado%2C%20Travessa%20das%20Pedras%20Negras%202%2C%20Lisboa&amp;destination=Past%C3%A9is%20de%20Bel%C3%A9m%2C%20Rua%20de%20Bel%C3%A9m%2084%2C%20Lisboa&amp;travelmode=transit">Directions</a></div>
+      </div>
+
+      <article class="stop" id="belem-1">
+        <header class="stop-head">
+          <span class="tile" aria-hidden="true">1</span>
+          <p class="label when">14:25 – 14:55 · 30 min</p>
+          <h4>Pastéis de Belém</h4>
+          <span class="stamp pay">No booking · pay at the counter</span>
+        </header>
+        <figure class="photo">
+          <img src="attachment:pasteis-de-belem.jpg" width="1280" height="887" alt="Staff behind the blue-and-gold take-away counter at Pastéis de Belém">
+          <figcaption class="small">The take-away counter. Photo: Sonse, CC BY 2.0</figcaption>
+        </figure>
+        <p>Nata number two, and the reason for the day: the bakery has made its pastéis de Belém since 1837 to a recipe it traces to the monastery next door. Eat them warm with cinnamon and icing sugar, and compare with the morning's Manteigaria.</p>
+        <dl class="facts">
+          <dt>Open</dt><dd>Daily 08:00–21:00</dd>
+          <dt>Price</dt><dd>1,60&nbsp;€ each, box of six 9,60&nbsp;€, espresso 1,20&nbsp;€</dd>
+        </dl>
+        <p class="tip"><b>Tip</b>If the take-away line is long, ask for a table inside: the rooms run a long way back.</p>
+        <p class="links">
+          <a href="https://pasteisdebelem.pt/en/contact/">Hours</a>
+          <a href="https://pasteisdebelem.pt/menu/?lang=en">Menu and prices</a>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=Past%C3%A9is%20de%20Bel%C3%A9m%2C%20Rua%20de%20Bel%C3%A9m%2084%2C%20Lisboa">Google Maps</a>
+        </p>
+      </article>
+
+      <div class="leg">
+        <span class="mode">Walk</span>
+        <div class="leg-body"><p>4&nbsp;min, about 270&nbsp;m west along Rua de Belém.</p><a class="go" href="https://www.google.com/maps/dir/?api=1&amp;origin=Past%C3%A9is%20de%20Bel%C3%A9m%2C%20Rua%20de%20Bel%C3%A9m%2084%2C%20Lisboa&amp;destination=Mosteiro%20dos%20Jer%C3%B3nimos%2C%20Lisboa&amp;travelmode=walking">Directions</a></div>
+      </div>
+
+      <article class="stop" id="belem-2">
+        <header class="stop-head">
+          <span class="tile" aria-hidden="true">2</span>
+          <p class="label when">15:00 – 16:00 · 1 h</p>
+          <h4>Mosteiro dos Jerónimos</h4>
+          <span class="stamp timed">Timed entry · book 15:00</span>
+        </header>
+        <figure class="photo">
+          <img src="attachment:jeronimos.jpg" width="1280" height="853" alt="Two storeys of carved limestone arcades around the cloister lawn and its round basin">
+          <figcaption class="small">The cloister. Photo: Norbert Nagel, CC BY-SA 4.0</figcaption>
+        </figure>
+        <p>King Manuel I's monastery for the Order of Saint Jerome, begun in 1501–02. The two-storey cloister, the high point of the carved Manueline style, is what the ticket buys; the church is free.</p>
+        <dl class="facts">
+          <dt>Open</dt><dd>Cloister Tuesday–Sunday 09:30–17:30, last entry 17:00. Church on Saturdays 10:30–17:00. Ticket kiosk closes 16:30.</dd>
+          <dt>Ticket</dt><dd>18&nbsp;€; half price for 65+ and ages 13–24; 12 and under free. Buy online: the monastery says tickets often sell out and cannot then be bought on the day.</dd>
+        </dl>
+        <p class="tip"><b>Tip</b>Do the cloister first, then the church, so you leave on time for the 16:30 tower entry.</p>
+        <p class="links">
+          <a href="https://mmp.bymeoblueticket.pt/en/event/14759/mosteiro-dos-jeronimos-claustro">Tickets (official)</a>
+          <a href="https://mosteirojeronimos.torrebelem.gov.pt/en/visitar">Hours and prices</a>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=Mosteiro%20dos%20Jer%C3%B3nimos%2C%20Lisboa">Google Maps</a>
+        </p>
+      </article>
+
+      <div class="leg">
+        <span class="mode">Walk</span>
+        <div class="leg-body"><p>25&nbsp;min, about 1.8&nbsp;km: through the underpass to the river, past the Padrão dos Descobrimentos, then west along the water to the tower.</p><a class="go" href="https://www.google.com/maps/dir/?api=1&amp;origin=Mosteiro%20dos%20Jer%C3%B3nimos%2C%20Lisboa&amp;destination=Torre%20de%20Bel%C3%A9m%2C%20Lisboa&amp;travelmode=walking&amp;waypoints=Padr%C3%A3o%20dos%20Descobrimentos%2C%20Lisboa">Directions</a></div>
+      </div>
+
+      <article class="stop" id="belem-3">
+        <header class="stop-head">
+          <span class="tile" aria-hidden="true">3</span>
+          <p class="label when">16:30 – 17:30 · sunset 17:15</p>
+          <h4>Torre de Belém</h4>
+          <span class="stamp timed">Timed entry · book 16:30</span>
+        </header>
+        <figure class="photo">
+          <img src="attachment:torre-de-belem.jpg" width="1280" height="853" alt="The Torre de Belém and its bastion on the riverbank under a pale late-afternoon sky in February">
+          <figcaption class="small">Late afternoon in February. Photo: Naval S, CC BY 2.0</figcaption>
+        </figure>
+        <p>Built 1514–1519 on a rock in the river to guard the way into Lisbon. It reopened in late May 2026 after a year of restoration, now with entry in 30-minute slots and about 900 visitors a day. Enter at 16:30 and you can still be on the top terrace when the sun goes down over the river mouth, to the west-southwest, at 17:15; the tower closes at 17:30.</p>
+        <dl class="facts">
+          <dt>Open</dt><dd>Tuesday–Sunday 09:30–17:30, last entry 17:00. May close in bad weather, with a refund.</dd>
+          <dt>Ticket</dt><dd>15&nbsp;€; half price for 65+ and ages 13–24; 12 and under free</dd>
+          <dt>Light</dt><dd>Sunset 17:15, civil dusk 17:45</dd>
+        </dl>
+        <p class="tip"><b>Tip</b>Only the ground floor of the bastion is step-free; the rest is narrow stone stairs. If the tower is shut, the riverside lawn faces the same sunset.</p>
+        <p class="links">
+          <a href="https://mmp.bymeoblueticket.pt/en/event/14776/torre-de-belem">Tickets (official)</a>
+          <a href="https://mosteirojeronimos.torrebelem.gov.pt/en/visitar">Hours and prices</a>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=Torre%20de%20Bel%C3%A9m%2C%20Lisboa">Google Maps</a>
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="area" aria-labelledby="area-evening">
+    <div class="area-head">
+      <p class="label">Evening · from 17:40</p>
+      <h3 id="area-evening">Back at Rossio</h3>
+      <p>Tram 15E back to Praça da Figueira; a ginja and the Christmas market, then dinner, all a few minutes from Rossio.</p>
+      <a class="go" href="https://www.google.com/maps/dir/?api=1&amp;origin=A%20Ginjinha%2C%20Largo%20de%20S%C3%A3o%20Domingos%208%2C%20Lisboa&amp;destination=Casa%20do%20Alentejo%2C%20Rua%20das%20Portas%20de%20Santo%20Ant%C3%A3o%2058%2C%20Lisboa&amp;travelmode=walking">The evening in Google Maps</a>
+    </div>
+
+    <dodojo-map route mode="walking">
+      <dodojo-stop time="17:40">Tram 15E from Lg. Princesa back to Pç. Figueira, about 35 min</dodojo-stop>
+      <dodojo-stop lat="38.71470" lng="-9.13906" time="18:20" name="A Ginjinha and the Rossio market" place="A Ginjinha, Largo de São Domingos 8, Lisboa">A ginja standing in the square, then the Christmas stalls</dodojo-stop>
+      <dodojo-stop lat="38.71592" lng="-9.13985" time="19:30" name="Casa do Alentejo" place="Casa do Alentejo, Rua das Portas de Santo Antão 58, Lisboa">Dinner, booked</dodojo-stop>
+    </dodojo-map>
+
+    <div class="stops">
+
+      <div class="leg">
+        <span class="line l15">15E</span>
+        <div class="leg-body"><p>From the tower, walk 7&nbsp;min, about 500&nbsp;m, across the railway to the <strong>Lg. Princesa</strong> stop. The 15E towards Pç. Figueira comes every 10–12&nbsp;min and takes about 35&nbsp;min; from Pç. Figueira it is 4&nbsp;min on foot to Largo de São Domingos.</p><a class="go" href="https://www.google.com/maps/dir/?api=1&amp;origin=Torre%20de%20Bel%C3%A9m%2C%20Lisboa&amp;destination=A%20Ginjinha%2C%20Largo%20de%20S%C3%A3o%20Domingos%208%2C%20Lisboa&amp;travelmode=transit">Directions</a></div>
+      </div>
+
+      <article class="stop" id="evening-1">
+        <header class="stop-head">
+          <span class="tile" aria-hidden="true">1</span>
+          <p class="label when">18:20 – 19:25 · ginja and market</p>
+          <h4>A Ginjinha and the Rossio market</h4>
+          <span class="stamp free">Market free · ginja at the counter</span>
+        </header>
+        <p>A shot of <i>ginja</i>, Lisbon's sour-cherry liqueur, from the hole-in-the-wall bar that has poured it since about 1840. You drink it standing in Largo de São Domingos; ask for it <i>com</i> or <i>sem</i>, with or without the cherry. Round the corner, Rossio's Christmas market fills the square with craft and food stalls, and a free electric Christmas train loops through the Baixa.</p>
+        <dl class="facts">
+          <dt>Ginja</dt><dd>Daily about 09:00–22:00; about 1,50&nbsp;€ a glass (travel guides, not official: check on the day)</dd>
+          <dt>Market</dt><dd>15 November – 21 December 2026. This year's hours were not published when checked; last year it ran Sunday–Thursday 10:00–22:00 and Friday–Saturday 10:00–23:00.</dd>
+        </dl>
+        <p class="tip"><b>Tip</b>Nata number three for later: Manteigaria Rossio, Praça D. Pedro IV 66–68, is open until midnight.</p>
+        <p class="links">
+          <a href="https://www.comerciocomhistoria.gov.pt/en/listings/a-ginjinha-espinheira-s-domingos-3208/">A Ginjinha (Comércio com História)</a>
+          <a href="https://rfm.pt/atualidade/19294/mercados-de-natal-em-portugal-2026-ve-aqui-os-locais-e-datas">Christmas market dates</a>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=A%20Ginjinha%2C%20Largo%20de%20S%C3%A3o%20Domingos%208%2C%20Lisboa">Google Maps</a>
+        </p>
+      </article>
+
+      <div class="leg">
+        <span class="mode">Walk</span>
+        <div class="leg-body"><p>3&nbsp;min, about 200&nbsp;m up Rua das Portas de Santo Antão.</p><a class="go" href="https://www.google.com/maps/dir/?api=1&amp;origin=A%20Ginjinha%2C%20Largo%20de%20S%C3%A3o%20Domingos%208%2C%20Lisboa&amp;destination=Casa%20do%20Alentejo%2C%20Rua%20das%20Portas%20de%20Santo%20Ant%C3%A3o%2058%2C%20Lisboa&amp;travelmode=walking">Directions</a></div>
+      </div>
+
+      <article class="stop" id="evening-2">
+        <header class="stop-head">
+          <span class="tile" aria-hidden="true">2</span>
+          <p class="label when">19:30 · dinner</p>
+          <h4>Casa do Alentejo</h4>
+          <span class="stamp book">Book a table</span>
+        </header>
+        <p>Alentejo cooking at the Alentejo region's cultural house in Lisbon, 4&nbsp;min from Rossio and your bed. Order <i>carne de porco à alentejana</i>, pork with clams and fried potatoes (18,00&nbsp;€), and <i>sericaia</i> with Elvas plums (7,50&nbsp;€) to finish; prices from the October 2025 menu.</p>
+        <dl class="facts">
+          <dt>Open</dt><dd>Restaurant 12:00–15:00 and 19:00–23:00; Taberna 12:00–22:30</dd>
+          <dt>Book</dt><dd>Online, or by phone: +351 213 405 140. Rua das Portas de Santo Antão 58.</dd>
+        </dl>
+        <p class="tip"><b>Tip</b>Still going after dinner? Wonderland Lisboa (Christmas market, Ferris wheel, ice rink; free entry, 27 November 2026 – 3 January 2027) is in Parque Eduardo VII, two Metro stops up the Blue Line from Restauradores to Marquês de Pombal, on the same 24-hour ticket.</p>
+        <p class="links">
+          <a href="https://casadoalentejo.pt/reservas-2/">Book a table</a>
+          <a href="https://casadoalentejo.pt/">Hours</a>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=Casa%20do%20Alentejo%2C%20Rua%20das%20Portas%20de%20Santo%20Ant%C3%A3o%2058%2C%20Lisboa">Google Maps</a>
+        </p>
+      </article>
+    </div>
+  </section>
+</section>
+
+<section class="block" aria-labelledby="rain-title">
+  <h2 id="rain-title">If it rains, or something shuts</h2>
+  <ul class="plain">
+    <li><strong>Rain in the morning:</strong> the castle is open-air, so keep it short and swap the Alfama wander for the Museu do Fado at morning stop 3 (10:00–18:00, 5&nbsp;€).</li>
+    <li><strong>Rain in Belém:</strong> Pastéis de Belém, the Jerónimos church and the cloister's arcaded walks keep you dry. The Torre may close in bad weather and refunds your ticket; spend the time in the Jerónimos church instead (Saturday until 17:00).</li>
+    <li><strong>Tram diverted:</strong> Carris posted changes to the 28E, 12E and 15E in November 2026; check its service-changes page that morning. If the 15E is out, the CP train on the Cascais line runs from Cais do Sodré to Belém (separate fare, not on the 24-hour Carris/Metro ticket). <a href="https://carris.pt/en/travel/alteracoes-de-servico/">Carris service changes</a></li>
+  </ul>
+</section>
+
+<section class="block" aria-labelledby="check-title">
+  <h2 id="check-title">Before you go</h2>
+  <div class="checks">
+    <label class="check"><input type="checkbox" data-dodojo-key="ck-castle"><span>Castle ticket bought (17&nbsp;€, BOL)</span></label>
+    <label class="check"><input type="checkbox" data-dodojo-key="ck-jeronimos"><span>Jerónimos cloister, 15:00 entry, booked</span></label>
+    <label class="check"><input type="checkbox" data-dodojo-key="ck-torre"><span>Torre de Belém, 16:30 entry, booked</span></label>
+    <label class="check"><input type="checkbox" data-dodojo-key="ck-prado"><span>Prado lunch for 12:20, booked by phone</span></label>
+    <label class="check"><input type="checkbox" data-dodojo-key="ck-alentejo"><span>Casa do Alentejo dinner for 19:30, booked</span></label>
+    <label class="check"><input type="checkbox" data-dodojo-key="ck-card"><span>navegante card with the 24-hour Carris/Metro ticket (machines in Rossio Metro station)</span></label>
+    <label class="check"><input type="checkbox" data-dodojo-key="ck-cash"><span>Some cash for the ginja bar and market stalls</span></label>
+    <label class="check"><input type="checkbox" data-dodojo-key="ck-shoes"><span>Shoes with grip for wet calçada</span></label>
+    <label class="check"><input type="checkbox" data-dodojo-key="ck-rain"><span>Umbrella or rain jacket</span></label>
+    <label class="check"><input type="checkbox" data-dodojo-key="ck-phone"><span>Phone charged, power bank packed</span></label>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="move-title">
+  <h2 id="move-title">Getting around</h2>
+  <ul class="plain">
+    <li><strong>Ticket:</strong> buy a <strong>navegante occasional</strong> card (0,50&nbsp;€; it replaced the Viva Viagem card, one card per person) at a Metro machine and load the <strong>24-hour Carris/Metro ticket (7,25&nbsp;€)</strong>. It starts at your first tap at 08:23 and covers every tram, bus and Metro ride until the next morning.</li>
+    <li><strong>Other fares:</strong> Zapping pay-as-you-go is 1,72&nbsp;€ a Carris ride (loaded in steps of 3, 5, 10&nbsp;€ and up), so it only beats the day ticket if you ride four times or fewer. Paying on board costs 3,30&nbsp;€ a tram ride, by contactless card at the validator; the articulated trams on the 15E take no cash.</li>
+    <li><strong>Boarding:</strong> tap the card on the validator every time you get on.</li>
+    <li><strong>Lines today:</strong> <span class="line l28">28E</span> Martim Moniz – Campo de Ourique (Prazeres), <span class="line l15">15E</span> Praça da Figueira – Algés. Colours as on Carris's own timetables.</li>
+    <li><strong>Emergency:</strong> 112.</li>
+    <li><strong>Tipping:</strong> optional. Round up at cafés and bars; at a sit-down restaurant check the bill for <i>serviço</i> first, and if there is none, up to 10&nbsp;% in cash.</li>
+  </ul>
+  <div class="field">
+    <label class="label" for="hotel">Your hotel's address, written out</label>
+    <textarea id="hotel" data-dodojo-key="hotel-address" rows="2" placeholder="Street and number, Lisboa"></textarea>
+  </div>
+</section>
+
+<section class="block" aria-labelledby="cost-title">
+  <h2 id="cost-title">What the day costs</h2>
+  <table class="costs">
+    <tbody>
+      <tr><td>Castelo de São Jorge</td><td>17,00&nbsp;€</td></tr>
+      <tr><td>Sé de Lisboa (choir, balcony, Treasury)</td><td>7,00&nbsp;€</td></tr>
+      <tr><td>Mosteiro dos Jerónimos, cloister</td><td>18,00&nbsp;€</td></tr>
+      <tr><td>Torre de Belém</td><td>15,00&nbsp;€</td></tr>
+      <tr class="sub"><td>Tickets</td><td>57,00&nbsp;€</td></tr>
+      <tr><td>navegante occasional card</td><td>0,50&nbsp;€</td></tr>
+      <tr><td>24-hour Carris/Metro ticket</td><td>7,25&nbsp;€</td></tr>
+      <tr class="sub"><td>Transport</td><td>7,75&nbsp;€</td></tr>
+      <tr class="total"><td>Day total, one adult</td><td>64,75&nbsp;€</td></tr>
+    </tbody>
+  </table>
+  <p class="small">Food comes on top. Published prices: pastel de Belém 1,60&nbsp;€, espresso 1,20&nbsp;€, carne de porco à alentejana 18,00&nbsp;€ (October 2025 menu); a ginja is about 1,50&nbsp;€ by travel guides.</p>
+</section>
+
+<section class="block" aria-labelledby="src-title">
+  <h2 id="src-title">Sources, checked 25 November 2026</h2>
+  <ul class="sources">
+    <li>Castle: <a href="https://castelodesaojorge.pt/en/plan-your-visit/schedules/">hours</a>, <a href="https://castelodesaojorge.pt/en/plan-your-visit/choose-your-ticket/">prices</a>, <a href="https://castelodesaojorge.pt/en/faq/">buying online</a></li>
+    <li>Jerónimos and Torre de Belém: <a href="https://mosteirojeronimos.torrebelem.gov.pt/en/visitar">hours, prices, closures</a>; Torre reopening and slots: <a href="https://www.rtp.pt/noticias/pais/a-torre-de-belem-como-nunca-a-viu-reabre-apos-obras-de-um-milhao-de-euros_n1743350">RTP, May 2026</a></li>
+    <li>Sé: <a href="https://www.sedelisboa.pt/">hours</a>, <a href="https://www.sedelisboa.pt/bilheteira/">tickets</a></li>
+    <li>Pastéis de Belém: <a href="https://pasteisdebelem.pt/en/contact/">hours</a>, <a href="https://pasteisdebelem.pt/menu/?lang=en">menu</a>. Manteigaria: <a href="https://manteigaria.com/en/as-nossas-fabricas/portas-do-sol/">Portas do Sol</a>, <a href="https://manteigaria.com/en/as-nossas-fabricas/rossio/">Rossio</a></li>
+    <li>Prado: <a href="https://guide.michelin.com/en/lisboa-region/lisboa/restaurant/prado">MICHELIN Guide</a>. Casa do Alentejo: <a href="https://casadoalentejo.pt/">hours</a>, <a href="https://casadoalentejo.pt/wp-content/uploads/2025/10/Rest-Outubro-PT-EN-2025.pdf">menu, October 2025</a>. A Ginjinha hours and price: travel guides only</li>
+    <li>Museu do Fado: <a href="https://www.museudofado.pt/en/visit">visit</a></li>
+    <li>Trams: Carris <a href="https://carris.pt/media/bx0kw2tr/e28e_02112026.pdf">28E timetable</a> (from 2 November 2026), <a href="https://carris.pt/media/pmtp3r0w/e15_11112026.pdf">15E timetable</a> (from 1 June 2026), <a href="https://carris.pt/en/buy/occasional-journeys-2/">fares</a>; Metro <a href="https://www.metrolisboa.pt/en/wp-content/uploads/sites/3/2025/12/Tarifas_site_2026_UK-1.pdf">2026 fares and cards</a>, <a href="https://www.metrolisboa.pt/en/buy/viva-viagem-card/">navegante occasional card</a></li>
+    <li>Sunrise and sunset: <a href="https://www.timeanddate.com/sun/portugal/lisbon?month=12&amp;year=2026">timeanddate, December 2026</a>. December climate: <a href="https://www.ipma.pt/bin/file.data/climate-normal/cn_91-20_LISBOA_GAGO_COUTINHO.pdf">IPMA normal 1991–2020, Lisboa/Gago Coutinho</a> (mean high 14.9&nbsp;°C, low 8.7&nbsp;°C, 100&nbsp;mm, 9.7 days ≥&nbsp;1&nbsp;mm)</li>
+    <li>Christmas: <a href="https://rfm.pt/atualidade/19294/mercados-de-natal-em-portugal-2026-ve-aqui-os-locais-e-datas">RFM, 24 November 2026</a> (Rossio and Wonderland dates); last year's market hours: <a href="https://www.timeout.pt/lisboa/pt/coisas-para-fazer/rossio-christmas-market">Time Out</a></li>
+    <li>Emergency number: <a href="https://digital-strategy.ec.europa.eu/en/policies/112">European Commission, 112</a>. Tipping: <a href="https://www.frommers.com/tips/money-and-currency/tipping-in-portugal-a-gratuities-guide-for-hotels-restaurants-and-taxis/">Frommer's, updated 2023</a></li>
+    <li>Photos from Wikimedia Commons:
+      <a href="https://commons.wikimedia.org/wiki/File:View_of_Santo_Estev%C3%A3o_church_from_Miradouro_das_Portas_do_Sol.JPG">Portas do Sol</a> (José Luiz, CC BY-SA 3.0),
+      <a href="https://commons.wikimedia.org/wiki/File:Lissabon_-_Castle_-_Ramparts_-_1.jpg">castle</a> (Ingo Mehling, CC BY-SA 4.0),
+      <a href="https://commons.wikimedia.org/wiki/File:Lisbon._Tram_28_passing_by_S%C3%A9_de_Lisboa._(41223895764).jpg">Sé</a> (Vernaccia, CC BY 2.0),
+      <a href="https://commons.wikimedia.org/wiki/File:Takeout_%E2%80%A2_Original_Past%C3%A9is_de_Bel%C3%A9m_(1837)_(50660175068).jpg">Pastéis de Belém</a> (Sonse, CC BY 2.0),
+      <a href="https://commons.wikimedia.org/wiki/File:Frontal_view_of_the_cloister_arcades_-_Mosteiro_dos_Jer%C3%B3nimos_-_Lisbon_-_2026-05-14.jpg">Jerónimos cloister</a> (Norbert Nagel, CC BY-SA 4.0),
+      <a href="https://commons.wikimedia.org/wiki/File:Torre_de_Belem_(40403885911).jpg">Torre de Belém</a> (Naval S, CC BY 2.0)</li>
+  </ul>
+</section>
+
+</main>
+<script>
+// Outside dodojo, show the attached photos from the folder beside the page.
+if (!window.dodojo) document.querySelectorAll('[src^="attachment:"]').forEach(el => { el.src = el.getAttribute('src').slice(11); });
+</script>
+</body>
+</html>

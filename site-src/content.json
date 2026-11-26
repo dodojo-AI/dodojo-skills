@@ -1,0 +1,52 @@
+{
+  "repo": "dodojo14/dodojo-skills",
+  "order": [
+    "dodojo-travel"
+  ],
+  "skills": {
+    "dodojo-travel": {
+      "zh": {
+        "title": "旅行页",
+        "tagline": "一日游、城市行程、自驾、吃喝路线：按出行当天查营业时间、门票和交通，排出不走回头路的路线，配真实照片和地图。",
+        "input": "目的地、日期、住在哪；连上 dodojo 时，还有你存过的订单和收藏",
+        "output": "一张路上能用的行程页：地图、时间线、门票、清单、总花费",
+        "steps": [
+          [
+            "从已知出发",
+            "先在 dodojo 里搜订单、收藏和以前的游记，再确定日期、住处、同行人和节奏"
+          ],
+          [
+            "按当天逐个核实",
+            "营业时间、闭馆日、节假日、门票、交通、日落和天气，都留来源和查询日期"
+          ],
+          [
+            "排能走通的路线",
+            "按片区聚类，限时入场优先，一天三到五个点，留余量和雨天方案"
+          ],
+          [
+            "找真实照片",
+            "每个重点地方一张，从 Wikimedia Commons 下载，放在页面旁边并署名"
+          ],
+          [
+            "从地方本身来设计",
+            "配色、字体和细节取自目的地，先写成方案再排版"
+          ],
+          [
+            "为路上搭页面",
+            "首屏一眼看清，每天一张地图、每站一张卡片、吃什么、清单和花费，全在一个文件里"
+          ],
+          [
+            "检查后存起来",
+            "手机宽度、深浅色都看，链接和合计逐个核对；存成 dodojo 笔记，要点写进正文"
+          ]
+        ]
+      },
+      "en": {
+        "title": "Trip page",
+        "tagline": "Day trips, city itineraries, road trips and food crawls: hours, tickets and transport checked for the actual dates, a route that never backtracks, real photos and a map.",
+        "input": "Where, when and the base; plus bookings and saved places in dodojo when connected",
+        "output": "A page for the road: map, timeline, tickets, checklist and totals"
+      }
+    }
+  }
+}

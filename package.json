@@ -1,0 +1,14 @@
+{
+  "name": "dodojo-skills",
+  "private": true,
+  "description": "Open agent skills from dodojo, and the gallery that shows what each one makes.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-site.mjs",
+    "shoot": "node skills/dodojo-travel/scripts/shoot.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}

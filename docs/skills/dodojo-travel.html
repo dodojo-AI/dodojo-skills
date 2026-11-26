@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Trip page · dodojo skills</title>
+<meta name="description" content="Plan a trip, a day out, a road trip or a food crawl as a webpage the person follows on the road - opening hours, closures, tickets and transport checked for the actual dates, a route that does not backtrack, weather, real photos, a map with numbered stops and Google Maps links, and a look that comes from the place - saved into dodojo as a webpage Note, or as a standalone .html file. Use for itineraries, city or day plans, weekend getaways and outings, including 旅行攻略, 行程, 一日游 and 自驾.">
+<link rel="icon" href="../assets/icon.png">
+<link rel="stylesheet" href="../assets/site.css">
+<script>try{var l=localStorage.getItem("dodojo-skills-lang")}catch(e){}document.documentElement.dataset.lang=l==="zh"?"zh":"en"</script>
+</head>
+<body>
+<div class="wrap">
+<header class="bar">
+  <a class="brand" href="../index.html"><img src="../assets/icon.png" alt="" width="28" height="28" style="border-radius:7px">dodojo <span>/ skills</span></a>
+  <nav>
+    <span class="seg" role="group" aria-label="Language"><button type="button" data-set-lang="zh">中文</button><button type="button" data-set-lang="en">EN</button></span>
+    <a class="pill-button" href="https://github.com/dodojo14/dodojo-skills">GitHub ↗</a>
+  </nav>
+</header>
+
+<a class="crumb" href="../index.html">← <span data-l="zh">全部技能</span><span data-l="en">All skills</span></a>
+<section class="skill-head">
+  <h1><span class="mono">dodojo-travel</span><span data-l="zh">旅行页</span><span data-l="en">Trip page</span></h1>
+  <p><span data-l="zh">一日游、城市行程、自驾、吃喝路线：按出行当天查营业时间、门票和交通，排出不走回头路的路线，配真实照片和地图。</span><span data-l="en">Day trips, city itineraries, road trips and food crawls: hours, tickets and transport checked for the actual dates, a route that never backtracks, real photos and a map.</span></p>
+  <div class="install"><code>npx skills add dodojo14/dodojo-skills --skill dodojo-travel</code><button type="button" data-copy="npx skills add dodojo14/dodojo-skills --skill dodojo-travel"><span data-l="zh">复制</span><span data-l="en">Copy</span></button></div>
+</section>
+<div data-examples>
+<div class="example-tabs" role="group" aria-label="Examples">
+  <span class="tabs-label"><span data-l="zh">示例</span><span data-l="en">Examples</span></span>
+  <button type="button" data-show-example="lisbon-saturday" aria-pressed="true">Lisbon Saturday, Alfama to Belém<span class="lang">EN</span></button>
+  <button type="button" data-show-example="kyoto-higashiyama" aria-pressed="false">京都东山一日步行（12/12 周六）<span class="lang">中文</span></button>
+</div>
+<div class="example" data-example="lisbon-saturday">
+<section class="flow" aria-label="Lisbon Saturday, Alfama to Belém">
+  <div class="stage">
+    <div class="stage-label"><b>1</b><span data-l="zh">喂给它</span><span data-l="en">Give it</span></div>
+    <div class="ask"><q lang="en">I'm in Lisbon on Saturday, December 12, staying near Rossio. Plan me a day on foot and by tram: Alfama, the castle, Belém and the pastéis de nata. Make it a page I can follow on my phone.</q></div>
+    <dl class="facts">
+      <div><dt><span data-l="zh">输入</span><span data-l="en">Input</span></dt><dd><span data-l="zh">目的地、日期、住在哪；连上 dodojo 时，还有你存过的订单和收藏</span><span data-l="en">Where, when and the base; plus bookings and saved places in dodojo when connected</span></dd></div>
+      <div><dt><span data-l="zh">产出</span><span data-l="en">Output</span></dt><dd><span data-l="zh">一张路上能用的行程页：地图、时间线、门票、清单、总花费</span><span data-l="en">A page for the road: map, timeline, tickets, checklist and totals</span></dd></div>
+      
+    </dl>
+  </div>
+  <div class="stage">
+    <div class="stage-label"><b>2</b><span data-l="zh">它怎么做</span><span data-l="en">How it works</span></div>
+    <ol class="steps">
+<li class="dodojo"><span class="n">1</span><div><b><span data-l="zh">从已知出发</span><span data-l="en">Start from what is known</span> <span class="tag">dodojo</span></b><span class="detail"><span data-l="zh">先在 dodojo 里搜订单、收藏和以前的游记，再确定日期、住处、同行人和节奏</span><span data-l="en">search the person's dodojo memories for bookings, saved places and earlier trips, then pin down dates, base, party and pace.</span></span></div></li>
+<li class=""><span class="n">2</span><div><b><span data-l="zh">按当天逐个核实</span><span data-l="en">Check every place for the actual dates</span></b><span class="detail"><span data-l="zh">营业时间、闭馆日、节假日、门票、交通、日落和天气，都留来源和查询日期</span><span data-l="en">hours, closures, holidays, tickets, transport, light and weather, each with its source and the date checked.</span></span></div></li>
+<li class=""><span class="n">3</span><div><b><span data-l="zh">排能走通的路线</span><span data-l="en">Plan routes that work</span></b><span class="detail"><span data-l="zh">按片区聚类，限时入场优先，一天三到五个点，留余量和雨天方案</span><span data-l="en">cluster each day by area, timed entries first, three to five stops, buffers and a rain plan.</span></span></div></li>
+<li class=""><span class="n">4</span><div><b><span data-l="zh">找真实照片</span><span data-l="en">Find real photos</span></b><span class="detail"><span data-l="zh">每个重点地方一张，从 Wikimedia Commons 下载，放在页面旁边并署名</span><span data-l="en">one per key place, downloaded from Wikimedia Commons, kept beside the page and credited.</span></span></div></li>
+<li class=""><span class="n">5</span><div><b><span data-l="zh">从地方本身来设计</span><span data-l="en">Design from the place</span></b><span class="detail"><span data-l="zh">配色、字体和细节取自目的地，先写成方案再排版</span><span data-l="en">colors, type and details taken from the destination, written as a plan before any layout.</span></span></div></li>
+<li class=""><span class="n">6</span><div><b><span data-l="zh">为路上搭页面</span><span data-l="en">Build the page for the road</span></b><span class="detail"><span data-l="zh">首屏一眼看清，每天一张地图、每站一张卡片、吃什么、清单和花费，全在一个文件里</span><span data-l="en">an orienting first screen, then each day's map, a card per stop, food, a checklist and totals, in one file.</span></span></div></li>
+<li class="dodojo"><span class="n">7</span><div><b><span data-l="zh">检查后存起来</span><span data-l="en">Check and save</span> <span class="tag">dodojo</span></b><span class="detail"><span data-l="zh">手机宽度、深浅色都看，链接和合计逐个核对；存成 dodojo 笔记，要点写进正文</span><span data-l="en">phone width in both themes, every link and total checked, then saved as a dodojo Note with the key facts in Markdown.</span></span></div></li>
+    </ol>
+    <p class="from-skill"><span data-l="zh">步骤取自 SKILL.md 的 Workflow 一节，skill 改了，这里跟着变。金色步骤是和 dodojo 打交道的地方。</span><span data-l="en">Steps are read from the Workflow section of SKILL.md, so this page changes with the skill. Gold steps are where dodojo comes in.</span></p>
+  </div>
+  <div class="stage phone" data-phone>
+    <div class="toggles">
+      <div class="stage-label"><b>3</b><span data-l="zh">做出来</span><span data-l="en">What comes out</span></div>
+      <span class="seg" role="group" aria-label="Theme"><button type="button" data-scheme="light"><span data-l="zh">浅色</span><span data-l="en">Light</span></button><button type="button" data-scheme="dark"><span data-l="zh">深色</span><span data-l="en">Dark</span></button></span>
+    </div>
+    <div class="device"><div class="screen"><iframe data-src="../examples/dodojo-travel/lisbon-saturday/index.html?theme=light" title="Lisbon Saturday, Alfama to Belém"></iframe></div></div>
+    <a class="open-link" href="../examples/dodojo-travel/lisbon-saturday/index.html?theme=light" target="_blank" rel="noopener"><span data-l="zh">单独打开这页 ↗</span><span data-l="en">Open the page on its own ↗</span></a>
+  </div>
+</section>
+<section class="section">
+  <h2><span data-l="zh">存进 dodojo 之后</span><span data-l="en">Once it is in dodojo</span></h2>
+  <p class="sub"><span data-l="zh">左边是它在首页里的卡片（封面就是页面顶部那一块），右边是 Agent 一起写进笔记正文的要点，方便搜索和不打开页面时看。</span><span data-l="en">Left, its card in the library (the cover is the top of the page); right, the key facts the agent writes into the Note's body, so search finds them and they read without the page.</span></p>
+  <div class="indodojo">
+    <a class="tile" href="../examples/dodojo-travel/lisbon-saturday/index.html?theme=light">
+  <div class="cover"><iframe data-src="../examples/dodojo-travel/lisbon-saturday/index.html?theme=light" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe></div>
+  <h3>Lisbon Saturday, Alfama to Belém</h3>
+  <div class="meta"><span>Claude</span>·<span><span data-l="zh">11月25日</span><span data-l="en">Nov 25</span></span></div>
+  
+</a>
+    <article class="note" lang="en"><h4>Lisbon Saturday, Alfama to Belém</h4><p>One day in Lisbon on Saturday 12 December 2026, from a base near Rossio, on foot and by tram 28E and 15E: castle at nine, Alfama by noon, Belém at sunset (17:15). Tickets and transport come to <mark>64,75 € for one adult</mark>; book the <mark>Jerónimos 15:00</mark> and <mark>Torre de Belém 16:30</mark> entries before the day, because they often sell out.</p>
+<h5>The day, stop by stop</h5>
+<ul>
+<li style="margin-left:0px">08:23 Tram 28E from Martim Moniz (6 min walk from Rossio) to Lg. Portas Sol, about 20 min</li>
+<li style="margin-left:0px">08:45 Portas do Sol: viewpoint over Alfama, first pastel de nata at Manteigaria, Largo Portas do Sol 90 (08:00–22:00)</li>
+<li style="margin-left:0px">09:15 Castelo de São Jorge: 09:00–18:00, last entry 17:30; 17 €</li>
+<li style="margin-left:0px">11:30 Largo do Chafariz de Dentro, after 45 min in Alfama's lanes (rain option: Museu do Fado, 10:00–18:00, 5 €)</li>
+<li style="margin-left:0px">11:50 Sé de Lisboa: Monday–Saturday 10:00–18:00; 7 € for the choir, tower balcony and Treasury</li>
+<li style="margin-left:0px">12:20 Lunch at Prado, Travessa das Pedras Negras 2; book by phone, +351 21 053 4649</li>
+<li style="margin-left:0px">13:47 Tram 15E from Pç. Comércio to Mosteiro Jerónimos, about 35 min</li>
+<li style="margin-left:0px">14:25 Pastéis de Belém, Rua de Belém 84–92: daily 08:00–21:00; 1,60 € each</li>
+<li style="margin-left:0px">15:00 Mosteiro dos Jerónimos cloister: timed entry, 18 €; last entry 17:00, church free (Saturday 10:30–17:00)</li>
+<li style="margin-left:0px">16:30 Torre de Belém: timed entry, 15 €; sunset 17:15 from the terrace, closes 17:30</li>
+<li style="margin-left:0px">17:40 Tram 15E from Lg. Princesa back to Pç. Figueira, about 35 min</li>
+<li style="margin-left:0px">18:20 A Ginjinha, Largo de São Domingos 8, then Rossio's Christmas market (15 November – 21 December 2026)</li>
+<li style="margin-left:0px">19:30 Dinner at Casa do Alentejo, Rua das Portas de Santo Antão 58 (restaurant 19:00–23:00); book online</li>
+</ul>
+<h5>Book before the day</h5>
+<ul>
+<li style="margin-left:0px"><a href="https://castelosaojorge.bol.pt/" rel="noopener" target="_blank">Castle ticket</a> (not timed; skips the ticket-office queue)</li>
+<li style="margin-left:0px"><a href="https://mmp.bymeoblueticket.pt/en/event/14759/mosteiro-dos-jeronimos-claustro" rel="noopener" target="_blank">Jerónimos cloister, 15:00 entry</a></li>
+<li style="margin-left:0px"><a href="https://mmp.bymeoblueticket.pt/en/event/14776/torre-de-belem" rel="noopener" target="_blank">Torre de Belém, 16:30 entry</a></li>
+<li style="margin-left:0px">Prado lunch for 12:20, by phone: +351 21 053 4649</li>
+<li style="margin-left:0px"><a href="https://casadoalentejo.pt/reservas-2/" rel="noopener" target="_blank">Casa do Alentejo dinner for 19:30</a></li>
+</ul>
+<h5>Costs, one adult</h5>
+<table>
+<tr><td>Item</td><td>Price</td></tr>
+<tr><td>Castelo de São Jorge</td><td>17,00 €</td></tr>
+<tr><td>Sé de Lisboa</td><td>7,00 €</td></tr>
+<tr><td>Mosteiro dos Jerónimos</td><td>18,00 €</td></tr>
+<tr><td>Torre de Belém</td><td>15,00 €</td></tr>
+<tr><td>navegante occasional card</td><td>0,50 €</td></tr>
+<tr><td>24-hour Carris/Metro ticket</td><td>7,25 €</td></tr>
+<tr><td>Day total</td><td>64,75 €</td></tr>
+</table>
+<p>Food comes on top: pastel de Belém 1,60 €, carne de porco à alentejana 18,00 € at Casa do Alentejo (October 2025 menu).</p>
+<h5>Getting around</h5>
+<p>Buy a navegante occasional card (0,50 €) at a Metro machine and load the 24-hour Carris/Metro ticket (7,25 €); it covers every tram, bus and Metro ride from the first tap. Zapping is 1,72 € a Carris ride; paying on the tram is 3,30 €. Check <a href="https://carris.pt/en/travel/alteracoes-de-servico/" rel="noopener" target="_blank">Carris service changes</a> that morning. Emergency number: 112.</p>
+<h5>Weather and light</h5>
+<p>Usual December, not a forecast: about 15 °C by day and 9 °C at night, rain on about 10 days of the month (<a href="https://www.ipma.pt/bin/file.data/climate-normal/cn_91-20_LISBOA_GAGO_COUTINHO.pdf" rel="noopener" target="_blank">IPMA climate normal 1991–2020</a>). Sunrise 07:45, sunset 17:15, dark by 17:45 (<a href="https://www.timeanddate.com/sun/portugal/lisbon?month=12&amp;year=2026" rel="noopener" target="_blank">timeanddate</a>). Check the <a href="https://www.ipma.pt/en/otempo/prev.localidade.hora/" rel="noopener" target="_blank">IPMA forecast</a> from about ten days before.</p>
+<h5>Sources</h5>
+<p>Checked 25 November 2026: <a href="https://castelodesaojorge.pt/en/plan-your-visit/schedules/" rel="noopener" target="_blank">castle hours</a>, <a href="https://mosteirojeronimos.torrebelem.gov.pt/en/visitar" rel="noopener" target="_blank">Jerónimos and Torre de Belém</a>, <a href="https://www.sedelisboa.pt/bilheteira/" rel="noopener" target="_blank">Sé</a>, <a href="https://pasteisdebelem.pt/en/contact/" rel="noopener" target="_blank">Pastéis de Belém</a>, <a href="https://guide.michelin.com/en/lisboa-region/lisboa/restaurant/prado" rel="noopener" target="_blank">Prado in the MICHELIN Guide</a>, <a href="https://casadoalentejo.pt/" rel="noopener" target="_blank">Casa do Alentejo</a>, <a href="https://carris.pt/en/buy/occasional-journeys-2/" rel="noopener" target="_blank">Carris fares</a>, <a href="https://carris.pt/media/bx0kw2tr/e28e_02112026.pdf" rel="noopener" target="_blank">28E timetable</a>, <a href="https://carris.pt/media/pmtp3r0w/e15_11112026.pdf" rel="noopener" target="_blank">15E timetable</a>, <a href="https://rfm.pt/atualidade/19294/mercados-de-natal-em-portugal-2026-ve-aqui-os-locais-e-datas" rel="noopener" target="_blank">Christmas market dates</a>.</p><div class="attach"><span class="chip">📎 index.html</span><span class="chip">📎 castelo.jpg</span><span class="chip">📎 jeronimos.jpg</span><span class="chip">📎 pasteis-de-belem.jpg</span><span class="chip">📎 portas-do-sol.jpg</span><span class="chip">📎 se.jpg</span><span class="chip">📎 torre-de-belem.jpg</span></div></article>
+  </div>
+</section>
+
+</div>
+<div class="example" data-example="kyoto-higashiyama" hidden>
+<section class="flow" aria-label="Kyoto Higashiyama day walk (Sat 12 Dec)">
+  <div class="stage">
+    <div class="stage-label"><b>1</b><span data-l="zh">喂给它</span><span data-l="en">Give it</span></div>
+    <div class="ask"><q lang="zh-CN">12 月 12 日（周六）我在京都，住京都站附近，想一个人步行逛东山一带一天：清水寺、二年坂三年坂、八坂神社这些，帮我排个一日行程页。</q><small data-l="en">On Saturday 12 December I'll be in Kyoto, staying near Kyoto Station. I want to spend a day walking around Higashiyama on my own: Kiyomizu-dera, Ninenzaka and Sannenzaka, Yasaka Shrine and so on. Please put together a one-day itinerary page for me.</small></div>
+    <dl class="facts">
+      <div><dt><span data-l="zh">输入</span><span data-l="en">Input</span></dt><dd><span data-l="zh">目的地、日期、住在哪；连上 dodojo 时，还有你存过的订单和收藏</span><span data-l="en">Where, when and the base; plus bookings and saved places in dodojo when connected</span></dd></div>
+      <div><dt><span data-l="zh">产出</span><span data-l="en">Output</span></dt><dd><span data-l="zh">一张路上能用的行程页：地图、时间线、门票、清单、总花费</span><span data-l="en">A page for the road: map, timeline, tickets, checklist and totals</span></dd></div>
+      
+    </dl>
+  </div>
+  <div class="stage">
+    <div class="stage-label"><b>2</b><span data-l="zh">它怎么做</span><span data-l="en">How it works</span></div>
+    <ol class="steps">
+<li class="dodojo"><span class="n">1</span><div><b><span data-l="zh">从已知出发</span><span data-l="en">Start from what is known</span> <span class="tag">dodojo</span></b><span class="detail"><span data-l="zh">先在 dodojo 里搜订单、收藏和以前的游记，再确定日期、住处、同行人和节奏</span><span data-l="en">search the person's dodojo memories for bookings, saved places and earlier trips, then pin down dates, base, party and pace.</span></span></div></li>
+<li class=""><span class="n">2</span><div><b><span data-l="zh">按当天逐个核实</span><span data-l="en">Check every place for the actual dates</span></b><span class="detail"><span data-l="zh">营业时间、闭馆日、节假日、门票、交通、日落和天气，都留来源和查询日期</span><span data-l="en">hours, closures, holidays, tickets, transport, light and weather, each with its source and the date checked.</span></span></div></li>
+<li class=""><span class="n">3</span><div><b><span data-l="zh">排能走通的路线</span><span data-l="en">Plan routes that work</span></b><span class="detail"><span data-l="zh">按片区聚类，限时入场优先，一天三到五个点，留余量和雨天方案</span><span data-l="en">cluster each day by area, timed entries first, three to five stops, buffers and a rain plan.</span></span></div></li>
+<li class=""><span class="n">4</span><div><b><span data-l="zh">找真实照片</span><span data-l="en">Find real photos</span></b><span class="detail"><span data-l="zh">每个重点地方一张，从 Wikimedia Commons 下载，放在页面旁边并署名</span><span data-l="en">one per key place, downloaded from Wikimedia Commons, kept beside the page and credited.</span></span></div></li>
+<li class=""><span class="n">5</span><div><b><span data-l="zh">从地方本身来设计</span><span data-l="en">Design from the place</span></b><span class="detail"><span data-l="zh">配色、字体和细节取自目的地，先写成方案再排版</span><span data-l="en">colors, type and details taken from the destination, written as a plan before any layout.</span></span></div></li>
+<li class=""><span class="n">6</span><div><b><span data-l="zh">为路上搭页面</span><span data-l="en">Build the page for the road</span></b><span class="detail"><span data-l="zh">首屏一眼看清，每天一张地图、每站一张卡片、吃什么、清单和花费，全在一个文件里</span><span data-l="en">an orienting first screen, then each day's map, a card per stop, food, a checklist and totals, in one file.</span></span></div></li>
+<li class="dodojo"><span class="n">7</span><div><b><span data-l="zh">检查后存起来</span><span data-l="en">Check and save</span> <span class="tag">dodojo</span></b><span class="detail"><span data-l="zh">手机宽度、深浅色都看，链接和合计逐个核对；存成 dodojo 笔记，要点写进正文</span><span data-l="en">phone width in both themes, every link and total checked, then saved as a dodojo Note with the key facts in Markdown.</span></span></div></li>
+    </ol>
+    <p class="from-skill"><span data-l="zh">步骤取自 SKILL.md 的 Workflow 一节，skill 改了，这里跟着变。金色步骤是和 dodojo 打交道的地方。</span><span data-l="en">Steps are read from the Workflow section of SKILL.md, so this page changes with the skill. Gold steps are where dodojo comes in.</span></p>
+  </div>
+  <div class="stage phone" data-phone>
+    <div class="toggles">
+      <div class="stage-label"><b>3</b><span data-l="zh">做出来</span><span data-l="en">What comes out</span></div>
+      <span class="seg" role="group" aria-label="Theme"><button type="button" data-scheme="light"><span data-l="zh">浅色</span><span data-l="en">Light</span></button><button type="button" data-scheme="dark"><span data-l="zh">深色</span><span data-l="en">Dark</span></button></span>
+    </div>
+    <div class="device"><div class="screen"><iframe data-src="../examples/dodojo-travel/kyoto-higashiyama/index.html?theme=light" title="Kyoto Higashiyama day walk (Sat 12 Dec)"></iframe></div></div>
+    <a class="open-link" href="../examples/dodojo-travel/kyoto-higashiyama/index.html?theme=light" target="_blank" rel="noopener"><span data-l="zh">单独打开这页 ↗</span><span data-l="en">Open the page on its own ↗</span></a>
+  </div>
+</section>
+<section class="section">
+  <h2><span data-l="zh">存进 dodojo 之后</span><span data-l="en">Once it is in dodojo</span></h2>
+  <p class="sub"><span data-l="zh">左边是它在首页里的卡片（封面就是页面顶部那一块），右边是 Agent 一起写进笔记正文的要点，方便搜索和不打开页面时看。</span><span data-l="en">Left, its card in the library (the cover is the top of the page); right, the key facts the agent writes into the Note's body, so search finds them and they read without the page.</span></p>
+  <div class="indodojo">
+    <a class="tile" href="../examples/dodojo-travel/kyoto-higashiyama/index.html?theme=light">
+  <div class="cover"><iframe data-src="../examples/dodojo-travel/kyoto-higashiyama/index.html?theme=light" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe></div>
+  <h3><span data-l="zh">京都东山一日步行（12/12 周六）</span><span data-l="en">京都东山一日步行（12/12 周六）</span></h3>
+  <div class="meta"><span>Claude</span>·<span><span data-l="zh">11月25日</span><span data-l="en">Nov 25</span></span></div>
+  
+</a>
+    <article class="note" lang="zh-CN"><h4>京都东山一日步行（12/12 周六）</h4><p>12 月 12 日（周六）一个人从京都站出发：上午先上清水寺，顺坡走三年坂、二年坂进祇园，傍晚在高台寺等 <mark>17:00 点灯</mark>。门票加车费 2,560 円，都不用预约。</p>
+<h5>要点</h5>
+<ul>
+<li style="margin-left:0px">日期：2026-12-12（周六），日出 6:55，日落 16:46（国立天文台）</li>
+<li style="margin-left:0px">住处：京都站附近；去程和回程坐市巴士 206，每程 230 円</li>
+<li style="margin-left:0px">天气：京都 12 月常年最低 3.5 °C、最高 11.6 °C（气象厅 1991–2020 平年值），12/2 以后看预报</li>
+<li style="margin-left:0px">高台寺秋季夜间拜观开到 12/13：12 日 17:00 点灯，21:30 停止入场，22:00 关门</li>
+<li style="margin-left:0px">清水寺境内的地主神社修缮闭门；「今年の漢字」12/14 才在清水寺发布</li>
+<li style="margin-left:0px">花见小路两侧私人小巷别进，别追拍舞伎</li>
+</ul>
+<h5>行程</h5>
+<ul>
+<li style="margin-left:0px">08:16 京都站前 D2 乘市巴士 206 到五条坂（约 16 分），上坡步行约 10 分</li>
+<li style="margin-left:0px">08:45 清水寺：本堂舞台、奥之院、音羽瀑布；500 円，12 月 6:00–18:00</li>
+<li style="margin-left:0px">10:20 三年坂・二年坂：かさぎ屋的京都ぜんざい（周二休）</li>
+<li style="margin-left:0px">11:05 八坂塔（法観寺）：看外观；塔内 400 円，开放不定</li>
+<li style="margin-left:0px">11:35 建仁寺：法堂双龙图、潮音庭；800 円，10:00–17:00（16:30 停止入场）</li>
+<li style="margin-left:0px">12:45 総本家にしんそば松葉 本店：にしんそば 1,650 円（周三休）</li>
+<li style="margin-left:0px">13:45 祇园白川・巽桥</li>
+<li style="margin-left:0px">14:25 八坂神社 + 圆山公园：免费，24 小时</li>
+<li style="margin-left:0px">15:45 高台寺：800 円，日落后 17:00 点灯；两寺通票（含圆德院）1,200 円</li>
+<li style="margin-left:0px">17:45 東山安井乘市巴士 206 回京都站（约 20 分）；晚饭本家第一旭 ラーメン 980 円（周四休）</li>
+</ul>
+<h5>花费</h5>
+<ul>
+<li style="margin-left:0px">门票 + 车费：230 + 500 + 800 + 800 + 230 = 2,560 円</li>
+<li style="margin-left:0px">加午饭和晚饭：5,190 円（不含甜品和咖啡）</li>
+</ul>
+<h5>链接</h5>
+<ul>
+<li style="margin-left:0px"><a href="https://www.google.com/maps/dir/?api=1&amp;origin=%E6%B8%85%E6%B0%B4%E5%AF%BA%20%E4%BA%AC%E9%83%BD&amp;destination=%E9%AB%98%E5%8F%B0%E5%AF%BA%20%E4%BA%AC%E9%83%BD&amp;travelmode=walking&amp;waypoints=%E7%94%A3%E5%AF%A7%E5%9D%82%20%E4%BA%AC%E9%83%BD%7C%E4%BA%8C%E5%AF%A7%E5%9D%82%20%E4%BA%AC%E9%83%BD%7C%E6%B3%95%E8%A6%B3%E5%AF%BA%20%E5%85%AB%E5%9D%82%E3%81%AE%E5%A1%94%20%E4%BA%AC%E9%83%BD%7C%E5%BB%BA%E4%BB%81%E5%AF%BA%20%E4%BA%AC%E9%83%BD%7C%E7%B7%8F%E6%9C%AC%E5%AE%B6%E3%81%AB%E3%81%97%E3%82%93%E3%81%9D%E3%81%B0%E6%9D%BE%E8%91%89%20%E6%9C%AC%E5%BA%97%20%E4%BA%AC%E9%83%BD%7C%E5%B7%BD%E6%A9%8B%20%E7%A5%87%E5%9C%92%20%E4%BA%AC%E9%83%BD%7C%E5%85%AB%E5%9D%82%E7%A5%9E%E7%A4%BE%20%E4%BA%AC%E9%83%BD%7C%E7%9F%B3%E5%A1%80%E5%B0%8F%E8%B7%AF%20%E4%BA%AC%E9%83%BD" rel="noopener" target="_blank">全天步行路线（Google 地图）</a></li>
+<li style="margin-left:0px"><a href="https://www.kiyomizudera.or.jp/access.php" rel="noopener" target="_blank">清水寺 开门时间</a></li>
+<li style="margin-left:0px"><a href="https://www.kodaiji.com/haikan.html" rel="noopener" target="_blank">高台寺 拝観案内</a></li>
+<li style="margin-left:0px"><a href="https://www.kenninji.jp/access/" rel="noopener" target="_blank">建仁寺 アクセス</a></li>
+<li style="margin-left:0px"><a href="https://www.yasaka-jinja.or.jp/" rel="noopener" target="_blank">八坂神社</a></li>
+<li style="margin-left:0px"><a href="https://www2.city.kyoto.lg.jp/kotsu/busdia/hyperdia/06124204.htm" rel="noopener" target="_blank">市巴士 206 京都站前时刻表</a></li>
+<li style="margin-left:0px"><a href="https://www2.city.kyoto.lg.jp/kotsu/busdia/hyperdia/12630005.htm" rel="noopener" target="_blank">市巴士 206 東山安井时刻表</a></li>
+<li style="margin-left:0px"><a href="https://www.jma.go.jp/bosai/forecast/#area_type=offices&amp;area_code=260000" rel="noopener" target="_blank">气象厅 京都府预报</a></li>
+</ul>
+<p>以上信息 2026-11-25 查证。</p><div class="attach"><span class="chip">📎 index.html</span><span class="chip">📎 kennin-ji.jpg</span><span class="chip">📎 kiyomizu-dera.jpg</span><span class="chip">📎 kodai-ji.jpg</span><span class="chip">📎 ninenzaka.jpg</span><span class="chip">📎 yasaka-dori.jpg</span><span class="chip">📎 yasaka-jinja.jpg</span></div></article>
+  </div>
+</section>
+
+</div>
+</div>
+<section class="section">
+  <h2><span data-l="zh">Skill 里有什么</span><span data-l="en">What is in the skill</span></h2>
+  <p class="sub"><span data-l="zh">整个文件夹就是 skill：Agent 先读 SKILL.md，需要时再读 references。</span><span data-l="en">The folder is the skill: the agent reads SKILL.md first and the references when it needs them.</span></p>
+  <ul class="files">
+<li><a href="https://github.com/dodojo14/dodojo-skills/blob/main/skills/dodojo-travel/SKILL.md">SKILL.md</a><span><span data-l="zh">147 行</span><span data-l="en">147 lines</span></span></li>
+<li><a href="https://github.com/dodojo14/dodojo-skills/blob/main/skills/dodojo-travel/references/design.md">references/design.md</a><span><span data-l="zh">56 行</span><span data-l="en">56 lines</span></span></li>
+<li><a href="https://github.com/dodojo14/dodojo-skills/blob/main/skills/dodojo-travel/references/frame.md">references/frame.md</a><span><span data-l="zh">135 行</span><span data-l="en">135 lines</span></span></li>
+<li><a href="https://github.com/dodojo14/dodojo-skills/blob/main/skills/dodojo-travel/references/fundamentals.md">references/fundamentals.md</a><span><span data-l="zh">46 行</span><span data-l="en">46 lines</span></span></li>
+<li><a href="https://github.com/dodojo14/dodojo-skills/blob/main/skills/dodojo-travel/references/map.md">references/map.md</a><span><span data-l="zh">79 行</span><span data-l="en">79 lines</span></span></li>
+<li><a href="https://github.com/dodojo14/dodojo-skills/blob/main/skills/dodojo-travel/references/research.md">references/research.md</a><span><span data-l="zh">41 行</span><span data-l="en">41 lines</span></span></li>
+<li><a href="https://github.com/dodojo14/dodojo-skills/blob/main/skills/dodojo-travel/references/save-to-dodojo.md">references/save-to-dodojo.md</a><span><span data-l="zh">55 行</span><span data-l="en">55 lines</span></span></li>
+<li><a href="https://github.com/dodojo14/dodojo-skills/blob/main/skills/dodojo-travel/scripts/shoot.mjs">scripts/shoot.mjs</a><span><span data-l="zh">82 行</span><span data-l="en">82 lines</span></span></li>
+  </ul>
+</section>
+
+<footer class="foot">
+  <div><span data-l="zh">MIT 开源 · 页面由 skill 生成，可视化由 <code>scripts/build-site.mjs</code> 从 skill 文件自动生成</span><span data-l="en">MIT licensed · Pages made by the skills; this gallery is generated from the skill files by <code>scripts/build-site.mjs</code></span></div>
+  <div><a href="https://github.com/dodojo14/dodojo-skills">dodojo14/dodojo-skills</a> · <a href="https://www.dodojo.ai">dodojo.ai</a> · <a href="https://github.com/dodojo14/dodojo-plugin">dodojo plugin</a></div>
+</footer>
+</div>
+<script src="../assets/site.js"></script>
+</body>
+</html>

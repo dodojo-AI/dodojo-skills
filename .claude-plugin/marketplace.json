@@ -1,0 +1,20 @@
+{
+  "name": "dodojo-skills",
+  "description": "Open agent skills from dodojo. First up: dodojo-travel, trip pages checked for your dates, with a map and real photos.",
+  "owner": {
+    "name": "dodojo",
+    "email": "contact@dodojo.ai",
+    "url": "https://www.dodojo.ai"
+  },
+  "plugins": [
+    {
+      "name": "dodojo-skills",
+      "source": "./",
+      "strict": false,
+      "description": "dodojo-travel: plan a trip or a day out as a phone-first page with checked hours and tickets, a map of each day and real photos; saves into dodojo or stands on its own.",
+      "skills": [
+        "./skills/dodojo-travel"
+      ]
+    }
+  ]
+}
