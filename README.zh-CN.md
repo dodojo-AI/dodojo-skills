@@ -4,7 +4,7 @@
 
 在任何支持 skills 的 Agent 里都能用（Claude Code、Codex、Cursor 等）。连上 dodojo，它会先翻你存过的东西，做好后存成一条笔记。
 
-**看看 skill 能做出什么：[dodojo14.github.io/dodojo-skills](https://dodojo14.github.io/dodojo-skills/)**
+**看看 skill 能做出什么：[dodojo-ai.github.io/dodojo-skills](https://dodojo-ai.github.io/dodojo-skills/)**
 
 ## dodojo-travel
 
@@ -23,13 +23,13 @@
 用 [skills CLI](https://github.com/vercel-labs/skills)：
 
 ```bash
-npx skills add dodojo14/dodojo-skills
+npx skills add dodojo-AI/dodojo-skills
 ```
 
 在 Claude Code 里当插件装：
 
 ```
-/plugin marketplace add dodojo14/dodojo-skills
+/plugin marketplace add dodojo-AI/dodojo-skills
 /plugin install dodojo-skills@dodojo-skills
 ```
 
@@ -37,7 +37,7 @@ npx skills add dodojo14/dodojo-skills
 
 ## 配合 dodojo
 
-让 Agent 连接 dodojo 的 MCP：`https://www.dodojo.ai/api/mcp`（OAuth，登录一次），或装 [dodojo 插件](https://github.com/dodojo14/dodojo-plugin)。dodojo 桌面版里的 Agent 已经连好。连上之后：
+让 Agent 连接 dodojo 的 MCP：`https://www.dodojo.ai/api/mcp`（OAuth，登录一次），或装 [dodojo 插件](https://github.com/dodojo-AI/dodojo-plugin)。dodojo 桌面版里的 Agent 已经连好。连上之后：
 
 - 先搜你的记忆（订单、收藏、以前的游记），在此基础上做；
 - 页面存成网页笔记：在首页里以页面顶部为封面，手机和电脑上都能完整打开，每天的地图会画出来，勾过的清单会记住；

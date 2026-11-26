@@ -176,7 +176,7 @@ ${LANG_BOOT}
 ${body}
 <footer class="foot">
   <div>${t(`MIT 开源 · 页面由 skill 生成，可视化由 <code>scripts/build-site.mjs</code> 从 skill 文件自动生成`, `MIT licensed · Pages made by the skills; this gallery is generated from the skill files by <code>scripts/build-site.mjs</code>`)}</div>
-  <div><a href="${GITHUB}">${esc(content.repo)}</a> · <a href="https://www.dodojo.ai">dodojo.ai</a> · <a href="https://github.com/dodojo14/dodojo-plugin">dodojo plugin</a></div>
+  <div><a href="${GITHUB}">${esc(content.repo)}</a> · <a href="https://www.dodojo.ai">dodojo.ai</a> · <a href="https://github.com/dodojo-AI/dodojo-plugin">dodojo plugin</a></div>
 </footer>
 </div>
 <script src="${up}assets/site.js"></script>

@@ -10,7 +10,7 @@ They work in any agent that supports skills (Claude Code, Codex, Cursor and
 others). Connected to dodojo, they start from what you already keep and save
 the result there as a Note.
 
-**See what each skill makes: [dodojo14.github.io/dodojo-skills](https://dodojo14.github.io/dodojo-skills/)**
+**See what each skill makes: [dodojo-ai.github.io/dodojo-skills](https://dodojo-ai.github.io/dodojo-skills/)**
 ([中文说明](README.zh-CN.md))
 
 ## dodojo-travel
@@ -36,13 +36,13 @@ Examples, each made by an agent following the skill:
 With the [skills CLI](https://github.com/vercel-labs/skills):
 
 ```bash
-npx skills add dodojo14/dodojo-skills
+npx skills add dodojo-AI/dodojo-skills
 ```
 
 In Claude Code, as a plugin:
 
 ```
-/plugin marketplace add dodojo14/dodojo-skills
+/plugin marketplace add dodojo-AI/dodojo-skills
 /plugin install dodojo-skills@dodojo-skills
 ```
 
@@ -53,7 +53,7 @@ self-contained.
 ## With dodojo
 
 Connect your agent to dodojo's MCP server, `https://www.dodojo.ai/api/mcp`
-(OAuth, sign in once), or install the [dodojo plugin](https://github.com/dodojo14/dodojo-plugin).
+(OAuth, sign in once), or install the [dodojo plugin](https://github.com/dodojo-AI/dodojo-plugin).
 The agent in the dodojo desktop app is already connected. Then the skill:
 
 - searches your memories first (bookings, saved places, notes from earlier

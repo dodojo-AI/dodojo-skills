@@ -9,7 +9,7 @@ phone and the computer, and keeps what they tick and type.
 
 - The dodojo MCP server is `https://www.dodojo.ai/api/mcp` (OAuth; the person
   signs in once). The dodojo desktop app's own agent is already connected.
-  The `dodojo` skill in [dodojo14/dodojo-plugin](https://github.com/dodojo14/dodojo-plugin)
+  The `dodojo` skill in [dodojo-AI/dodojo-plugin](https://github.com/dodojo-AI/dodojo-plugin)
   has the full rules for reading and writing memories.
 - If the connector offers `get_storage_guide` with `topic: "webpage"`, read it
   first: it is the current version of these rules and wins where they differ.
