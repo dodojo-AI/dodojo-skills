@@ -50,9 +50,8 @@ game, a party game passed around one phone.
   stones, green felt), in light and dark.
 
 Example, made by following the skill:
-[gomoku on a kaya board](examples/dodojo-game/gomoku/) (in Chinese), against
-the computer at three levels or two people on one phone, with replay and a
-record of wins.
+[gomoku on a kaya board](examples/dodojo-game/gomoku/), against the computer at
+three levels or two people on one phone, with replay and a record of wins.
 
 ## Install
 

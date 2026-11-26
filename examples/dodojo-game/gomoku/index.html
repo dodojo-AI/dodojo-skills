@@ -1,27 +1,29 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <meta name="dodojo-page-id" content="gomoku-kaya">
-<title>五子棋</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&amp;display=swap&amp;text=%E9%BB%91%E7%99%BD%E8%83%9C%E5%92%8C%E6%A3%8B">
+<title>Gomoku</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@700&amp;display=swap&amp;text=BlackWhitewinsDr%20">
 <style>
-/* 版式：先下棋，后读字。一条 52px 的对局条（谁执黑、该谁下、比分）→ 榧木棋盘（也是卡片封面）
-   → 一排按钮；对手、战绩、规则都在下面。电脑宽度时，设置和战绩挪到棋盘右边。
-   材质：榧木棋盘、那智黑石、蛤碁石。界面用藍，棋盘上的批注（胜线、上一手、要堵的点）用朱笔，像在棋谱上批注。 */
+/* Layout: play first, read after. A 52px status strip (who has Black, whose turn, the score) -> the kaya
+   board (also the Note's cover) -> one row of buttons; opponent, record and rules below. At computer width
+   the settings and the record move beside the board.
+   Materials: a kaya-wood board, slate and clamshell stones. The interface is indigo; marks on the board
+   (the winning line, the last move, the point to block) are vermilion, like notes on a printed game record. */
 :root{
   --bg: var(--dodojo-bg, #f6f5f2);
   --fg: var(--dodojo-fg, #1c1b19);
   --muted: var(--dodojo-muted-fg, #6b6862);
   --surface: var(--dodojo-surface, #ffffff);
   --line: var(--dodojo-border, #e2dfd8);
-  --ai: #2b4a7e;          /* 藍：按钮、轮到谁 */
+  --ai: #2b4a7e;          /* indigo: buttons, whose turn */
   --ai-fg: #ffffff;
-  --edge: #b4844a;        /* 棋盘侧面 */
+  --edge: #b4844a;        /* the board's edge */
   --font: var(--dodojo-font-sans, -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif);
-  --serif: "Noto Serif SC", "Songti SC", "STSong", serif;
+  --serif: "Shippori Mincho", "Iowan Old Style", Georgia, serif;
 }
 :root[data-dodojo-theme="dark"]{ --ai:#9ab6ec; --ai-fg:#0e1930; --edge:#6a4c2d; }
 @media (prefers-color-scheme: dark){
@@ -38,11 +40,11 @@ button{font:inherit;color:inherit}
   .layout{max-width:none;display:grid;grid-template-columns:minmax(0,520px) minmax(0,1fr);gap:32px;align-items:start}
 }
 
-/* 对局条：高度固定，消息只在中间那格里换 */
-.strip{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:6px;height:52px;margin-bottom:10px}
+/* Status strip: a fixed height; only the middle cell's message changes */
+.strip{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:8px;height:52px;margin-bottom:10px}
 .plate{display:flex;align-items:center;gap:8px;min-width:0;height:46px;padding:0 10px;border-radius:12px;border:1px solid transparent;transition:background-color .2s,border-color .2s,box-shadow .2s}
 .plate.right{flex-direction:row-reverse}
-@media (max-width:380px){.plate{gap:6px;padding:0 8px}}
+@media (max-width:380px){.plate{gap:6px;padding:0 8px}.name{font-size:14px}}
 .plate.turn{background:var(--surface);border-color:var(--line);box-shadow:inset 0 -2px 0 var(--ai)}
 .pip{flex:none;width:18px;height:18px;border-radius:50%}
 .pip.black{background:radial-gradient(circle at 34% 30%,#7b8089,#2a2c30 40%,#0b0b0c 75%)}
@@ -55,11 +57,12 @@ button{font:inherit;color:inherit}
 .name{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .role{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wins{flex:none;font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
-.mid{min-width:56px;font-size:13px;color:var(--muted);text-align:center;white-space:nowrap;font-variant-numeric:tabular-nums}
-.mid.busy::after{content:"";display:inline-block;width:6px;height:6px;margin-left:5px;border-radius:50%;background:var(--ai);vertical-align:middle;animation:blink 1s ease-in-out infinite}
+/* the status is read aloud from here; on screen it lives in the plates and the line under the board */
+.mid{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.role.busy::after{content:"";display:inline-block;width:6px;height:6px;margin-left:5px;border-radius:50%;background:var(--ai);vertical-align:middle;animation:blink 1s ease-in-out infinite}
 @keyframes blink{50%{opacity:.2}}
 
-/* 棋盘：画布跟着方块走，侧面用阴影画出厚度 */
+/* Board: the canvas follows its square box; a shadow draws the board's thickness */
 .board{position:relative;aspect-ratio:1/1;border-radius:6px;background:#dcb173;box-shadow:0 5px 0 var(--edge),0 20px 30px -18px rgba(40,22,6,.75)}
 canvas{position:absolute;inset:0;display:block;width:100%;height:100%;border-radius:6px;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;cursor:pointer}
 canvas:focus{outline:none}
@@ -67,12 +70,12 @@ canvas:focus-visible{outline:3px solid var(--ai);outline-offset:3px}
 .result{position:absolute;left:10px;right:10px;bottom:10px;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:2px 14px;padding:12px 16px;border-radius:14px;background:color-mix(in srgb,var(--surface) 90%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 12px 30px -14px rgba(0,0,0,.55);animation:rise .3s cubic-bezier(.2,.8,.2,1)}
 .result.top{top:10px;bottom:auto}
 @keyframes rise{from{transform:translateY(8px);opacity:0}}
-.verdict{grid-row:span 2;font:700 30px/1 var(--serif);letter-spacing:.06em}
+.verdict{grid-row:span 2;font:700 26px/1.05 var(--serif);letter-spacing:.01em}
 .detail{font-size:14px;font-weight:600;min-width:0}
 .sub{font-size:13px;color:var(--muted);min-width:0}
 .next{grid-column:1/-1;justify-self:start;margin-top:6px;min-height:36px;padding:0 12px;border-radius:10px;border:1px solid var(--ai);background:transparent;color:var(--ai);font-size:14px;font-weight:600;cursor:pointer}
 
-/* 按钮：棋盘正下方一排，结束后换成「复盘 / 再来一局」，复盘时换成一排翻手数的按钮，高度不变 */
+/* Controls: one row right under the board; after a game it reads Replay / Play again, while replaying it steps through the moves; always the same height */
 .controls,.replay{display:grid;gap:8px;height:48px;margin-top:20px}
 .controls{grid-template-columns:1fr 1.35fr 48px}
 .replay{grid-template-columns:48px 48px minmax(0,1fr) 48px 48px auto}
@@ -84,12 +87,12 @@ canvas:focus-visible{outline:3px solid var(--ai);outline-offset:3px}
 .count{display:flex;align-items:center;justify-content:center;font-size:14px;font-variant-numeric:tabular-nums;color:var(--muted)}
 .hint{height:22px;margin:10px 0 0;font-size:13px;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* 下面是读的部分 */
+/* Below: what is read rather than played */
 .side{margin-top:28px;display:flex;flex-direction:column;gap:26px}
 @media (min-width:760px){.side{margin-top:0}}
 h3{margin:0 0 10px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--muted)}
-.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:3px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
-.seg button{min-height:44px;border:0;border-radius:9px;background:transparent;font-size:14px;cursor:pointer}
+.seg{display:flex;gap:3px;padding:3px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.seg button{flex:1 1 auto;min-height:44px;padding:0 8px;border:0;border-radius:9px;background:transparent;font-size:14px;white-space:nowrap;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--ai);color:var(--ai-fg);font-weight:600}
 .caption{margin:8px 2px 0;font-size:14px;color:var(--muted)}
 .caption.warn{color:var(--fg);font-weight:600}
@@ -122,7 +125,7 @@ dl{padding-left:0}
 dt{font-weight:600;margin-top:8px}
 dd{margin:0;color:var(--muted)}
 @media (prefers-reduced-motion: reduce){
-  .plate.turn .pip,.mid.busy::after{animation:none}
+  .plate.turn .pip,.role.busy::after{animation:none}
   .result{animation:none}
 }
 </style>
@@ -131,90 +134,90 @@ dd{margin:0;color:var(--muted)}
 <div class="layout">
 <div class="game">
   <div class="strip">
-    <div class="plate" id="plateL"><span class="pip black" id="pipL"></span><span class="who"><span class="name" id="nameL">你</span><span class="role" id="roleL">执黑</span></span><span class="wins" id="winsL">0</span></div>
-    <div class="mid" id="mid" aria-live="polite">黑先</div>
-    <div class="plate right" id="plateR"><span class="pip white" id="pipR"></span><span class="who"><span class="name" id="nameR">电脑</span><span class="role" id="roleR">进阶</span></span><span class="wins" id="winsR">0</span></div>
+    <div class="plate" id="plateL"><span class="pip black" id="pipL"></span><span class="who"><span class="name" id="nameL">You</span><span class="role" id="roleL">Black</span></span><span class="wins" id="winsL">0</span></div>
+    <div class="mid" id="mid" aria-live="polite">vs</div>
+    <div class="plate right" id="plateR"><span class="pip white" id="pipR"></span><span class="who"><span class="name" id="nameR">Computer</span><span class="role" id="roleR">Medium</span></span><span class="wins" id="winsR">0</span></div>
   </div>
 
   <div class="board">
-    <canvas id="board" tabindex="0" role="application" aria-label="15 路五子棋棋盘。方向键移动，回车落子。" aria-describedby="hint"></canvas>
+    <canvas id="board" tabindex="0" role="application" aria-label="15 by 15 gomoku board. Arrow keys move, Enter places a stone." aria-describedby="hint"></canvas>
     <div class="result" id="result" role="status" hidden>
-      <span class="verdict" id="verdict">黑胜</span>
-      <span class="detail" id="detail">你赢了</span>
-      <span class="sub" id="sub">共 0 手</span>
-      <button class="next" id="nextLevel" type="button" hidden>下一局换「高手」</button>
+      <span class="verdict" id="verdict">Black wins</span>
+      <span class="detail" id="detail">You won</span>
+      <span class="sub" id="sub">0 moves</span>
+      <button class="next" id="nextLevel" type="button" hidden>Next game: Hard</button>
     </div>
   </div>
 
   <div class="controls" id="controls">
-    <button class="btn" id="undo" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span id="undoLabel">悔棋</span></button>
-    <button class="btn" id="fresh" type="button">新开一局</button>
-    <button class="btn" id="sound" type="button" aria-pressed="true" aria-label="音效"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path id="waves" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/><path id="mute" d="m16 9 6 6m0-6-6 6" hidden/></svg></button>
+    <button class="btn" id="undo" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span id="undoLabel">Undo</span></button>
+    <button class="btn" id="fresh" type="button">New game</button>
+    <button class="btn" id="sound" type="button" aria-pressed="true" aria-label="Sound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path id="waves" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/><path id="mute" d="m16 9 6 6m0-6-6 6" hidden/></svg></button>
   </div>
   <div class="replay" id="replay" hidden>
-    <button class="btn" id="rFirst" type="button" aria-label="第一手"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5v14M18 6l-7 6 7 6"/></svg></button>
-    <button class="btn" id="rPrev" type="button" aria-label="上一手"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
+    <button class="btn" id="rFirst" type="button" aria-label="First move"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 5v14M18 6l-7 6 7 6"/></svg></button>
+    <button class="btn" id="rPrev" type="button" aria-label="Previous move"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button>
     <span class="count" id="rCount" aria-live="polite">0 / 0</span>
-    <button class="btn" id="rNext" type="button" aria-label="下一手"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
-    <button class="btn" id="rLast" type="button" aria-label="最后一手"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 5v14M6 6l7 6-7 6"/></svg></button>
-    <button class="btn" id="rExit" type="button">返回</button>
+    <button class="btn" id="rNext" type="button" aria-label="Next move"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button>
+    <button class="btn" id="rLast" type="button" aria-label="Last move"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 5v14M6 6l7 6-7 6"/></svg></button>
+    <button class="btn" id="rExit" type="button">Back</button>
   </div>
-  <p class="hint" id="hint">点交叉点落子，也可以用方向键加回车。</p>
+  <p class="hint" id="hint">Click a point, or arrow keys and Enter</p>
 </div>
 
 <div class="side">
   <section aria-labelledby="h-opp">
-    <h3 id="h-opp">对手</h3>
+    <h3 id="h-opp">Opponent</h3>
     <div class="seg" role="group" aria-labelledby="h-opp">
-      <button type="button" data-mode="cpu1" aria-pressed="false">入门</button>
-      <button type="button" data-mode="cpu2" aria-pressed="true">进阶</button>
-      <button type="button" data-mode="cpu3" aria-pressed="false">高手</button>
-      <button type="button" data-mode="duo" aria-pressed="false">两人</button>
+      <button type="button" data-mode="cpu1" aria-pressed="false">Easy</button>
+      <button type="button" data-mode="cpu2" aria-pressed="true">Medium</button>
+      <button type="button" data-mode="cpu3" aria-pressed="false">Hard</button>
+      <button type="button" data-mode="duo" aria-pressed="false">2 players</button>
     </div>
-    <p class="caption" id="caption">进阶：该堵的四一定堵，也会主动做杀。跟电脑下，悔棋不限次数。</p>
+    <p class="caption" id="caption">Medium: always blocks a four and sets up attacks of its own. Against the computer, undo as often as you like.</p>
     <div class="names" id="names" hidden>
-      <label>执黑先下的一方<input id="nameA" data-dodojo-key="nameA" maxlength="10" placeholder="玩家一" autocomplete="off"></label>
-      <label>另一方<input id="nameB" data-dodojo-key="nameB" maxlength="10" placeholder="玩家二" autocomplete="off"></label>
+      <label>Starts with Black<input id="nameA" data-dodojo-key="nameA" maxlength="10" placeholder="Player 1" autocomplete="off"></label>
+      <label>Starts with White<input id="nameB" data-dodojo-key="nameB" maxlength="10" placeholder="Player 2" autocomplete="off"></label>
     </div>
     <div class="toggles">
-      <label class="toggle"><span>标出要堵的点<small>对方再下一手就连成五子的位置，画朱色虚圈</small></span><input type="checkbox" id="hints"></label>
-      <label class="toggle"><span>棋子上显示手数<small>像棋谱一样，第几手写在棋子上</small></span><input type="checkbox" id="numbers"></label>
+      <label class="toggle"><span>Mark the point to block<small>Where the other side would make five next move, circled in red</small></span><input type="checkbox" id="hints"></label>
+      <label class="toggle"><span>Number the stones<small>Each stone shows its move, like a printed game record</small></span><input type="checkbox" id="numbers"></label>
     </div>
   </section>
 
   <section aria-labelledby="h-rec">
-    <h3 id="h-rec">战绩</h3>
+    <h3 id="h-rec">Record</h3>
     <table>
-      <thead><tr><th scope="col">对手</th><th scope="col">胜</th><th scope="col">负</th><th scope="col">和</th><th scope="col">最快胜</th></tr></thead>
+      <thead><tr><th scope="col">Opponent</th><th scope="col">Won</th><th scope="col">Lost</th><th scope="col">Drawn</th><th scope="col">Fastest win</th></tr></thead>
       <tbody>
-        <tr><td>入门</td><td id="r-cpu1-w">0</td><td id="r-cpu1-l">0</td><td id="r-cpu1-d">0</td><td id="r-cpu1-b">—</td></tr>
-        <tr><td>进阶</td><td id="r-cpu2-w">0</td><td id="r-cpu2-l">0</td><td id="r-cpu2-d">0</td><td id="r-cpu2-b">—</td></tr>
-        <tr><td>高手</td><td id="r-cpu3-w">0</td><td id="r-cpu3-l">0</td><td id="r-cpu3-d">0</td><td id="r-cpu3-b">—</td></tr>
+        <tr><td>Easy</td><td id="r-cpu1-w">0</td><td id="r-cpu1-l">0</td><td id="r-cpu1-d">0</td><td id="r-cpu1-b">—</td></tr>
+        <tr><td>Medium</td><td id="r-cpu2-w">0</td><td id="r-cpu2-l">0</td><td id="r-cpu2-d">0</td><td id="r-cpu2-b">—</td></tr>
+        <tr><td>Hard</td><td id="r-cpu3-w">0</td><td id="r-cpu3-l">0</td><td id="r-cpu3-d">0</td><td id="r-cpu3-b">—</td></tr>
       </tbody>
     </table>
-    <p class="duo-score" id="duoScore">两人同屏：还没下完过一局。</p>
+    <p class="duo-score" id="duoScore">Two players: no finished game yet.</p>
   </section>
 
   <section>
     <details>
-      <summary>规则</summary>
+      <summary>Rules</summary>
       <ul>
-        <li>黑先白后，轮流在交叉点上落一子，落下就不再移动。</li>
-        <li>横、竖、斜任一方向连成五子就赢；连成六子以上也算赢。本页用「无禁手」规则。</li>
-        <li>棋盘下满还没人连成五子，算和棋。</li>
-        <li>黑棋先下优势很大，所以每下完一局就交换黑白，先手轮流来。</li>
-        <li>跟电脑下，悔棋不限次数，会退回到你上一次落子之前；两人同屏，每人每局可以悔一次自己刚下的那手。</li>
-        <li>下到一半关掉也没关系：棋局存在这篇笔记里，下次打开、换一台设备打开，都接着下。</li>
+        <li>Black moves first, then the players take turns placing one stone on an empty point. Stones never move.</li>
+        <li>Five in a row across, down or diagonally wins, and so does six or more: this page plays freestyle gomoku, with no forbidden moves.</li>
+        <li>If the board fills up without a five, the game is a draw.</li>
+        <li>Moving first is a real advantage, so the players swap colors after every game.</li>
+        <li>Against the computer you can undo as often as you like, back to before your last move. Between two players, each may take back their own last move once a game.</li>
+        <li>Close the Note halfway through and the game waits here for you, on any of your devices.</li>
       </ul>
     </details>
     <details>
-      <summary>几个术语</summary>
+      <summary>Terms</summary>
       <dl>
-        <dt>活三</dt><dd>两头都空着的三子，再下一手就成活四，对方必须马上堵。</dd>
-        <dt>冲四</dt><dd>只差一子就成五，但有一头已经被堵住，对方只要堵另一头。</dd>
-        <dt>活四</dt><dd>两头都空着的四子，对方只能堵一头，下一手必成五。</dd>
-        <dt>四三</dt><dd>一手棋同时做成冲四和活三，对方堵了四堵不了三，几乎必胜。</dd>
-        <dt>禁手</dt><dd>正式比赛的「连珠」规则里，黑棋不许下三三、四四和长连，用来削弱先手优势。本页为了上手容易，不设禁手。</dd>
+        <dt>Open three</dt><dd>Three in a row with both ends open. One more stone makes an open four, so it has to be blocked at once.</dd>
+        <dt>Four</dt><dd>One stone short of five with one end already blocked. Blocking the other end stops it.</dd>
+        <dt>Open four</dt><dd>Four in a row with both ends open. Only one end can be blocked, so it becomes five on the next move.</dd>
+        <dt>Four-three</dt><dd>One move that makes a four and an open three at once. Block the four and the three goes through: almost always a win.</dd>
+        <dt>Forbidden moves</dt><dd>Tournament renju forbids Black double threes, double fours and lines of six or more, to offset the advantage of moving first. This page leaves them out so the game is easy to pick up.</dd>
       </dl>
     </details>
   </section>
@@ -362,12 +365,12 @@ function makeAI() {
   const N = 15, NN = N * N;
   const LETTERS = "ABCDEFGHIJKLMNO";
   const MODES = ["cpu1", "cpu2", "cpu3", "duo"];
-  const LEVEL = { cpu1: "入门", cpu2: "进阶", cpu3: "高手" };
+  const LEVEL = { cpu1: "Easy", cpu2: "Medium", cpu3: "Hard" };
   const CAPTION = {
-    cpu1: "入门：会自己连子，但常常顾不上堵你，适合刚学的人。跟电脑下，悔棋不限次数。",
-    cpu2: "进阶：该堵的四一定堵，也会主动做杀。跟电脑下，悔棋不限次数。",
-    cpu3: "高手：往后算四手，会做连续的杀棋。跟电脑下，悔棋不限次数。",
-    duo: "两人同屏：轮流用这台设备下，每人每局可以悔一次自己刚下的那手。",
+    cpu1: "Easy: builds its own lines but often forgets to block yours. Good for learning. Against the computer, undo as often as you like.",
+    cpu2: "Medium: always blocks a four and sets up attacks of its own. Against the computer, undo as often as you like.",
+    cpu3: "Hard: reads four moves ahead and plays forcing sequences. Against the computer, undo as often as you like.",
+    duo: "Two players: take turns on this device. Each player may take back their own last move once a game.",
   };
   const DIRS = [[0, 1], [1, 0], [1, 1], [1, -1]];
   const api = window.dodojo || null;
@@ -400,7 +403,8 @@ function makeAI() {
   const coord = i => LETTERS[i % N] + (N - Math.floor(i / N));
   const seatOf = color => ((color === 1) === aBlack ? "A" : "B");
   const nameA = $("nameA"), nameB = $("nameB");
-  const seatName = seat => (seat === "A" ? nameA.value.trim() || "玩家一" : nameB.value.trim() || "玩家二");
+  const seatName = seat => (seat === "A" ? nameA.value.trim() || "Player 1" : nameB.value.trim() || "Player 2");
+  const plural = (n, word) => n + " " + word + (n === 1 ? "" : "s");
   const humanMayMove = () => !over() && replayAt === null && !thinking && (!isCpu() || turnColor() === humanColor());
 
   function blankStats() {
@@ -853,37 +857,37 @@ function makeAI() {
     const leftColor = cpu ? humanColor() : aBlack ? 1 : 2;
     el.pipL.className = "pip " + (leftColor === 1 ? "black" : "white");
     el.pipR.className = "pip " + (leftColor === 1 ? "white" : "black");
-    el.nameL.textContent = cpu ? "你" : seatName("A");
-    el.nameR.textContent = cpu ? "电脑" : seatName("B");
-    el.roleL.textContent = leftColor === 1 ? "执黑" : "执白";
-    el.roleR.textContent = cpu ? LEVEL[mode] : leftColor === 1 ? "执白" : "执黑";
+    el.nameL.textContent = cpu ? "You" : seatName("A");
+    el.nameR.textContent = cpu ? "Computer" : seatName("B");
+    el.roleL.textContent = leftColor === 1 ? "Black" : "White";
+    el.roleR.textContent = cpu ? (thinking ? "Thinking" : LEVEL[mode]) : leftColor === 1 ? "White" : "Black";
+    el.roleR.classList.toggle("busy", thinking);
     el.winsL.textContent = cpu ? stats[mode].w : stats.duo.a;
     el.winsR.textContent = cpu ? stats[mode].l : stats.duo.b;
     const tc = turnColor(), playing = !over() && replayAt === null;
     el.plateL.classList.toggle("turn", playing && tc === leftColor);
     el.plateR.classList.toggle("turn", playing && tc !== leftColor);
 
-    el.mid.classList.toggle("busy", thinking);
-    el.mid.textContent = replayAt !== null ? "复盘" : thinking ? "电脑在想" : winLine ? "共 " + moves.length + " 手" : moves.length >= NN ? "和棋" : moves.length ? "第 " + (moves.length + 1) + " 手" : "黑先";
+    el.mid.textContent = replayAt !== null ? "Replay" : thinking ? "Thinking" : winLine ? plural(moves.length, "move") : moves.length >= NN ? "Draw" : moves.length ? "Move " + (moves.length + 1) : "vs";
 
     // result laid over the board, away from the winning line
     const done = over() && replayAt === null;
     el.result.hidden = !done;
     if (done) {
       const winner = winLine ? grid[winLine[0]] : 0;
-      el.verdict.textContent = winner === 1 ? "黑胜" : winner === 2 ? "白胜" : "和棋";
-      if (!winner) el.detail.textContent = "棋盘下满了";
-      else if (cpu) el.detail.textContent = winner === humanColor() ? "你赢了" : "电脑赢了";
-      else el.detail.textContent = seatName(seatOf(winner)) + " 赢了";
-      let sub = "共 " + moves.length + " 手";
-      if (cpu && undoCount) sub += " · 悔棋 " + undoCount + " 次";
-      if (cpu && winner === humanColor() && newBest) sub += " · 最快的一次";
+      el.verdict.textContent = winner === 1 ? "Black wins" : winner === 2 ? "White wins" : "Draw";
+      if (!winner) el.detail.textContent = "The board is full";
+      else if (cpu) el.detail.textContent = winner === humanColor() ? "You won" : "The computer won";
+      else el.detail.textContent = seatName(seatOf(winner)) + " won";
+      let sub = plural(moves.length, "move");
+      if (cpu && undoCount) sub += " · " + plural(undoCount, "undo");
+      if (cpu && winner === humanColor() && newBest) sub += " · your fastest yet";
       el.sub.textContent = sub;
       const rows = winLine ? winLine.map(i => Math.floor(i / N)) : [N];
       el.result.classList.toggle("top", rows.reduce((a, r) => a + r, 0) / rows.length > N / 2);
       const up = mode === "cpu1" ? "cpu2" : mode === "cpu2" ? "cpu3" : null;
       el.nextLevel.hidden = !(cpu && up && winner === humanColor());
-      if (up) { el.nextLevel.textContent = "下一局换「" + LEVEL[up] + "」"; el.nextLevel.dataset.mode = up; }
+      if (up) { el.nextLevel.textContent = "Next game: " + LEVEL[up]; el.nextLevel.dataset.mode = up; }
     }
 
     // controls: same row, same height, whatever the moment
@@ -895,21 +899,21 @@ function makeAI() {
       $("rNext").disabled = $("rLast").disabled = replayAt === moves.length;
     }
     if (over()) {
-      el.undoLabel.textContent = "复盘";
+      el.undoLabel.textContent = "Replay";
       el.undo.firstElementChild.toggleAttribute("hidden", true);
       el.undo.disabled = !moves.length;
-      el.fresh.textContent = "再来一局";
+      el.fresh.textContent = "Play again";
       el.fresh.classList.add("primary");
     } else {
       el.undo.firstElementChild.toggleAttribute("hidden", false);
       el.fresh.classList.remove("primary");
-      el.fresh.textContent = confirmFresh ? "再点一次重开" : "新开一局";
+      el.fresh.textContent = confirmFresh ? "Tap again to restart" : "New game";
       if (cpu) {
-        el.undoLabel.textContent = "悔棋";
+        el.undoLabel.textContent = "Undo";
         el.undo.disabled = !moves.some((_, k) => (k % 2 === 0 ? 1 : 2) === humanColor());
       } else {
         const last = moves.length ? seatOf(grid[moves[moves.length - 1]]) : null;
-        el.undoLabel.textContent = last && undoUsed.includes(last) ? "已悔过" : "悔棋";
+        el.undoLabel.textContent = last && undoUsed.includes(last) ? "Undo used" : "Undo";
         el.undo.disabled = !last || undoUsed.includes(last);
       }
     }
@@ -919,12 +923,12 @@ function makeAI() {
 
     // one line under the board
     let hint;
-    if (replayAt !== null) hint = replayAt ? "第 " + replayAt + " 手：" + (replayAt % 2 ? "黑" : "白") + " " + coord(moves[replayAt - 1]) : "从第一手开始看";
-    else if (pending !== null) hint = "再点一下虚影就落子，点别处换位置";
-    else if (over()) hint = "点「复盘」一手一手看这局怎么下的";
-    else if (thinking) hint = moves.length ? "上一手 " + coord(moves[moves.length - 1]) : "这局电脑执黑先下";
-    else if (!moves.length) hint = lastPointer === "touch" || window.matchMedia("(pointer: coarse)").matches ? "点一下出现虚影，再点同一处落子" : "点交叉点落子，也可以用方向键加回车";
-    else hint = "上一手 " + coord(moves[moves.length - 1]) + (cpu ? "" : " · 轮到" + seatName(seatOf(tc)));
+    if (replayAt !== null) hint = replayAt ? "Move " + replayAt + ": " + (replayAt % 2 ? "Black" : "White") + " " + coord(moves[replayAt - 1]) : "Before the first move";
+    else if (pending !== null) hint = "Tap the ghost stone again to place it";
+    else if (over()) hint = "Tap Replay to step through the game";
+    else if (thinking) hint = moves.length ? "Last move " + coord(moves[moves.length - 1]) : "The computer has Black and moves first";
+    else if (!moves.length) hint = lastPointer === "touch" || window.matchMedia("(pointer: coarse)").matches ? "Tap once for a ghost stone, again to place it" : "Click a point, or arrow keys and Enter";
+    else hint = "Move " + (moves.length + 1) + " · last " + coord(moves[moves.length - 1]) + (cpu ? "" : " · " + seatName(seatOf(tc)) + " to play");
     el.hint.textContent = hint;
 
     // below the game
@@ -932,7 +936,7 @@ function makeAI() {
       b.setAttribute("aria-pressed", String(b.dataset.mode === mode));
     });
     if (pendingMode) {
-      el.caption.textContent = "这一局还没下完。再点一次「" + (LEVEL[pendingMode] || "两人") + "」就换对手，这局不计。";
+      el.caption.textContent = "This game isn't finished. Tap " + (LEVEL[pendingMode] || "2 players") + " again to switch; this game won't count.";
       el.caption.classList.add("warn");
     } else {
       el.caption.textContent = CAPTION[mode];
@@ -944,10 +948,10 @@ function makeAI() {
     for (const k of ["cpu1", "cpu2", "cpu3"]) {
       const st = stats[k];
       $("r-" + k + "-w").textContent = st.w; $("r-" + k + "-l").textContent = st.l; $("r-" + k + "-d").textContent = st.d;
-      $("r-" + k + "-b").textContent = st.best ? st.best + " 手" : "—";
+      $("r-" + k + "-b").textContent = st.best ? plural(st.best, "move") : "—";
     }
     const duo = stats.duo, games = duo.a + duo.b + duo.d;
-    el.duoScore.textContent = games ? "两人同屏：" + seatName("A") + " " + duo.a + " : " + duo.b + " " + seatName("B") + (duo.d ? "，和 " + duo.d + " 局" : "") : "两人同屏：还没下完过一局。";
+    el.duoScore.textContent = games ? "Two players: " + seatName("A") + " " + duo.a + " : " + duo.b + " " + seatName("B") + (duo.d ? ", " + duo.d + " drawn" : "") : "Two players: no finished game yet.";
     draw();
   }
 
