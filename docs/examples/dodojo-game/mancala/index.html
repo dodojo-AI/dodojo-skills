@@ -1,0 +1,1235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../../assets/dodojo-runtime.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="dodojo-page-id" content="mancala-kalah-6x4">
+<title>Mancala</title>
+<style>
+/* layout: two name plates, the carved board, the line under it, the controls and the language switch; then how to play, opponent, record, moves and the full rules. From 880px the reading parts sit beside the board. */
+/* play area: one block of honey-coloured iroko, oiled, its twelve pits and two stores scooped out; each count burnt into the wood beside its hollow; seeds are river pebbles in bone, sand, ash and slate. Drawn on the wood: burnt-umber numbers #26150a and chalk marks #fff1cf with a dark edge (last move, keyboard cursor, landing hint). The wood stays wood in dark mode, one shade dimmer. */
+/* page: neutrals on dodojo's tokens; one accent, adire indigo, for the controls and the lit plate of the player to move. Type: the system UI face with tabular figures; no display face. */
+:root {
+  --paper: var(--dodojo-bg, #f3f1ec);
+  --panel: var(--dodojo-surface, #ffffff);
+  --ink: var(--dodojo-fg, #1e1b17);
+  --soft: var(--dodojo-muted-fg, #645e55);
+  --line: var(--dodojo-border, rgba(30, 27, 23, .14));
+  --accent: #2c4c84;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(44, 76, 132, .10);
+  --radius: var(--dodojo-radius, 10px);
+}
+:root[data-dodojo-theme="dark"] {
+  --paper: var(--dodojo-bg, #141312);
+  --panel: var(--dodojo-surface, #1d1c1a);
+  --ink: var(--dodojo-fg, #eceae6);
+  --soft: var(--dodojo-muted-fg, #a8a39b);
+  --line: var(--dodojo-border, rgba(236, 234, 230, .14));
+  --accent: #a9bfee;
+  --accent-ink: #0e1626;
+  --accent-soft: rgba(169, 191, 238, .14);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dodojo-theme]) {
+    --paper: #141312; --panel: #1d1c1a; --ink: #eceae6; --soft: #a8a39b;
+    --line: rgba(236, 234, 230, .14); --accent: #a9bfee; --accent-ink: #0e1626; --accent-soft: rgba(169, 191, 238, .14);
+  }
+}
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink);
+  font: 16px/1.5 var(--dodojo-font-sans, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif); }
+:root:lang(zh) body { font-family: var(--dodojo-font-sans, system-ui, -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif); line-break: strict; }
+:root:lang(ja) body { font-family: var(--dodojo-font-sans, system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif); line-break: strict; }
+:root:lang(zh) .read p, :root:lang(ja) .read p, :root:lang(zh) .read li, :root:lang(ja) .read li { line-height: 1.75; }
+button { font: inherit; color: inherit; }
+button:focus-visible, input:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.page { max-width: 920px; margin: 0 auto; display: grid; gap: 28px; }
+@media (min-width: 880px) { .page { grid-template-columns: minmax(0, 560px) minmax(0, 1fr); align-items: start; gap: 32px; } }
+.play { display: grid; gap: 8px; width: 100%; max-width: 560px; min-width: 0; }
+
+/* status strip: two name plates, the lit one is to move */
+.strip { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; height: 52px; }
+.plate { display: flex; align-items: center; gap: 8px; min-width: 0; height: 52px; padding: 0 10px 0 9px;
+  border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); text-align: left; cursor: default; }
+.plate.sit { cursor: pointer; border-style: dashed; }
+.plate .dot { flex: none; width: 12px; height: 12px; border-radius: 50%; border: 2px solid currentColor; opacity: .55; }
+.plate .who { flex: 1; min-width: 0; display: grid; line-height: 1.2; }
+.plate .nm { font-size: 15px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.plate .sub { font-size: 12px; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 15px; }
+.plate .sc { flex: none; font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.plate.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.plate.on .sub { color: inherit; opacity: .85; }
+.plate.on .dot { background: currentColor; opacity: 1; }
+.plate.think .dot { animation: pulse 1s ease-in-out infinite alternate; }
+@keyframes pulse { from { opacity: 1; } to { opacity: .25; } }
+
+/* the board */
+.boardbox { position: relative; width: 100%; aspect-ratio: 1.6; border-radius: var(--corner, 14px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .06), 0 12px 24px -14px rgba(48, 24, 6, .55); }
+#board { position: absolute; inset: 0; width: 100%; height: 100%; display: block; border-radius: inherit;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent; cursor: pointer; }
+#board:focus { outline: none; }
+#board:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.boardtext { margin: 0; padding: 16px; font-size: 14px; }
+.banner { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: max-content; max-width: 84%;
+  padding: 10px 18px 12px; border-radius: 12px; text-align: center; cursor: pointer;
+  background: rgba(28, 16, 7, .88); color: #fbf0de; box-shadow: 0 10px 28px -10px rgba(0, 0, 0, .6); }
+.banner b { display: block; font-size: 20px; line-height: 1.2; white-space: nowrap; }
+.banner .score { display: block; font-size: 28px; font-weight: 750; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.banner small { display: block; font-size: 12px; opacity: .85; white-space: nowrap; }
+.banner button { margin-top: 8px; min-height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid rgba(251, 240, 222, .5);
+  background: transparent; color: inherit; font-size: 14px; white-space: nowrap; cursor: pointer; }
+
+.msg { margin: 0; height: 22px; line-height: 22px; font-size: 14px; text-align: center; color: var(--soft);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.msg.hot { color: var(--ink); font-weight: 600; }
+
+/* controls: one row, 44px */
+.controls { display: flex; gap: 6px; height: 44px; }
+.controls button { flex: 1 1 auto; min-width: 0; height: 44px; padding: 0 8px; border-radius: var(--radius);
+  border: 1px solid var(--line); background: var(--panel); font-size: 15px; font-weight: 600; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+.controls button.main { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.controls button:disabled { opacity: .42; cursor: default; }
+.controls .icon { flex: 0 0 44px; padding: 0; display: grid; place-items: center; }
+.controls .icon svg { width: 20px; height: 20px; }
+.langs { display: flex; justify-content: center; align-items: center; gap: 0; font-size: 13px; color: var(--soft); }
+.langs button { min-height: 36px; padding: 0 9px; border: 0; background: none; color: var(--soft); cursor: pointer; }
+.langs button[aria-pressed="true"] { color: var(--ink); font-weight: 650; text-decoration: underline 2px var(--accent); text-underline-offset: 5px; }
+
+/* what is read rather than played */
+.read { display: grid; gap: 22px; min-width: 0; }
+.read h2 { margin: 0 0 6px; font-size: 16px; line-height: 1.3; text-wrap: balance; }
+.read p { margin: 0; }
+.read section > * + * { margin-top: 10px; }
+.note { font-size: 14px; color: var(--soft); }
+.seg { display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+.seg button { min-height: 40px; padding: 0 14px; border: 0; border-radius: 9px; background: none; font-size: 15px; white-space: nowrap; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.seg button:disabled { opacity: .45; cursor: default; }
+.rowset { display: flex; flex-wrap: wrap; gap: 8px; }
+.chk { display: flex; gap: 10px; align-items: center; min-height: 44px; font-size: 15px; cursor: pointer; }
+.chk input { width: 20px; height: 20px; accent-color: var(--accent); margin: 0; }
+.plain { min-height: 40px; padding: 0 14px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--panel); cursor: pointer; }
+table.rec { border-collapse: collapse; width: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
+table.rec th, table.rec td { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: right; }
+table.rec th:first-child, table.rec td:first-child { text-align: left; }
+table.rec thead th { font-size: 12px; font-weight: 600; color: var(--soft); letter-spacing: .03em; }
+details { border-top: 1px solid var(--line); padding-top: 10px; }
+summary { cursor: pointer; font-weight: 650; min-height: 32px; }
+ol.moves { margin: 8px 0 0; padding-left: 1.6em; font-variant-numeric: tabular-nums; font-size: 15px; columns: 2 9em; column-gap: 20px; }
+ol.moves li { break-inside: avoid; }
+ol.moves .mv { font-family: var(--dodojo-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace); font-size: 14px; }
+ol.moves .now { background: var(--accent-soft); border-radius: 4px; }
+ol.rules { margin: 8px 0 0; padding-left: 1.3em; }
+ol.rules li + li { margin-top: 6px; }
+@media (prefers-reduced-motion: reduce) { .plate.think .dot { animation: none; } }
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="play">
+    <div class="strip">
+      <button class="plate on" id="plate0" type="button"><span class="dot" aria-hidden="true"></span><span class="who"><span class="nm">You</span><span class="sub">to move</span></span><span class="sc">0</span></button>
+      <button class="plate" id="plate1" type="button"><span class="dot" aria-hidden="true"></span><span class="who"><span class="nm">Computer</span><span class="sub">Easy</span></span><span class="sc">0</span></button>
+    </div>
+    <div class="boardbox" id="boardbox">
+      <canvas id="board" tabindex="0" aria-label="Mancala board. Left and right arrow keys choose a pit, Enter sows it."><p class="boardtext">A Kalah board: six pits on each side with four seeds in each, and a store at each end.</p></canvas>
+      <div class="banner" id="banner" hidden></div>
+    </div>
+    <p class="msg" id="msg" aria-live="polite">Your move: tap a pit on your side</p>
+    <div class="controls" id="controls">
+      <button type="button" id="bMain" class="main">New game</button>
+      <button type="button" id="bUndo" disabled>Undo</button>
+      <button type="button" id="bReview" hidden>Review</button>
+      <button type="button" id="bSound" class="icon" aria-pressed="true" aria-label="Sound"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="w" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="x" d="M17 9l5 6M22 9l-5 6" hidden/></svg></button>
+    </div>
+    <div class="langs" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button><span aria-hidden="true">·</span><button type="button" data-lang="zh" aria-pressed="false" lang="zh-CN">中文</button><span aria-hidden="true">·</span><button type="button" data-lang="ja" aria-pressed="false" lang="ja">日本語</button>
+    </div>
+  </div>
+
+  <div class="read">
+    <section>
+      <h2 data-t="howTitle">How to play · Kalah, 6 pits × 4 seeds</h2>
+      <p data-t="howBody">Tap a pit on your side to sow its seeds counterclockwise, one per pit. Last seed in your store: go again. Last seed in an empty pit of yours: capture the pit opposite. Most seeds in your store wins.</p>
+    </section>
+
+    <section>
+      <h2 data-t="oppTitle">Opponent</h2>
+      <div class="rowset">
+        <div class="seg" role="group" aria-label="Opponent" id="modes">
+          <button type="button" data-mode="cpu" aria-pressed="true" data-t="modeCpu">Computer</button>
+          <button type="button" data-mode="two" aria-pressed="false" data-t="modeTwo">Two players</button>
+        </div>
+        <div class="seg" role="group" aria-label="Level" id="lvls">
+          <button type="button" data-lvl="1" aria-pressed="true" data-t="lvl1">Easy</button>
+          <button type="button" data-lvl="2" aria-pressed="false" data-t="lvl2">Medium</button>
+          <button type="button" data-lvl="3" aria-pressed="false" data-t="lvl3">Hard</button>
+        </div>
+      </div>
+      <p class="note" id="setNote" hidden></p>
+      <label class="chk"><input type="checkbox" id="hint"> <span data-t="hintLabel">Show where the last seed lands</span></label>
+      <p class="note" data-t="seatNote">Two phones: in a dodojo team space, each of you taps a name plate to take that seat and plays from your own phone. Elsewhere you take turns on one device.</p>
+      <button type="button" class="plain" id="bLeave" hidden data-t="leave">Leave my seat</button>
+    </section>
+
+    <section>
+      <h2 data-t="recTitle">Record</h2>
+      <table class="rec">
+        <thead><tr><th data-t="recAgainst">Against</th><th data-t="recWon">Won</th><th data-t="recLost">Lost</th><th data-t="recDrawn">Drawn</th><th data-t="recBest">Best</th></tr></thead>
+        <tbody>
+          <tr><td data-t="lvl1">Easy</td><td id="r1w">0</td><td id="r1l">0</td><td id="r1d">0</td><td id="r1b">–</td></tr>
+          <tr><td data-t="lvl2">Medium</td><td id="r2w">0</td><td id="r2l">0</td><td id="r2d">0</td><td id="r2b">–</td></tr>
+          <tr><td data-t="lvl3">Hard</td><td id="r3w">0</td><td id="r3l">0</td><td id="r3d">0</td><td id="r3b">–</td></tr>
+        </tbody>
+      </table>
+      <p class="note" id="recTwo" data-t="recTwo">Two players: South 0, North 0, drawn 0.</p>
+    </section>
+
+    <details id="movesBox">
+      <summary data-t="movesTitle">Moves this game</summary>
+      <ol class="moves" id="moves"></ol>
+      <p class="note" data-t="movesNote">Pits a–f (South) and A–F (North), each counted from its owner's left. + is an extra turn, × a capture.</p>
+    </details>
+
+    <details>
+      <summary data-t="rulesTitle">Full rules: Kalah (6 pits, 4 seeds)</summary>
+      <ol class="rules" data-t="rulesBody">
+        <li>The board has six pits on each side and a store at each end. Your pits are the row nearest you; your store is on your right.</li>
+        <li>Each pit starts with 4 seeds, 48 in all. Who moves first alternates from game to game.</li>
+        <li>On your turn, pick up every seed in one of your pits and sow them counterclockwise, one per pit, into your own store but never your opponent's.</li>
+        <li>If your last seed lands in your store, you take another turn.</li>
+        <li>If your last seed lands in an empty pit on your side and the pit opposite holds seeds, you capture both: that seed and the seeds opposite go to your store. (Some sets capture even when the opposite pit is empty; these rules do not.)</li>
+        <li>The game ends as soon as either row is empty. Each player then puts the seeds left on their own side into their own store.</li>
+        <li>Most seeds wins; 24–24 is a draw.</li>
+        <li>Take-backs: against the computer as many as you like, and they are counted; between two people, one each per game, before the other player moves.</li>
+      </ol>
+    </details>
+  </div>
+</main>
+
+<script>
+/* ---------- rules and computer opponent: one self-contained function, also run in a worker ---------- */
+function makeAI() {
+  const STORE = [6, 13], WIN = 10000;
+  const start = () => [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0];
+  function legal(b, side) { const o = side * 7, r = []; for (let i = o; i < o + 6; i++) if (b[i] > 0) r.push(i); return r; }
+  // full move with its path, for the page
+  function play(b, pit, side) {
+    const a = b.slice(), skip = STORE[1 - side], store = STORE[side], path = [];
+    let n = a[pit], pos = pit; a[pit] = 0;
+    while (n > 0) { pos = (pos + 1) % 14; if (pos === skip) continue; a[pos]++; n--; path.push(pos); }
+    let extra = pos === store, cap = null;
+    const own = side ? pos > 6 && pos < 13 : pos < 6;
+    if (!extra && own && a[pos] === 1 && a[12 - pos] > 0) {
+      cap = { at: pos, opp: 12 - pos, n: 1 + a[12 - pos] };
+      a[store] += cap.n; a[pos] = 0; a[12 - pos] = 0;
+    }
+    let s = 0, t = 0; for (let i = 0; i < 6; i++) { s += a[i]; t += a[i + 7]; }
+    let sweep = null;
+    if (s === 0 || t === 0) { sweep = [s, t]; for (let i = 0; i < 6; i++) { a[i] = 0; a[i + 7] = 0; } a[6] += s; a[13] += t; extra = false; }
+    return { b: a, path, extra, cap, sweep, over: !!sweep, next: sweep ? -1 : extra ? side : 1 - side };
+  }
+  // lean move for the search: a[14] is the side to move next, 2 when the game is over
+  function sow(b, pit, side) {
+    const a = b.slice(0, 14), skip = side ? 6 : 13, store = side ? 13 : 6;
+    let n = a[pit], pos = pit; a[pit] = 0;
+    while (n > 0) { pos++; if (pos === 14) pos = 0; if (pos === skip) continue; a[pos]++; n--; }
+    let next = pos === store ? side : 1 - side;
+    if (pos !== store && (side ? pos > 6 && pos < 13 : pos < 6) && a[pos] === 1 && a[12 - pos] > 0) {
+      a[store] += 1 + a[12 - pos]; a[pos] = 0; a[12 - pos] = 0;
+    }
+    let s = 0, t = 0; for (let i = 0; i < 6; i++) { s += a[i]; t += a[i + 7]; }
+    if (s === 0 || t === 0) { for (let i = 0; i < 6; i++) { a[i] = 0; a[i + 7] = 0; } a[6] += s; a[13] += t; next = 2; }
+    a[14] = next;
+    return a;
+  }
+  function score(a, side) {
+    const me = a[STORE[side]], op = a[STORE[1 - side]];
+    return me > 24 ? WIN + me - op : op > 24 ? -WIN + me - op : me - op;
+  }
+  const settle = (v, depth) => v > WIN / 2 ? v + depth : v < -WIN / 2 ? v - depth : v;
+  function ordered(a, side) {        // moves that end in the store first, then from the store end
+    const o = side * 7, first = [], rest = [];
+    for (let i = o + 5; i >= o; i--) { const n = a[i]; if (!n) continue; const d = o + 6 - i; (n === d || n === d + 13 ? first : rest).push(i); }
+    return first.concat(rest);
+  }
+  let nodes = 0, deadline = Infinity, stop = false;
+  function search(a, side, depth, alpha, beta) {
+    const e = score(a, side);
+    if (e > WIN / 2 || e < -WIN / 2) return settle(e, depth);
+    if (depth <= 0) return e;
+    if ((++nodes & 1023) === 0 && Date.now() > deadline) stop = true;
+    if (stop) return 0;
+    let best = -Infinity;
+    for (const i of ordered(a, side)) {
+      const c = sow(a, i, side), nx = c[14];
+      const v = nx === 2 ? settle(score(c, side), depth) : nx === side ? search(c, side, depth - 1, alpha, beta) : -search(c, 1 - side, depth - 1, -beta, -alpha);
+      if (v > best) best = v;
+      if (v > alpha) alpha = v;
+      if (alpha >= beta) break;
+    }
+    return best === -Infinity ? e : best;
+  }
+  function rank(a, side, depth) {    // exact scores for every move that could be best
+    const out = []; let best = -Infinity;
+    for (const i of ordered(a, side)) {
+      const c = sow(a, i, side), nx = c[14];
+      const v = nx === 2 ? settle(score(c, side), depth) : nx === side ? search(c, side, depth - 1, best - 1, Infinity) : -search(c, 1 - side, depth - 1, -Infinity, -(best - 1));
+      if (stop) return null;
+      out.push([i, v]); if (v > best) best = v;
+    }
+    return out;
+  }
+  function rng(seed) {
+    let t = seed >>> 0;
+    return () => { t = (t + 0x6D2B79F5) >>> 0; let r = Math.imul(t ^ (t >>> 15), 1 | t); r ^= r + Math.imul(r ^ (r >>> 7), 61 | r); return ((r ^ (r >>> 14)) >>> 0) / 4294967296; };
+  }
+  // level 1: greedy one move ahead, a third of the time any move, never looks at the reply
+  // level 2: four plies ahead, store difference
+  // level 3: iterative deepening alpha-beta for about 0.3 s
+  function choose(b, side, level, seed) {
+    const R = rng(seed || 1), moves = legal(b, side);
+    if (moves.length <= 1) return moves.length ? moves[0] : -1;
+    const pick = list => list[Math.floor(R() * list.length)];
+    if (level <= 1) {
+      if (R() < 0.34) return pick(moves);
+      const st = STORE[side]; let best = -1, top = [];
+      for (const i of moves) { const c = sow(b, i, side); const g = c[st] - b[st] + (c[14] === side ? 2 : 0); if (g > best) { best = g; top = [i]; } else if (g === best) top.push(i); }
+      return pick(top);
+    }
+    let ranked = null;
+    nodes = 0;
+    if (level === 2) { deadline = Infinity; stop = false; ranked = rank(b, side, 4); }
+    else {
+      const t0 = Date.now();
+      for (let d = 2; d <= 48; d++) {
+        deadline = d <= 5 ? Infinity : t0 + 300; stop = false;
+        const r = rank(b, side, d);
+        if (!r) break;
+        ranked = r;
+        const top = Math.max(...r.map(x => x[1]));
+        if (top > WIN / 2 || Date.now() - t0 > 150) break;
+      }
+    }
+    const top = Math.max(...ranked.map(x => x[1]));
+    return pick(ranked.filter(x => x[1] === top).map(x => x[0]));
+  }
+  return { start, legal, play, sow, choose, STORE };
+}
+/* end AI */
+
+(() => {
+"use strict";
+const AI = makeAI();
+const SEAT = ["S", "N"];
+const TAU = Math.PI * 2;
+const api = window.dodojo || null;
+let extraSave = null;     // keys written in the same setState call as the next game save
+const save = patch => { try { const p = api && api.setState && api.setState(patch); if (p && p.catch) p.catch(() => {}); return p; } catch (e) { return null; } };
+const stored = (() => { try { return (api && api.getState && api.getState()) || {}; } catch (e) { return {}; } })();
+const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+
+/* ---------- words ---------- */
+const WORDS = {
+  en: {
+    you: "You", computer: "Computer", south: "South", north: "North", youTag: "you",
+    toMove: "to move", thinking: "thinking…", tapToSit: "tap to sit", waiting: "waiting", seatOpen: "open seat",
+    lvl1: "Easy", lvl2: "Medium", lvl3: "Hard",
+    msgYour: "Your move: tap a pit on your side", msgSide: "{p} to move", msgThinking: "Computer is thinking…",
+    msgExtraYou: "Last seed in your store: go again", msgExtraCpu: "Computer lands in its store: it goes again", msgExtra: "{p} lands in the store: go again",
+    msgCapYou: "You captured {n}", msgCapCpu: "Computer captured {n}", msgCap: "{p} captured {n}",
+    msgEmpty: "That pit is empty", msgNotYours: "Sow from your own row", msgWait: "Waiting for {p}", msgWatch: "Watching {a} and {b}",
+    msgSeats: "Tap a name plate to play from this phone", msgSeating: "Waiting for a second player",
+    msgAsk: "{p} asks for a new game", msgAsked: "Asked for a new game…", msgRaced: "Someone acted first; the board is up to date",
+    msgUndoUsed: "{p} already took back a move", msgUndone: "Took back a move", msgSitOut: "Two players are seated; the computer sits out",
+    msgReview: "Move {k} of {n}", msgStartPos: "The start of the game", msgAgain: "Tap again to start over",
+    youWin: "You win", cpuWins: "Computer wins", pWins: "{p} wins", draw: "Draw",
+    bannerTakebacks: "{n} take-backs", bannerTakeback: "1 take-back", newBest: "New best: by {n}", tryLvl: "Try {lvl}", moves: "{n} moves",
+    bNew: "New game", bAgain: "Play again", bUndo: "Undo", bReview: "Review", bDone: "Done", bAgree: "Agree", bKeep: "Keep playing", bConfirm: "Tap again",
+    prev: "Back", next: "Forward", sound: "Sound",
+    boardLabel: "Mancala board. Left and right arrow keys choose a pit, Enter sows it.",
+    noteNext: "Starts with the next game.", recTwoTpl: "Two players: South {s}, North {n}, drawn {d}."
+  },
+  zh: {
+    you: "你", computer: "电脑", south: "南方", north: "北方", youTag: "你",
+    toMove: "该走了", thinking: "思考中…", tapToSit: "点此入座", waiting: "等待中", seatOpen: "空位",
+    lvl1: "简单", lvl2: "中等", lvl3: "困难",
+    msgYour: "轮到你：点你这一侧的坑", msgSide: "轮到{p}", msgThinking: "电脑在思考…",
+    msgExtraYou: "最后一颗落进你的仓：再走一次", msgExtraCpu: "电脑落进自己的仓：再走一次", msgExtra: "{p}落进仓里：再走一次",
+    msgCapYou: "你吃掉 {n} 颗", msgCapCpu: "电脑吃掉 {n} 颗", msgCap: "{p}吃掉 {n} 颗",
+    msgEmpty: "这个坑是空的", msgNotYours: "只能从你这一侧的坑播子", msgWait: "等待{p}", msgWatch: "正在观战：{a} 对 {b}",
+    msgSeats: "点名牌，就能用这部手机入座", msgSeating: "等待另一位玩家",
+    msgAsk: "{p}想开新局", msgAsked: "已请求开新局…", msgRaced: "对方先动了一步，棋盘已更新",
+    msgUndoUsed: "{p}本局已经悔过棋", msgUndone: "已悔一步", msgSitOut: "两位玩家已入座，电脑不参与",
+    msgReview: "第 {k} 步，共 {n} 步", msgStartPos: "开局", msgAgain: "再点一次就重新开始",
+    youWin: "你赢了", cpuWins: "电脑赢了", pWins: "{p}赢了", draw: "平局",
+    bannerTakebacks: "悔棋 {n} 次", bannerTakeback: "悔棋 1 次", newBest: "新纪录：赢 {n} 颗", tryLvl: "试试{lvl}", moves: "{n} 步",
+    bNew: "新局", bAgain: "再来一局", bUndo: "悔棋", bReview: "复盘", bDone: "完成", bAgree: "同意", bKeep: "继续下", bConfirm: "确定？",
+    prev: "上一步", next: "下一步", sound: "声音",
+    boardLabel: "播棋棋盘。左右方向键选坑，回车键播子。",
+    noteNext: "从下一局开始生效。", recTwoTpl: "双人：南方 {s} 胜，北方 {n} 胜，平 {d}。",
+    howTitle: "玩法 · Kalah 规则，每边 6 坑、每坑 4 子",
+    howBody: "点你这一侧的一个坑，把里面的子按逆时针一个一个播出去。最后一颗落进自己的仓：再走一次。落进自己这边的空坑：吃掉对面坑里的子。仓里子多的人赢。",
+    oppTitle: "对手", modeCpu: "电脑", modeTwo: "双人", hintLabel: "提示最后一颗子落在哪里",
+    seatNote: "两部手机：在 dodojo 团队空间里，各自点一个名牌入座，就能用自己的手机对战。其他地方在同一台设备上轮流走。",
+    leave: "离座", recTitle: "战绩", recAgainst: "对手", recWon: "胜", recLost: "负", recDrawn: "平", recBest: "最大胜差",
+    recTwo: "双人：南方 0 胜，北方 0 胜，平 0。",
+    movesTitle: "本局棋谱", movesNote: "南方的坑记作 a–f，北方记作 A–F，都从坑主人的左手边数起。+ 表示再走一次，× 表示吃子。",
+    rulesTitle: "完整规则：Kalah（每边 6 坑、每坑 4 子）",
+    rulesBody: "<li>棋盘每边 6 个坑，两端各有一个仓。离你近的一排是你的坑，你的仓在你的右手边。</li><li>开局每个坑 4 颗子，共 48 颗。每局轮流先走。</li><li>轮到你时，拿起你一个坑里的全部子，按逆时针一坑一颗地播下去，经过自己的仓也放一颗，但跳过对方的仓。</li><li>最后一颗落进自己的仓，你再走一次。</li><li>最后一颗落进你这边的空坑，而对面的坑里有子，就把这颗和对面的子一起收进你的仓。（有的玩法对面没子也算吃；这里不算。）</li><li>任何一方的一排坑空了，对局立即结束，双方把各自这边剩下的子收进自己的仓。</li><li>仓里子多的赢，24 比 24 为平局。</li><li>悔棋：对电脑不限次数，但会记下次数；两人对局每人每局一次，且要在对方走之前。</li>"
+  },
+  ja: {
+    you: "あなた", computer: "CPU", south: "南", north: "北", youTag: "あなた",
+    toMove: "の番", thinking: "考え中…", tapToSit: "タップで着席", waiting: "待機中", seatOpen: "空席",
+    lvl1: "やさしい", lvl2: "ふつう", lvl3: "つよい",
+    msgYour: "あなたの番:手前のポケットをタップ", msgSide: "{p}の番", msgThinking: "CPUが考え中…",
+    msgExtraYou: "ゴールに入ったのでもう一手", msgExtraCpu: "CPUがゴールに入れてもう一手", msgExtra: "{p}がゴールに入れてもう一手",
+    msgCapYou: "{n}個横取りしました", msgCapCpu: "CPUが{n}個横取り", msgCap: "{p}が{n}個横取り",
+    msgEmpty: "そのポケットは空です", msgNotYours: "自分の側のポケットから", msgWait: "{p}を待っています", msgWatch: "観戦中:{a} 対 {b}",
+    msgSeats: "名札をタップしてこのスマホで着席", msgSeating: "もう一人を待っています",
+    msgAsk: "{p}が新しいゲームを希望", msgAsked: "新しいゲームを申し込みました…", msgRaced: "相手が先に動きました。盤面は最新です",
+    msgUndoUsed: "{p}は待ったを使用済み", msgUndone: "一手戻しました", msgSitOut: "二人が着席中。CPUは休み",
+    msgReview: "{n}手中 {k}手目", msgStartPos: "初期配置", msgAgain: "もう一度タップでやり直し",
+    youWin: "あなたの勝ち", cpuWins: "CPUの勝ち", pWins: "{p}の勝ち", draw: "引き分け",
+    bannerTakebacks: "待った {n} 回", bannerTakeback: "待った 1 回", newBest: "最高記録:{n}個差", tryLvl: "{lvl}に挑戦", moves: "{n}手",
+    bNew: "新しく", bAgain: "もう一度", bUndo: "待った", bReview: "棋譜", bDone: "閉じる", bAgree: "同意", bKeep: "続ける", bConfirm: "本当に?",
+    prev: "前へ", next: "次へ", sound: "音",
+    boardLabel: "マンカラの盤。左右の矢印キーでポケットを選び、Enter でまきます。",
+    noteNext: "次のゲームから変わります。", recTwoTpl: "二人対戦:南 {s} 勝、北 {n} 勝、引き分け {d}。",
+    howTitle: "遊び方・カラハ(6穴・4石)",
+    howBody: "手前のポケットをタップすると、中の石を反時計回りに一つずつまきます。最後の石が自分のゴールに入ったらもう一手。自分側の空のポケットに入ったら、向かいの石を横取り。ゴールの石が多い方の勝ち。",
+    oppTitle: "対戦相手", modeCpu: "コンピューター", modeTwo: "二人で", hintLabel: "最後の石が入る場所を表示",
+    seatNote: "スマホ2台で:dodojo のチームスペースでは、それぞれ名札をタップして席に着けば自分のスマホで対戦できます。それ以外では1台を交代で使います。",
+    leave: "席を立つ", recTitle: "戦績", recAgainst: "相手", recWon: "勝", recLost: "負", recDrawn: "分", recBest: "最大差",
+    recTwo: "二人対戦:南 0 勝、北 0 勝、引き分け 0。",
+    movesTitle: "この対局の棋譜", movesNote: "南のポケットは a–f、北は A–F。どちらも持ち主の左から数えます。+ はもう一手、× は横取り。",
+    rulesTitle: "ルール:カラハ(6穴・4石)",
+    rulesBody: "<li>盤の両側に6つずつポケットがあり、両端にゴールがあります。手前の列が自分のポケット、右端が自分のゴールです。</li><li>はじめは各ポケットに石が4個、全部で48個。先手はゲームごとに交代します。</li><li>自分の番では、自分のポケットを一つ選んで石を全部取り、反時計回りに一つずつまきます。自分のゴールには入れ、相手のゴールは飛ばします。</li><li>最後の石が自分のゴールに入ったら、もう一手。</li><li>最後の石が自分側の空のポケットに入り、向かいのポケットに石があれば横取り:その石と向かいの石を自分のゴールへ。(向かいが空でも取るルールもありますが、ここでは取りません。)</li><li>どちらかの列が空になったら即終了。残った石はそれぞれの持ち主のゴールへ入ります。</li><li>ゴールの石が多い方の勝ち。24対24は引き分け。</li><li>待った:コンピューター相手なら何回でも(回数は記録されます)。二人対戦では一人一回まで、相手が指す前に限ります。</li>"
+  }
+};
+const EN_HTML = {};
+document.querySelectorAll("[data-t]").forEach(el => { EN_HTML[el.dataset.t] = el.innerHTML; });
+function detectLang() {
+  const l = String((navigator.languages && navigator.languages[0]) || navigator.language || "en").toLowerCase();
+  return l.startsWith("zh") ? "zh" : l.startsWith("ja") ? "ja" : "en";
+}
+let lang = detectLang();
+function t(key, vars) {
+  let s = (WORDS[lang] && WORDS[lang][key]) ?? WORDS.en[key] ?? EN_HTML[key] ?? key;
+  if (vars) s = s.replace(/\{(\w+)\}/g, (m, k) => (vars[k] ?? m));
+  return s;
+}
+
+/* ---------- settings and record ---------- */
+const Sx = { mode: "cpu", lvl: 1, snd: true, hint: false, rec: { c1: [0, 0, 0, 0], c2: [0, 0, 0, 0], c3: [0, 0, 0, 0], p: [0, 0, 0] } };
+function parseRec(s) {
+  const rec = { c1: [0, 0, 0, 0], c2: [0, 0, 0, 0], c3: [0, 0, 0, 0], p: [0, 0, 0] };
+  String(s || "").split("|").forEach(part => { const [k, v] = part.split(":"); if (rec[k] && v) v.split(".").forEach((n, i) => { if (i < rec[k].length) rec[k][i] = Math.max(0, parseInt(n, 10) || 0); }); });
+  return rec;
+}
+const recString = rec => Object.keys(rec).map(k => k + ":" + rec[k].join(".")).join("|");
+function loadSettings(st) {
+  if (st.lang === "en" || st.lang === "zh" || st.lang === "ja") lang = st.lang;
+  if (st.mode === "cpu" || st.mode === "two") Sx.mode = st.mode;
+  if ([1, 2, 3].includes(+st.lvl)) Sx.lvl = +st.lvl;
+  if (st.snd != null) Sx.snd = !(st.snd === false || st.snd === 0 || st.snd === "0");
+  if (st.hint != null) Sx.hint = st.hint === true || st.hint === 1 || st.hint === "1";
+  if (typeof st.rec === "string") Sx.rec = parseRec(st.rec);
+}
+loadSettings(stored);
+
+/* ---------- the game: dodojo.game when present, else one device ---------- */
+const other = s => (s === "S" ? "N" : "S");
+function fresh() { return { m: "", u: "", cu: 0, md: Sx.mode === "cpu" ? "c" + Sx.lvl : "p" }; }
+function localGame() {
+  const listeners = [];
+  const blank = (round, first) => ({ round, first, turn: first, status: "playing", winner: null, v: fresh() });
+  const read = st => { try { const o = JSON.parse(st.game || "null"); if (o && o.v && typeof o.v.m === "string" && SEAT.includes(o.first)) return o; } catch (e) {} return null; };
+  let g = read(stored) || blank(1, "S");
+  const persist = () => { const p = Object.assign({ game: JSON.stringify(g) }, extraSave || {}); extraSave = null; save(p); };
+  const emit = () => listeners.forEach(f => { try { f(obj.state); } catch (e) {} });
+  const obj = {
+    get state() {
+      return Object.assign({}, g.v, { seats: SEAT, players: { S: null, N: null }, mine: null, status: g.status, round: g.round, first: g.first,
+        turn: g.turn, myTurn: g.status === "playing", winner: g.winner, restartBy: null, spectator: false, alone: true });
+    },
+    sit: () => Promise.resolve(false), leave: () => Promise.resolve(false), answerRestart: () => Promise.resolve(false),
+    move(patch, o) { o = o || {}; if (g.status !== "playing") return Promise.resolve(false);
+      Object.assign(g.v, patch); if (o.winner) { g.status = "over"; g.winner = o.winner; } else g.turn = o.next || other(g.turn);
+      persist(); emit(); return Promise.resolve(true); },
+    update(patch, o) { o = o || {}; Object.assign(g.v, patch);
+      if (o.turn) { g.turn = o.turn; if (g.status === "over") { g.status = "playing"; g.winner = null; } }
+      persist(); emit(); return Promise.resolve(true); },
+    resign() { g.status = "over"; g.winner = other(g.turn); persist(); emit(); return Promise.resolve(true); },
+    restart() { g = blank(g.round + 1, other(g.first)); persist(); emit(); return Promise.resolve(true); },
+    onChange(f) { listeners.push(f); return () => { const i = listeners.indexOf(f); if (i >= 0) listeners.splice(i, 1); }; },
+    reload(st) { const o = read(st); if (o && JSON.stringify(o) !== JSON.stringify(g)) { g = o; emit(); } }
+  };
+  return obj;
+}
+const realGame = (() => { try { return (api && typeof api.game === "function" && api.game({ seats: SEAT, fresh })) || null; } catch (e) { return null; } })();
+const game = realGame || localGame();
+const vals = st => (st && st.values && typeof st.values === "object") ? st.values : (st || {});
+const playerOf = (st, seat) => { const p = st.players; if (!p) return null; return (Array.isArray(p) ? p[SEAT.indexOf(seat)] : p[seat]) || null; };
+const mySeats = st => { const m = st.mine; return m == null ? [] : Array.isArray(m) ? m.filter(s => SEAT.includes(s)) : SEAT.includes(m) ? [m] : []; };
+
+/* ---------- moves, replay and seed identities ---------- */
+const moveChar = pit => pit < 6 ? "abcdef"[pit] : "ABCDEF"[pit - 7];
+const charPit = c => { const i = "abcdef".indexOf(c); if (i >= 0) return i; const j = "ABCDEF".indexOf(c); return j >= 0 ? 7 + j : -1; };
+function startIds() { const ids = Array.from({ length: 14 }, () => []); let k = 0; for (const p of [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12]) for (let j = 0; j < 4; j++) ids[p].push(k++); return ids; }
+const cloneIds = ids => ids.map(a => a.slice());
+function moveIds(ids, pit, r) {
+  const hand = ids[pit]; ids[pit] = [];
+  for (const to of r.path) ids[to].push(hand.shift());
+  const st = pit < 6 ? 6 : 13;
+  if (r.cap) { ids[st].push(...ids[r.cap.at], ...ids[r.cap.opp]); ids[r.cap.at] = []; ids[r.cap.opp] = []; }
+  if (r.sweep) for (let i = 0; i < 6; i++) { ids[6].push(...ids[i]); ids[i] = []; ids[13].push(...ids[i + 7]); ids[i + 7] = []; }
+}
+function replay(moves, first) {
+  let b = AI.start(), side = first; const ids = startIds(), log = []; let ok = "";
+  for (const ch of moves) {
+    const pit = charPit(ch);
+    if (pit < 0 || side < 0 || (pit < 6 ? 0 : 1) !== side || !b[pit]) break;
+    const r = AI.play(b, pit, side); moveIds(ids, pit, r);
+    log.push({ pit, side, r, ch, n: log.length, ids: cloneIds(ids) });
+    b = r.b; side = r.next; ok += ch;
+  }
+  return { b, side, ids, log, moves: ok, over: side < 0 };
+}
+const winnerSide = b => b[6] > b[13] ? 0 : b[13] > b[6] ? 1 : -1;
+
+/* ---------- state of this device ---------- */
+let st = game.state, L = replay("", 0), shownMoves = null, shownFirst = -1, optimistic = null;
+let review = null;           // { k } while stepping through a finished game
+let armed = 0, newBest = 0, lastRec = null;
+function roles() {
+  const real = !!realGame;
+  const alone = !real || st.alone !== false;
+  const mine = mySeats(st).map(s => SEAT.indexOf(s));
+  const md = String(vals(st).md || "p");
+  const cpu = md[0] === "c" && alone ? Math.min(3, Math.max(1, +md[1] || 1)) : 0;
+  const human = cpu ? (mine.length ? mine[0] : 0) : -1;
+  const cpuSide = cpu ? 1 - human : -1;
+  const spectator = real && (st.spectator === true || (api && api.writable === false));
+  const bottom = mine.length === 1 ? mine[0] : cpu ? human : 0;
+  return { real, alone, mine, md, cpu, human, cpuSide, spectator, bottom, sitOut: md[0] === "c" && !alone };
+}
+let R = roles();
+function canMove(side) {
+  if (review || R.spectator || L.over || side < 0) return false;
+  if (st.status === "over") return false;
+  if (R.alone) return side !== R.cpuSide;
+  return st.status === "playing" && !!st.myTurn && R.mine.includes(side);
+}
+
+/* ---------- geometry ---------- */
+const RATIO = 1.6;
+const canvas = document.getElementById("board"), ctx = canvas.getContext("2d"), box = document.getElementById("boardbox");
+let G = null, size = 0, dpr = 1, flip = false;
+function slots(w, h, r) {
+  const d = r * 2, dy = d * 0.87, pts = [], half = w / 2, m = r * 1.02;
+  for (let row = -20; row <= 20; row++) {
+    const y = row * dy; if (Math.abs(y) > h / 2 - m) continue;
+    for (let col = -6; col <= 6; col++) {
+      const x = (row & 1) ? col * d : (col + 0.5) * d;
+      const into = Math.max(0, Math.abs(y) - (h / 2 - half));
+      if (Math.hypot(x, into) > half - m + 0.01) continue;
+      pts.push([x, y]);
+    }
+  }
+  pts.sort((a, b) => (a[0] * a[0] + a[1] * a[1] * 0.7) - (b[0] * b[0] + b[1] * b[1] * 0.7) || a[1] - b[1] || a[0] - b[0]);
+  return pts;
+}
+function geometry(w) {
+  const h = w / RATIO, padX = w * 0.022, gap = w * 0.008;
+  const pitW = (w - 2 * padX - 7 * gap) / 7.7, storeW = pitW * 0.85;
+  const band = h * 0.095, padY = h * 0.03, mid = h * 0.04;
+  const pitH = (h - 2 * padY - 2 * band - mid) / 2, topY = padY + band, botY = topY + pitH + mid;
+  const colX = c => padX + storeW + gap + c * (pitW + gap);
+  const rects = [];
+  for (let i = 0; i < 6; i++) rects[i] = { x: colX(i), y: botY, w: pitW, h: pitH, row: 1 };
+  rects[6] = { x: w - padX - storeW, y: topY, w: storeW, h: 2 * pitH + mid, row: 1, store: true };
+  for (let i = 7; i < 13; i++) rects[i] = { x: colX(12 - i), y: topY, w: pitW, h: pitH, row: 0 };
+  rects[13] = { x: padX, y: topY, w: storeW, h: 2 * pitH + mid, row: 0, store: true };
+  rects.forEach(r => { r.cx = r.x + r.w / 2; r.cy = r.y + r.h / 2; r.ny = r.row ? h - padY - band / 2 : padY + band / 2; });
+  const rad = Math.min(pitW * 0.165, pitH * 0.088);
+  return { w, h, gap, mid, band, padY, rects, r: rad, corner: Math.max(10, Math.min(20, w * 0.04)), font: Math.min(band * 0.7, 17),
+    pitSlots: slots(pitW, pitH, rad), storeSlots: slots(storeW, 2 * pitH + mid, rad) };
+}
+const rectOf = p => G.rects[flip ? (p + 7) % 14 : p];
+function seedPos(p, k, id) {
+  const r = rectOf(p), list = r.store ? G.storeSlots : G.pitSlots, n = list.length;
+  const layer = Math.floor(k / n), s = list[k % n], shrink = Math.pow(0.8, layer);
+  const j = hash(id * 7 + 3), jx = ((j & 255) / 255 - 0.5) * G.r * 0.22, jy = (((j >> 8) & 255) / 255 - 0.5) * G.r * 0.22;
+  const ox = layer ? (layer & 1 ? 0.5 : -0.5) * G.r : 0, oy = layer ? -0.35 * G.r * layer : 0;
+  return [r.cx + s[0] * shrink + ox + jx, r.cy + s[1] * shrink + oy + jy, layer];
+}
+function hash(x) { x = Math.imul(x ^ (x >>> 16), 0x45d9f3b); x = Math.imul(x ^ (x >>> 16), 0x45d9f3b); return (x ^ (x >>> 16)) >>> 0; }
+function mulberry(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let r = Math.imul(a ^ (a >>> 15), 1 | a); r ^= r + Math.imul(r ^ (r >>> 7), 61 | r); return ((r ^ (r >>> 14)) >>> 0) / 4294967296; }; }
+function pitAt(e) {
+  if (!G) return null;
+  const b = canvas.getBoundingClientRect(), x = e.clientX - b.left, y = e.clientY - b.top;
+  for (const p of [0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12]) {
+    const r = rectOf(p);
+    if (x < r.x - G.gap / 2 || x > r.x + r.w + G.gap / 2) continue;
+    if (r.row ? (y >= r.y - G.mid / 2 && y <= G.h) : (y >= 0 && y <= r.y + r.h + G.mid / 2)) return p;
+  }
+  return null;
+}
+
+/* ---------- materials, drawn once per size ---------- */
+const dark = () => { const d = document.documentElement.dataset.dodojoTheme; return d ? d === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; };
+let woodSprite = null, seedSprites = null;
+function capsule(c, x, y, w, h) { const r = Math.min(w, h) / 2; c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+function roundRect(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+function makeWood() {
+  const cv = document.createElement("canvas"); cv.width = Math.round(G.w * dpr); cv.height = Math.round(G.h * dpr);
+  const c = cv.getContext("2d"); c.scale(dpr, dpr);
+  const w = G.w, h = G.h, rnd = mulberry(1907);
+  roundRect(c, 0, 0, w, h, G.corner); c.save(); c.clip();
+  const base = c.createLinearGradient(0, 0, 0, h);
+  base.addColorStop(0, "#c08752"); base.addColorStop(0.5, "#b27a49"); base.addColorStop(1, "#a06a3d");
+  c.fillStyle = base; c.fillRect(0, 0, w, h);
+  // grain along the length of the block
+  for (let i = 0; i < 120; i++) {
+    const y0 = rnd() * h * 1.1 - h * 0.05, amp = 1 + rnd() * h * 0.025, wl = w * (0.18 + rnd() * 0.5), ph = rnd() * TAU, dark = rnd() < 0.8;
+    c.strokeStyle = dark ? `rgba(84,46,18,${0.05 + rnd() * 0.12})` : `rgba(235,190,140,${0.05 + rnd() * 0.1})`;
+    c.lineWidth = 0.4 + rnd() * (dark ? 1.6 : 1);
+    c.beginPath();
+    for (let x = -4; x <= w + 4; x += 4) { const y = y0 + Math.sin(x / wl * TAU + ph) * amp + Math.sin(x / (wl * 0.31) + ph * 2) * amp * 0.25; x === -4 ? c.moveTo(x, y) : c.lineTo(x, y); }
+    c.stroke();
+  }
+  // a few pores
+  for (let i = 0; i < 260; i++) { c.fillStyle = `rgba(70,36,12,${0.08 + rnd() * 0.12})`; c.fillRect(rnd() * w, rnd() * h, 0.6 + rnd() * 1.6, 0.5); }
+  // soft vignette and an oiled sheen
+  const vg = c.createRadialGradient(w * 0.45, h * 0.35, h * 0.2, w * 0.5, h * 0.5, w * 0.7);
+  vg.addColorStop(0, "rgba(255,230,190,.10)"); vg.addColorStop(1, "rgba(40,18,4,.22)");
+  c.fillStyle = vg; c.fillRect(0, 0, w, h);
+  // the hollows
+  for (let p = 0; p < 14; p++) { const r = G.rects[p]; carve(c, r.x, r.y, r.w, r.h); }
+  c.restore();
+  // the block's edge
+  roundRect(c, 0.75, 0.75, w - 1.5, h - 1.5, G.corner - 0.75); c.lineWidth = 1.5; c.strokeStyle = "rgba(255,226,186,.35)"; c.stroke();
+  roundRect(c, 0.25, 0.25, w - 0.5, h - 0.5, G.corner); c.lineWidth = 0.75; c.strokeStyle = "rgba(48,22,6,.55)"; c.stroke();
+  if (dark()) { roundRect(c, 0, 0, w, h, G.corner); c.fillStyle = "rgba(10,4,0,.16)"; c.fill(); }
+  return cv;
+}
+function carve(c, x, y, w, h) {
+  // the rim catches light on its lower edge, the hollow is shaded from the top
+  capsule(c, x - 0.6, y - 0.2, w + 1.2, h + 1.6); c.fillStyle = "rgba(255,224,182,.32)"; c.fill();
+  capsule(c, x, y, w, h);
+  const g = c.createLinearGradient(0, y, 0, y + h);
+  g.addColorStop(0, "#3a210e"); g.addColorStop(0.35, "#5a3519"); g.addColorStop(1, "#7a4a25");
+  c.fillStyle = g; c.fill();
+  c.save(); capsule(c, x, y, w, h); c.clip();
+  const sh = Math.max(2, w * 0.16);
+  c.shadowColor = "rgba(18,8,0,.75)"; c.shadowBlur = sh * 1.4; c.shadowOffsetY = sh * 0.7; c.shadowOffsetX = sh * 0.15;
+  c.lineWidth = sh * 2; c.strokeStyle = "#000"; capsule(c, x - sh, y - sh, w + 2 * sh, h + 2 * sh); c.stroke();
+  c.shadowColor = "transparent";
+  const lip = c.createLinearGradient(0, y, 0, y + h); lip.addColorStop(0.6, "rgba(255,214,160,0)"); lip.addColorStop(1, "rgba(255,214,160,.28)");
+  c.strokeStyle = lip; c.lineWidth = 1.4; capsule(c, x + 0.7, y + 0.7, w - 1.4, h - 1.4); c.stroke();
+  c.restore();
+}
+const PEBBLES = ["#e7ddcb", "#d5bf9b", "#bcb5a9", "#949a96", "#c9cdcb", "#cdb08a"];
+function makeSeeds() {
+  const r = G.r, s = Math.ceil(r * 3.2), out = [];
+  for (let k = 0; k < PEBBLES.length * 4; k++) {
+    const col = PEBBLES[k % PEBBLES.length], shape = Math.floor(k / PEBBLES.length);
+    const cv = document.createElement("canvas"); cv.width = cv.height = Math.ceil(s * dpr);
+    const c = cv.getContext("2d"); c.scale(dpr, dpr);
+    const cx = s / 2, cy = s / 2 - r * 0.12, rx = r * (1.06 - shape * 0.02), ry = r * (0.9 + shape * 0.03), rot = shape * 0.8 - 0.6;
+    const shadow = c.createRadialGradient(cx + r * 0.15, cy + r * 0.42, r * 0.2, cx + r * 0.15, cy + r * 0.42, r * 1.25);
+    shadow.addColorStop(0, "rgba(14,6,0,.55)"); shadow.addColorStop(1, "rgba(14,6,0,0)");
+    c.fillStyle = shadow; c.beginPath(); c.ellipse(cx + r * 0.15, cy + r * 0.42, r * 1.25, r * 1.05, rot, 0, TAU); c.fill();
+    const g = c.createRadialGradient(cx - rx * 0.38, cy - ry * 0.45, r * 0.08, cx, cy, r * 1.12);
+    g.addColorStop(0, shade(col, 0.32)); g.addColorStop(0.5, col); g.addColorStop(1, shade(col, -0.38));
+    c.fillStyle = g; c.beginPath(); c.ellipse(cx, cy, rx, ry, rot, 0, TAU); c.fill();
+    c.strokeStyle = "rgba(30,16,4,.35)"; c.lineWidth = 0.6; c.stroke();
+    c.fillStyle = "rgba(255,255,255,.55)"; c.beginPath(); c.ellipse(cx - rx * 0.38, cy - ry * 0.42, r * 0.26, r * 0.14, -0.5, 0, TAU); c.fill();
+    out.push({ cv, s, ox: s / 2, oy: s / 2 - r * 0.12 });
+  }
+  return out;
+}
+function shade(hex, f) {
+  const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const m = v => Math.round(f >= 0 ? v + (255 - v) * f : v * (1 + f));
+  return `rgb(${m(r)},${m(g)},${m(b)})`;
+}
+function seedSprite(id) { const hsh = hash(id + 11); return seedSprites[(hsh % PEBBLES.length) + PEBBLES.length * ((hsh >> 5) & 3)]; }
+function drawSeed(id, x, y, scale) {
+  const sp = seedSprite(id), s = sp.s * (scale || 1);
+  ctx.drawImage(sp.cv, x - sp.ox * (scale || 1), y - sp.oy * (scale || 1), s, s);
+}
+
+/* ---------- animation ---------- */
+let disp = startIds(), events = [], flights = [], held = null, cur = null, queue = [], raf = 0, idleAt = 0, lastShown = null, landing = {};
+function at(time, fn) { events.push({ time, fn }); events.sort((a, b) => a.time - b.time); }
+function kick() { if (!raf) raf = requestAnimationFrame(loop); }
+function loop(now) {
+  raf = 0;
+  while (events.length && events[0].time <= now) events.shift().fn(now);
+  for (const f of flights) if (now >= f.t0 + f.dur) { f.done = true; land(f); }
+  flights = flights.filter(f => !f.done);
+  draw(now);
+  if (events.length || flights.length) kick();
+}
+function land(f) {
+  landing[f.to] = (landing[f.to] || 1) - 1;
+  disp[f.to].push(f.id);
+  if (f.tick) clack(1700 + (hash(f.id) % 900), f.last ? 0.22 : 0.13);
+}
+function launch(id, from, to, dur, t0, opts) {
+  const k = disp[to].length + (landing[to] = (landing[to] || 0) + 1) - 1;
+  const end = seedPos(to, k, id);
+  flights.push(Object.assign({ id, x0: from[0], y0: from[1], x1: end[0], y1: end[1], to, t0, dur, arc: G.r * 2.2 }, opts || {}));
+}
+const handPos = p => { const r = rectOf(p); return [r.cx, r.cy - G.r * 0.6]; };
+function busy() { return !!cur || queue.length > 0; }
+function runMove(e) {
+  cur = e; lastShown = e; landing = {};
+  const now = performance.now(), n = e.r.path.length;
+  const step = n <= 4 ? 80 : Math.max(26, Math.round(400 / n)), fly = Math.round(step * 1.6) + 50;
+  const start = handPos(e.pit);
+  held = { ids: disp[e.pit].splice(0), x0: start[0], y0: start[1], x1: start[0], y1: start[1], t0: now, dur: 1 };
+  clack(900, 0.1);
+  e.r.path.forEach((to, k) => at(now + k * step, time => {
+    const id = held.ids.shift();
+    const hp = handPos(k ? e.r.path[k - 1] : e.pit), np = handPos(to);
+    held.x0 = hp[0]; held.y0 = hp[1]; held.x1 = np[0]; held.y1 = np[1]; held.t0 = time; held.dur = step;
+    launch(id, hp, to, fly, time, { tick: true, last: k === n - 1 });
+  }));
+  let tEnd = now + (n - 1) * step + fly + 20;
+  const store = e.side ? 13 : 6;
+  if (e.r.cap) {
+    const c = e.r.cap, tc = tEnd + 70;
+    at(tc, time => {
+      held = null; pop();
+      const items = [];
+      [c.at, c.opp].forEach(p => { disp[p].forEach((id, k) => items.push([id, seedPos(p, k, id)])); disp[p] = []; });
+      items.forEach(([id, pos], i) => launch(id, pos, store, 280 + i * 16, time, { arc: G.r * 1.4 }));
+      say(e.side, "cap", c.n);
+    });
+    tEnd = tc + 280 + c.n * 16 + 30;
+  }
+  if (e.r.sweep) {
+    const ts = tEnd + 160;
+    at(ts, time => {
+      held = null; rumble();
+      for (let p = 0; p < 13; p++) {
+        if (p === 6) continue;
+        const items = disp[p].map((id, k) => [id, seedPos(p, k, id)]); disp[p] = [];
+        items.forEach(([id, pos], i) => launch(id, pos, p < 6 ? 6 : 13, 340 + i * 20, time, { arc: G.r * 1.2 }));
+      }
+    });
+    tEnd = ts + 340 + 20 * 14 + 40;
+  }
+  at(tEnd, () => { disp = cloneIds(e.ids); held = null; cur = null; landing = {}; idleAt = performance.now(); afterMove(e, true); pump(); });
+  kick();
+}
+function pump() {
+  if (!cur && queue.length) runMove(queue.shift());
+  else if (!cur) { renderUI(); tryPlayAI(); draw(); }
+}
+function snap() {
+  events = []; flights = []; held = null; cur = null; queue = []; landing = {};
+  disp = review ? (review.k ? cloneIds(L.log[review.k - 1].ids) : startIds()) : cloneIds(L.ids);
+  lastShown = review ? (review.k ? L.log[review.k - 1] : null) : L.log[L.log.length - 1] || null;
+  idleAt = performance.now() - 1000;
+  draw();
+}
+
+/* ---------- drawing ---------- */
+let hover = null, press = null, cursor = null, kbd = false;
+function draw() {
+  if (!G || !woodSprite) return;
+  const c = ctx, now = performance.now();
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.clearRect(0, 0, G.w, G.h);
+  c.drawImage(woodSprite, 0, 0, G.w, G.h);
+  const live = !busy() && !review;
+  // the row that may move now
+  if (live && canMove(L.side)) {
+    for (const p of AI.legal(L.b, L.side)) { const r = rectOf(p); capsule(c, r.x - 1.5, r.y - 1.5, r.w + 3, r.h + 3); c.lineWidth = 1.4; c.strokeStyle = "rgba(255,241,207,.55)"; c.stroke(); }
+  }
+  // hover and press light the hollow
+  const lit = press != null ? press : hover;
+  if (lit != null && live && canMove(L.side) && (lit < 6 ? 0 : 1) === L.side) { const r = rectOf(lit); capsule(c, r.x, r.y, r.w, r.h); c.fillStyle = press != null ? "rgba(255,236,200,.22)" : "rgba(255,236,200,.13)"; c.fill(); }
+  // seeds
+  for (let p = 0; p < 14; p++) {
+    const ids = disp[p];
+    for (let k = 0; k < ids.length; k++) { const pos = seedPos(p, k, ids[k]); drawSeed(ids[k], pos[0], pos[1], 1 + pos[2] * 0.02); }
+  }
+  // counts burnt into the wood
+  const rot = R.cpu === 0 && R.alone;    // two people on one device: the far row reads the right way up for its owner
+  for (let p = 0; p < 14; p++) {
+    const r = rectOf(p), n = disp[p].length, fs = r.store ? G.font * 1.2 : G.font;
+    c.save(); c.translate(r.cx, r.ny); if (rot && r.row === 0) c.rotate(Math.PI);
+    c.font = `${r.store ? 800 : 700} ${fs}px system-ui, -apple-system, "Segoe UI", sans-serif`;
+    c.textAlign = "center"; c.textBaseline = "middle";
+    c.fillStyle = "rgba(255,226,186,.38)"; c.fillText(String(n), 0, 1);
+    c.fillStyle = "#26150a"; c.fillText(String(n), 0, 0);
+    c.restore();
+  }
+  // the last move: a chalk bar under the sown pit's count and a ring where its last seed fell
+  const lm = lastShown;
+  if (lm) {
+    const r = rectOf(lm.pit), bw = G.font * 1.3, by = r.row ? r.ny + G.font * 0.62 : r.ny - G.font * 0.62;
+    chalk(() => { c.beginPath(); c.moveTo(r.cx - bw / 2, by); c.lineTo(r.cx + bw / 2, by); }, 2);
+    if (lm !== cur) { const end = lm.r.cap ? lm.r.cap.at : lm.r.path[lm.r.path.length - 1]; const q = rectOf(end); chalk(() => capsule(c, q.x - 3, q.y - 3, q.w + 6, q.h + 6), 2); }
+  }
+  // landing hint (setting) and keyboard cursor
+  const aim = kbd && cursor != null ? cursor : lit;
+  if (Sx.hint && live && aim != null && canMove(L.side) && (aim < 6 ? 0 : 1) === L.side && L.b[aim]) {
+    const res = AI.play(L.b, aim, L.side), end = res.path[res.path.length - 1], q = rectOf(end);
+    chalk(() => { c.beginPath(); c.arc(q.cx, q.store ? q.cy : q.cy, G.r * 1.25, 0, TAU); }, 2.2, [3, 3]);
+  }
+  if (kbd && cursor != null && !review && document.activeElement === canvas) { const q = rectOf(cursor); chalk(() => capsule(c, q.x - 4.5, q.y - 4.5, q.w + 9, q.h + 9), 3); }
+  // in the hand and in the air
+  if (held && held.ids.length) {
+    const u = Math.min(1, (now - held.t0) / held.dur), x = held.x0 + (held.x1 - held.x0) * u, y = held.y0 + (held.y1 - held.y0) * u - G.r * 0.8;
+    held.ids.forEach((id, i) => { const a = i * 2.4, rr = G.r * 0.75 * Math.sqrt(i); drawSeed(id, x + Math.cos(a) * rr, y + Math.sin(a) * rr * 0.8, 1.1); });
+  }
+  for (const f of flights) {
+    const u = Math.max(0, Math.min(1, (now - f.t0) / f.dur)), e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+    if (u <= 0) continue;
+    drawSeed(f.id, f.x0 + (f.x1 - f.x0) * e, f.y0 + (f.y1 - f.y0) * e - Math.sin(Math.PI * u) * f.arc, 1 + 0.12 * Math.sin(Math.PI * u));
+  }
+}
+function chalk(path, width, dash) {
+  const c = ctx; c.save(); if (dash) c.setLineDash(dash);
+  path(); c.lineWidth = width + 1.6; c.strokeStyle = "rgba(38,18,4,.55)"; c.stroke();
+  path(); c.lineWidth = width; c.strokeStyle = "#fff1cf"; c.stroke();
+  c.restore();
+}
+function resize() {
+  const w = box.clientWidth, d = Math.min(window.devicePixelRatio || 1, 3);
+  if (!w || (w === size && d === dpr && G)) return;
+  size = w; dpr = d;
+  canvas.width = Math.round(w * d); canvas.height = Math.round(w / RATIO * d);
+  G = geometry(w);
+  box.style.setProperty("--corner", G.corner + "px");
+  woodSprite = makeWood(); seedSprites = makeSeeds();
+  if (busy()) snap(); else draw();
+}
+new ResizeObserver(() => requestAnimationFrame(resize)).observe(box);
+const retheme = () => { if (G) { woodSprite = makeWood(); draw(); } };
+window.addEventListener("dodojo-theme-change", retheme);
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", retheme);
+
+/* ---------- sound, made in the page ---------- */
+let audio = null, noise = null;
+function startAudio() {
+  if (!Sx.snd) return null;
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    if (audio.state === "suspended") audio.resume();
+    if (!noise) { noise = audio.createBuffer(1, Math.round(audio.sampleRate * 0.08), audio.sampleRate); const d = noise.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3); }
+  } catch (e) { audio = null; }
+  return audio;
+}
+const ready = () => (Sx.snd && audio && audio.state === "running") ? audio : null;
+function clack(freq, vol) {         // a stone dropped into a wooden cup
+  const a = ready(); if (!a) return;
+  const t0 = a.currentTime + 0.003, g = a.createGain();
+  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol || 0.15, t0 + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.07); g.connect(a.destination);
+  const src = a.createBufferSource(), bp = a.createBiquadFilter(); src.buffer = noise; bp.type = "bandpass"; bp.frequency.value = freq; bp.Q.value = 2.2;
+  src.connect(bp).connect(g); src.start(t0); src.stop(t0 + 0.09);
+}
+function tone(freq, start, len, vol, type) {
+  const a = ready(); if (!a) return;
+  const t0 = a.currentTime + start, o = a.createOscillator(), g = a.createGain();
+  o.type = type || "triangle"; o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t0 + len);
+  o.connect(g).connect(a.destination); o.start(t0); o.stop(t0 + len + 0.02);
+}
+function pop() { clack(600, 0.3); tone(170, 0, 0.18, 0.22, "sine"); }
+function rumble() { for (let i = 0; i < 5; i++) setTimeout(() => clack(1200 + i * 150, 0.1), i * 50); }
+function extraChime() { tone(660, 0, 0.12, 0.05); tone(880, 0.09, 0.14, 0.05); }
+function winNotes() { [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.1, 0.22, 0.09)); }
+function lossNotes() { [440, 370, 311].forEach((f, i) => tone(f, i * 0.12, 0.25, 0.05, "sine")); }
+
+/* ---------- the computer ---------- */
+const local = makeAI();
+let worker = null, job = null, jobSeq = 0;
+try {
+  const src = "const AI=(" + makeAI + ")();onmessage=e=>postMessage({id:e.data.id,move:AI.choose(e.data.b,e.data.side,e.data.level,e.data.seed)})";
+  worker = new Worker(URL.createObjectURL(new Blob([src], { type: "text/javascript" })));
+  worker.onmessage = e => { if (job && e.data.id === job.id) answered(job, e.data.move); };
+  worker.onerror = () => { worker = null; if (job && job.move == null) runHere(job); };
+} catch (e) { worker = null; }
+function runHere(j) { setTimeout(() => { if (job === j) answered(j, local.choose(j.b, j.side, j.level, j.seed)); }, 30); }
+function cancelAI() { job = null; }
+function maybeAI() {
+  if (!R.cpu || review || L.over || st.status === "over" || L.side !== R.cpuSide || R.spectator) { if (job) cancelAI(); return; }
+  const key = L.moves + "|" + st.round;
+  if (job && job.key === key) return;
+  job = { id: ++jobSeq, key, t0: performance.now(), move: null, b: L.b.slice(), side: L.side, level: R.cpu, seed: (Date.now() ^ (L.moves.length * 2654435761)) >>> 0 };
+  if (worker) worker.postMessage({ id: job.id, b: job.b, side: job.side, level: job.level, seed: job.seed }); else runHere(job);
+}
+function answered(j, move) { if (job !== j) return; j.move = move; tryPlayAI(); }
+function tryPlayAI() {
+  const j = job; if (!j || j.move == null || busy()) return;
+  const wait = Math.max(j.t0 + 450, idleAt + 220) - performance.now();
+  if (wait > 0) { setTimeout(tryPlayAI, wait + 5); return; }
+  if (L.moves + "|" + st.round !== j.key || L.side !== j.side) { cancelAI(); maybeAI(); return; }
+  job = null;
+  if (j.move >= 0) commit(j.move);
+}
+
+/* ---------- making a move ---------- */
+function tryMove(pit) {
+  if (review || L.over || pit == null) return;
+  const side = pit < 6 ? 0 : 1;
+  if (R.spectator) return;
+  if (!canMove(L.side)) { if (!R.alone && st.status === "playing") flash(t("msgWait", { p: nameOf(L.side) })); return; }
+  if (side !== L.side) { flash(t("msgNotYours")); clack(400, 0.06); return; }
+  if (!L.b[pit]) { flash(t("msgEmpty")); clack(400, 0.06); return; }
+  commit(pit);
+}
+function commit(pit) {
+  if (busy()) snap();
+  armed = 0;
+  const side = L.side, r = AI.play(L.b, pit, side), m = L.moves + moveChar(pit);
+  const opts = r.over ? { winner: (w => w < 0 ? "draw" : SEAT[w])(winnerSide(r.b)) } : { next: SEAT[r.next] };
+  if (r.over) { const rec = recordResult(r.b, 1); extraSave = { rec: recString(rec) }; }
+  optimistic = m;
+  sync();
+  const roundAt = st.round;
+  game.move({ m }, opts).then(ok => {
+    optimistic = null;
+    if (!ok) { extraSave = null; if (lastRec) { Sx.rec = lastRec; lastRec = null; newBest = 0; } flash(t("msgRaced")); }
+    else if (r.over && realGame) { save({ rec: recString(Sx.rec) }); extraSave = null; }
+    sync();
+  }, () => { optimistic = null; sync(); });
+  void roundAt;
+}
+function recordResult(b, sign) {
+  const md = R.md, w = winnerSide(b);
+  lastRec = JSON.parse(JSON.stringify(Sx.rec));
+  newBest = 0;
+  if (md[0] === "c" && R.cpu) {
+    const row = Sx.rec["c" + R.cpu], h = R.human, margin = b[h ? 13 : 6] - b[h ? 6 : 13];
+    if (w < 0) row[2] += sign; else if (w === h) row[0] += sign; else row[1] += sign;
+    if (sign > 0 && w === h && margin > row[3]) { row[3] = margin; newBest = margin; }
+    for (let i = 0; i < 3; i++) row[i] = Math.max(0, row[i]);
+  } else {
+    const row = Sx.rec.p; row[w < 0 ? 2 : w] = Math.max(0, row[w < 0 ? 2 : w] + sign);
+  }
+  return Sx.rec;
+}
+
+/* ---------- undo ---------- */
+function undoPlan() {
+  if (review || !L.log.length || R.spectator) return null;
+  const last = L.log[L.log.length - 1];
+  if (R.cpu) {
+    let k = L.log.length;
+    while (k > 0 && L.log[k - 1].side === R.cpuSide) k--;
+    if (k === 0) return null;
+    return { m: L.moves.slice(0, k - 1), side: L.log[k - 1].side, u: String(vals(st).u || ""), cu: (+vals(st).cu || 0) + 1 };
+  }
+  const seat = SEAT[last.side], used = String(vals(st).u || "");
+  if (!R.alone) { if (!R.mine.includes(last.side) || st.status !== "playing") return null; }
+  if (used.includes(seat)) return { blocked: seat };
+  return { m: L.moves.slice(0, -1), side: last.side, u: used + seat, cu: +vals(st).cu || 0 };
+}
+function undo() {
+  const plan = undoPlan(); if (!plan) return;
+  if (plan.blocked) { flash(t("msgUndoUsed", { p: nameOf(SEAT.indexOf(plan.blocked)) })); return; }
+  cancelAI();
+  if (L.over) { recordResult(L.b, -1); extraSave = { rec: recString(Sx.rec) }; newBest = 0; }
+  game.update({ m: plan.m, u: plan.u, cu: plan.cu }, { turn: SEAT[plan.side] }).then(ok => {
+    if (!ok) { flash(t("msgRaced")); extraSave = null; }
+    else { if (realGame && extraSave) save(extraSave); extraSave = null; flash(t("msgUndone")); }
+    sync();
+  });
+}
+
+/* ---------- new game, seats ---------- */
+function newGame() {
+  if (review) { review = null; }
+  const mid = L.log.length > 0 && !L.over && st.status !== "over";
+  if (mid && R.alone && armed < performance.now()) { armed = performance.now() + 3000; renderUI(); setTimeout(renderUI, 3050); return; }
+  armed = 0; cancelAI();
+  game.restart().then(ok => { if (!ok) flash(t("msgRaced")); sync(); });
+}
+function nameOf(side) {
+  if (R.cpu) return side === R.cpuSide ? t("computer") : t("you");
+  const p = R.real ? playerOf(st, SEAT[side]) : null;
+  if (p && p.name) return p.name;
+  return t(side ? "north" : "south");
+}
+
+/* ---------- reading the shared state ---------- */
+function sync() {
+  st = game.state; R = roles();
+  const v = vals(st), first = Math.max(0, SEAT.indexOf(st.first));
+  const moves = optimistic != null ? optimistic : String(v.m || "");
+  L = replay(moves, first);
+  flip = R.bottom === 1;
+  if (review && review.k > L.log.length) review = null;
+  const grow = shownMoves != null && shownFirst === first && L.moves.length > shownMoves.length && L.moves.startsWith(shownMoves);
+  if (grow && !review && !reduced.matches && !document.hidden && G) {
+    for (let k = shownMoves.length; k < L.log.length; k++) queue.push(L.log[k]);
+  } else if (L.moves !== shownMoves || first !== shownFirst) {
+    snap();
+    if (grow) afterMove(L.log[L.log.length - 1], false);
+  }
+  shownMoves = L.moves; shownFirst = first;
+  if (cursor == null || (cursor < 6 ? 0 : 1) !== L.side || !L.b[cursor]) cursor = AI.legal(L.b, Math.max(0, L.side))[0] ?? null;
+  maybeAI();
+  pump();
+  renderUI();
+}
+game.onChange(() => sync());
+window.addEventListener("dodojo-state-change", e => {
+  const d = (e && e.detail) || {};
+  loadSettings(d);
+  if (!realGame && game.reload) game.reload(d);
+  applyLang(); sync();
+});
+window.addEventListener("dodojo-ready", () => { try { loadSettings(api.getState() || {}); } catch (e) {} applyLang(); sync(); });
+document.addEventListener("visibilitychange", () => { if (document.hidden && busy()) { snap(); pump(); } });
+
+/* ---------- messages ---------- */
+let flashText = "", flashUntil = 0;
+function flash(text, ms) { flashText = text; flashUntil = performance.now() + (ms || 2200); renderUI(); setTimeout(renderUI, (ms || 2200) + 30); }
+function say(side, kind, n) {
+  if (kind === "cap") flash(R.cpu ? t(side === R.cpuSide ? "msgCapCpu" : "msgCapYou", { n }) : t("msgCap", { p: nameOf(side), n }));
+  else if (kind === "extra") flash(R.cpu ? t(side === R.cpuSide ? "msgExtraCpu" : "msgExtraYou") : t("msgExtra", { p: nameOf(side) }));
+}
+function afterMove(e, animated) {
+  if (!e) return;
+  if (!animated && e.r.cap) say(e.side, "cap", e.r.cap.n);
+  if (e.r.extra) { say(e.side, "extra"); extraChime(); }
+  if (e.r.over) {
+    const w = winnerSide(e.r.b);
+    if (R.cpu) (w === R.human ? winNotes : w < 0 ? extraChime : lossNotes)(); else winNotes();
+  }
+}
+
+/* ---------- the page around the board ---------- */
+const $ = id => document.getElementById(id);
+const plates = [$("plate0"), $("plate1")], msg = $("msg"), banner = $("banner");
+const bMain = $("bMain"), bUndo = $("bUndo"), bReview = $("bReview"), bSound = $("bSound");
+let ctl = "play";
+function resultLine() {
+  const b = L.b, w = winnerSide(b);
+  if (R.cpu) { const h = R.human, a = b[h ? 13 : 6], o = b[h ? 6 : 13]; return { head: w < 0 ? t("draw") : w === h ? t("youWin") : t("cpuWins"), score: `${a}–${o}`, won: w === h }; }
+  const hi = Math.max(b[6], b[13]), lo = Math.min(b[6], b[13]);
+  return { head: w < 0 ? t("draw") : t("pWins", { p: nameOf(w) }), score: `${hi}–${lo}`, won: false };
+}
+function renderUI() {
+  if (!G && !L) return;
+  const over = L.over, idle = !busy();
+  const left = R.bottom, right = 1 - left;
+  // plates
+  [left, right].forEach((side, i) => {
+    const el = plates[i], seat = SEAT[side], p = R.real ? playerOf(st, seat) : null;
+    const open = R.real && !p && !R.mine.length && !R.cpu;
+    const toMove = !over && !review && L.side === side;
+    const thinking = toMove && R.cpu && side === R.cpuSide;
+    let sub = "";
+    if (R.cpu && side === R.cpuSide) sub = thinking ? t("thinking") : t("lvl" + R.cpu);
+    else if (open && Sx.mode === "two") sub = t("tapToSit");
+    else if (R.real && !p && !R.cpu && Sx.mode === "two" && R.mine.length) sub = t("seatOpen");
+    else if (R.real && p && R.mine.includes(side) && !R.alone) sub = t("youTag") + (toMove ? " · " + t("toMove") : "");
+    else if (toMove) sub = t("toMove");
+    el.querySelector(".nm").textContent = nameOf(side);
+    el.querySelector(".sub").textContent = sub;
+    el.querySelector(".sc").textContent = String(disp[side ? 13 : 6].length);
+    el.classList.toggle("on", toMove);
+    el.classList.toggle("think", thinking);
+    el.classList.toggle("sit", open && Sx.mode === "two");
+    el.dataset.side = side;
+    el.setAttribute("aria-label", `${nameOf(side)}: ${disp[side ? 13 : 6].length}${toMove ? ", " + t("toMove") : ""}`);
+  });
+  // the line under the board
+  let text = "", hot = false;
+  const now = performance.now();
+  if (review) { text = review.k ? t("msgReview", { k: review.k, n: L.log.length }) + " · " + (L.log[review.k - 1].ch + (L.log[review.k - 1].r.extra ? "+" : "") + (L.log[review.k - 1].r.cap ? "×" : "")) : t("msgStartPos"); }
+  else if (st.restartBy && !over) { const asker = restartName(); text = mineAsked() ? t("msgAsked") : t("msgAsk", { p: asker }); hot = !mineAsked(); }
+  else if (armed > now) { text = t("msgAgain"); hot = true; }
+  else if (flashUntil > now) { text = flashText; hot = true; }
+  else if (over) { const r = resultLine(); text = `${r.head} ${r.score}`; hot = true; }
+  else if (R.spectator) text = t("msgWatch", { a: nameOf(0), b: nameOf(1) });
+  else if (R.sitOut) text = t("msgSitOut");
+  else if (st.status === "seating") text = t("msgSeating");
+  else if (R.cpu) text = L.side === R.cpuSide ? t("msgThinking") : t("msgYour");
+  else if (!R.alone) text = canMove(L.side) ? t("msgYour") : t("msgWait", { p: nameOf(L.side) });
+  else if (R.real && Sx.mode === "two" && !R.mine.length && !L.log.length) text = t("msgSeats");
+  else text = t("msgSide", { p: nameOf(L.side) });
+  msg.textContent = text; msg.classList.toggle("hot", hot);
+  // controls: the row keeps its height, its buttons change
+  const plan = undoPlan();
+  const asked = st.restartBy && !over && !mineAsked() && R.mine.length && !R.alone;
+  ctl = review ? "review" : asked ? "answer" : over ? "over" : "play";
+  $("controls").querySelectorAll("button:not(#bSound)").forEach(b => { b.hidden = R.spectator; });
+  if (!R.spectator) {
+    if (ctl === "review") {
+      bMain.textContent = "◀"; bMain.setAttribute("aria-label", t("prev")); bMain.classList.remove("main"); bMain.disabled = review.k === 0;
+      bUndo.textContent = "▶"; bUndo.setAttribute("aria-label", t("next")); bUndo.disabled = review.k >= L.log.length; bUndo.hidden = false;
+      bReview.textContent = t("bDone"); bReview.hidden = false; bReview.classList.add("main");
+    } else if (ctl === "answer") {
+      bMain.textContent = t("bAgree"); bMain.removeAttribute("aria-label"); bMain.classList.add("main"); bMain.disabled = false;
+      bUndo.textContent = t("bKeep"); bUndo.removeAttribute("aria-label"); bUndo.disabled = false; bUndo.hidden = false;
+      bReview.hidden = true;
+    } else {
+      bMain.textContent = over ? t("bAgain") : armed > now ? t("bConfirm") : t("bNew"); bMain.removeAttribute("aria-label"); bMain.classList.add("main"); bMain.disabled = false;
+      bUndo.textContent = t("bUndo"); bUndo.removeAttribute("aria-label"); bUndo.hidden = false; bUndo.disabled = !plan;
+      bReview.textContent = t("bReview"); bReview.classList.remove("main"); bReview.hidden = !over;
+    }
+  }
+  bSound.setAttribute("aria-pressed", String(Sx.snd)); bSound.setAttribute("aria-label", t("sound"));
+  bSound.querySelector(".w").toggleAttribute("hidden", !Sx.snd); bSound.querySelector(".x").toggleAttribute("hidden", Sx.snd);
+  // the result, laid on the board once the last seed has settled
+  if (over && idle && !review && !bannerHidden) {
+    const r = resultLine(), bits = [];
+    if (R.cpu) { const cu = +vals(st).cu || 0; bits.push(t("lvl" + R.cpu)); bits.push(t("moves", { n: L.log.length })); if (cu) bits.push(cu === 1 ? t("bannerTakeback") : t("bannerTakebacks", { n: cu })); }
+    else bits.push(t("moves", { n: L.log.length }));
+    let html = `<b>${esc(r.head)}</b><span class="score">${esc(r.score)}</span><small>${esc(bits.join(" · "))}</small>`;
+    if (newBest && r.won) html += `<small>${esc(t("newBest", { n: newBest }))}</small>`;
+    if (R.cpu && r.won && R.cpu < 3) html += `<button type="button" id="bNext">${esc(t("tryLvl", { lvl: t("lvl" + (R.cpu + 1)) }))}</button>`;
+    if (banner.innerHTML !== html) banner.innerHTML = html;
+    banner.hidden = false;
+  } else banner.hidden = true;
+  // settings, record, moves
+  document.querySelectorAll("#modes button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === Sx.mode)));
+  document.querySelectorAll("#lvls button").forEach(b => { b.setAttribute("aria-pressed", String(+b.dataset.lvl === Sx.lvl)); b.disabled = Sx.mode !== "cpu"; });
+  const want = Sx.mode === "cpu" ? "c" + Sx.lvl : "p";
+  const note = $("setNote"); note.hidden = want === R.md || !L.log.length || L.over; note.textContent = t("noteNext");
+  $("hint").checked = Sx.hint;
+  $("bLeave").hidden = !(R.real && R.mine.length && (st.status === "over" || R.alone));
+  [1, 2, 3].forEach(l => { const row = Sx.rec["c" + l]; $("r" + l + "w").textContent = row[0]; $("r" + l + "l").textContent = row[1]; $("r" + l + "d").textContent = row[2]; $("r" + l + "b").textContent = row[3] ? "+" + row[3] : "–"; });
+  $("recTwo").textContent = t("recTwoTpl", { s: Sx.rec.p[0], n: Sx.rec.p[1], d: Sx.rec.p[2] });
+  renderMoves();
+  draw();
+}
+let bannerHidden = false, movesKey = "";
+function renderMoves() {
+  const key = L.moves + "|" + lang + "|" + (review ? review.k : -1) + "|" + R.cpu + "|" + R.bottom;
+  if (key === movesKey) return; movesKey = key;
+  const ol = $("moves"); ol.textContent = "";
+  let li = null, prev = -1;
+  L.log.forEach((e, i) => {
+    if (e.side !== prev) { li = document.createElement("li"); const b = document.createElement("b"); b.textContent = nameOf(e.side) + " "; li.appendChild(b); ol.appendChild(li); prev = e.side; }
+    const s = document.createElement("span"); s.className = "mv" + (review && review.k === i + 1 ? " now" : "");
+    s.textContent = e.ch + (e.r.extra ? "+" : "") + (e.r.cap ? "×" + e.r.cap.n : "") + " ";
+    li.appendChild(s);
+  });
+}
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function restartName() { const r = st.restartBy; if (!r) return ""; if (typeof r === "object" && r.name) return r.name; if (SEAT.includes(r)) return nameOf(SEAT.indexOf(r)); return String(r); }
+function mineAsked() { const r = st.restartBy; if (!r) return false; if (typeof r === "object") return api && api.viewer && r.id === api.viewer.id; return SEAT.includes(r) && R.mine.includes(SEAT.indexOf(r)); }
+function applyLang() {
+  document.documentElement.lang = lang === "zh" ? "zh-CN" : lang;
+  document.querySelectorAll("[data-t]").forEach(el => { const k = el.dataset.t; const s = (WORDS[lang] && WORDS[lang][k]) ?? EN_HTML[k]; if (s != null && el.innerHTML !== s) el.innerHTML = s; });
+  document.querySelectorAll(".langs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  canvas.setAttribute("aria-label", t("boardLabel"));
+  movesKey = "";
+}
+
+/* ---------- input ---------- */
+let lastPointer = "mouse";
+canvas.addEventListener("pointerdown", e => {
+  lastPointer = e.pointerType || "mouse"; kbd = false; startAudio();
+  if (L.over && !review) { bannerHidden = !bannerHidden; renderUI(); return; }
+  press = pitAt(e); draw();
+});
+canvas.addEventListener("pointermove", e => {
+  if (e.pointerType === "mouse") { const p = pitAt(e); if (p !== hover) { hover = p; draw(); } }
+  else if (press != null && pitAt(e) !== press) { press = null; draw(); }
+});
+canvas.addEventListener("pointerleave", () => { hover = null; if (lastPointer === "mouse") press = null; draw(); });
+canvas.addEventListener("pointercancel", () => { press = null; draw(); });
+canvas.addEventListener("pointerup", e => {
+  const p = pitAt(e), was = press; press = null;
+  if (was != null && p === was) tryMove(p); else draw();
+});
+function rowPits(side) {      // the pits of a side from screen left to right
+  const bottom = (side === 0) !== flip;
+  return [0, 1, 2, 3, 4, 5].map(c => bottom ? side * 7 + c : side * 7 + 5 - c);
+}
+canvas.addEventListener("keydown", e => {
+  const k = e.key;
+  if (review && (k === "ArrowLeft" || k === "ArrowRight")) { e.preventDefault(); stepReview(k === "ArrowLeft" ? -1 : 1); return; }
+  if (k === "ArrowLeft" || k === "ArrowRight" || k === "a" || k === "d" || k === "A" || k === "D") {
+    e.preventDefault(); kbd = true; startAudio();
+    if (L.side < 0) return;
+    const row = rowPits(L.side), dir = (k === "ArrowLeft" || k === "a" || k === "A") ? -1 : 1;
+    let i = row.indexOf(cursor); if (i < 0) i = dir > 0 ? -1 : 6;
+    for (let s = 0; s < 6; s++) { i = (i + dir + 6) % 6; if (L.b[row[i]]) break; }
+    cursor = row[i]; draw();
+  } else if (k === "Enter" || k === " ") {
+    e.preventDefault(); kbd = true; startAudio();
+    if (L.over) return;
+    tryMove(cursor);
+  }
+});
+canvas.addEventListener("focus", () => { if (kbd) draw(); });
+canvas.addEventListener("blur", () => draw());
+document.addEventListener("pointerdown", () => startAudio(), { capture: true });
+plates.forEach(el => el.addEventListener("click", () => {
+  const side = +el.dataset.side;
+  if (!R.real || R.cpu || R.mine.length || playerOf(st, SEAT[side])) return;
+  game.sit(SEAT[side]).then(ok => { if (!ok) flash(t("msgRaced")); sync(); });
+}));
+bMain.addEventListener("click", () => {
+  if (ctl === "review") return stepReview(-1);
+  if (ctl === "answer") return game.answerRestart(true).then(() => sync());
+  bannerHidden = false; newGame();
+});
+bUndo.addEventListener("click", () => {
+  if (ctl === "review") return stepReview(1);
+  if (ctl === "answer") return game.answerRestart(false).then(() => sync());
+  bannerHidden = false; undo();
+});
+bReview.addEventListener("click", () => {
+  if (ctl === "review") { review = null; snap(); renderUI(); return; }
+  if (!L.over) return;
+  review = { k: L.log.length }; snap(); renderUI(); canvas.focus();
+});
+function stepReview(d) { if (!review) return; review.k = Math.max(0, Math.min(L.log.length, review.k + d)); snap(); renderUI(); }
+bSound.addEventListener("click", () => { Sx.snd = !Sx.snd; save({ snd: Sx.snd }); if (Sx.snd) { startAudio(); clack(2000, 0.12); } renderUI(); });
+banner.addEventListener("click", e => {
+  if (e.target && e.target.id === "bNext") { setLevel(Math.min(3, R.cpu + 1), true); return; }
+  bannerHidden = true; renderUI();
+});
+document.querySelectorAll("#modes button").forEach(b => b.addEventListener("click", () => setMode(b.dataset.mode)));
+document.querySelectorAll("#lvls button").forEach(b => b.addEventListener("click", () => setLevel(+b.dataset.lvl, false)));
+$("hint").addEventListener("change", e => { Sx.hint = e.target.checked; save({ hint: Sx.hint }); draw(); });
+$("bLeave").addEventListener("click", () => { const s = R.mine[0]; if (s == null) return; game.leave(SEAT[s]).then(ok => { if (!ok) flash(t("msgRaced")); sync(); }); });
+document.querySelectorAll(".langs button").forEach(b => b.addEventListener("click", () => { lang = b.dataset.lang; save({ lang }); applyLang(); renderUI(); }));
+function applySettingNow() {
+  const want = Sx.mode === "cpu" ? "c" + Sx.lvl : "p";
+  if (want === R.md) return;
+  if (L.over || st.status === "over") { bannerHidden = false; cancelAI(); game.restart().then(() => sync()); }
+  else if (!L.log.length && R.alone) { cancelAI(); game.update({ md: want }, {}).then(() => sync()); }
+  else renderUI();
+}
+function setMode(m) { if (m !== "cpu" && m !== "two") return; Sx.mode = m; save({ mode: m }); applySettingNow(); }
+function setLevel(l, startNow) { Sx.lvl = l; Sx.mode = "cpu"; save({ lvl: l, mode: "cpu" }); if (startNow) { bannerHidden = false; cancelAI(); game.restart().then(() => sync()); } else applySettingNow(); }
+
+/* ---------- start ---------- */
+applyLang();
+resize();
+sync();
+window.__mancala = { get moves() { return L.moves; }, get side() { return L.side; }, get over() { return L.over; }, get board() { return L.b.slice(); }, get shown() { return disp.map(a => a.length); },
+  words: WORDS, get busy() { return busy(); }, get thinking() { return !!job; }, get cursor() { return cursor; },
+  center(p) { const r = rectOf(p), b = canvas.getBoundingClientRect(); return { x: b.left + r.cx, y: b.top + r.cy }; }, get roles() { return Object.assign({}, R); }, get status() { return st.status; }, ai: AI };
+})();
+</script>
+<script>
+// Outside dodojo, show the attached photos from the folder beside the page.
+if (!window.dodojo) document.querySelectorAll('[src^="attachment:"]').forEach(el => { el.src = el.getAttribute('src').slice(11); });
+</script>
+</body>
+</html>

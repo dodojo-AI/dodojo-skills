@@ -54,9 +54,18 @@ tabletop game:
 - every move kept, and a look taken from the board and pieces (a kaya board,
   slate and shell stones, green felt).
 
-Example: [gomoku on a kaya board](examples/dodojo-game/gomoku/), against the
+Examples: [gomoku on a kaya board](examples/dodojo-game/gomoku/), against the
 computer at three levels or two people on one phone, with replay and a record
-of wins.
+of wins; [mancala on a carved board](examples/dodojo-game/mancala/), Kalah
+rules with seeds sown one by one, three computer levels, and two people on one
+phone or each on their own in a team space.
+
+<p>
+  <img src="examples/dodojo-game/gomoku/preview/cover.jpg" height="240" alt="Gomoku as it opens: a kaya board">
+  <img src="examples/dodojo-game/gomoku/preview/2.jpg" height="240" alt="Gomoku mid-game against the computer">
+  <img src="examples/dodojo-game/mancala/preview/cover.jpg" height="240" alt="Mancala on a carved board">
+  <img src="examples/dodojo-game/mancala/preview/2.jpg" height="240" alt="Mancala: a win against the computer">
+</p>
 
 ### dodojo-party-game
 
@@ -73,9 +82,19 @@ game for two to ten people around one phone:
 - hundreds of prompts written natively for each language, never translated
   word for word.
 
-Example: [Number Bomb](examples/dodojo-party-game/number-bomb/), a bomb box
-with a shrinking range and a fuse, for 2-10 players in English, 中文 and
+Examples: [Number Bomb](examples/dodojo-party-game/number-bomb/), a bomb box
+with a shrinking range and a fuse, for 2-10 players;
+[Odd Word Out](examples/dodojo-party-game/odd-word-out/), a bluffing game in
+sealed envelopes where one or two players' words are only almost the same,
+for 3-10 players with 150 word pairs per language. Both in English, 中文 and
 日本語.
+
+<p>
+  <img src="examples/dodojo-party-game/number-bomb/preview/cover.jpg" height="240" alt="Number Bomb, ready to play">
+  <img src="examples/dodojo-party-game/number-bomb/preview/3.jpg" height="240" alt="Number Bomb: someone hit the bomb">
+  <img src="examples/dodojo-party-game/odd-word-out/preview/cover.jpg" height="240" alt="Odd Word Out: sealed envelopes">
+  <img src="examples/dodojo-party-game/odd-word-out/preview/1.jpg" height="240" alt="Odd Word Out: a secret word, shown while held">
+</p>
 
 ### dodojo-puzzle-game
 
@@ -91,6 +110,13 @@ puzzle to solve alone, one a day or in a pack of levels:
 Example: [Low Tide](examples/dodojo-puzzle-game/low-tide/), picture logic set
 like a tide-table booklet: twelve shore pictures from 5 x 5 to 10 x 10 and a
 new puzzle every day, each proven unique, in English, 中文 and 日本語.
+
+<p>
+  <img src="examples/dodojo-puzzle-game/low-tide/preview/cover.jpg" height="240" alt="Low Tide, level 1">
+  <img src="examples/dodojo-puzzle-game/low-tide/preview/1.jpg" height="240" alt="Low Tide: a hint explains the next step">
+  <img src="examples/dodojo-puzzle-game/low-tide/preview/2.jpg" height="240" alt="Low Tide: a solved picture">
+  <img src="examples/dodojo-puzzle-game/low-tide/preview/3.jpg" height="240" alt="Low Tide: today's puzzle">
+</p>
 
 ### dodojo-arcade-game
 
@@ -110,6 +136,12 @@ spider under a sodium streetlamp that drops on its thread to catch moths and
 climbs away from bats: hold to drop, let go to climb. In English, 中文 and
 日本語.
 
+<p>
+  <img src="examples/dodojo-arcade-game/lamplight-spider/preview/cover.jpg" height="240" alt="Lamplight Spider, ready to play">
+  <img src="examples/dodojo-arcade-game/lamplight-spider/preview/2.jpg" height="240" alt="Lamplight Spider in play">
+  <img src="examples/dodojo-arcade-game/lamplight-spider/preview/3.jpg" height="240" alt="Lamplight Spider: the end of a run">
+</p>
+
 ### dodojo-story-game
 
 [`skills/dodojo-story-game`](skills/dodojo-story-game/SKILL.md) makes a game
@@ -126,6 +158,12 @@ text adventure, or a treasure hunt built from shared memories:
 Example: [The Hollin Frost](examples/dodojo-story-game/hollin-frost/), a 1956
 case file: an insurance adjuster has until four o'clock to find out who let a
 famous orchid freeze. Twenty-nine scenes, two locks and three endings.
+
+<p>
+  <img src="examples/dodojo-story-game/hollin-frost/preview/cover.jpg" height="240" alt="The Hollin Frost: the opening scene">
+  <img src="examples/dodojo-story-game/hollin-frost/preview/2.jpg" height="240" alt="The Hollin Frost: reading the thermograph">
+  <img src="examples/dodojo-story-game/hollin-frost/preview/3.jpg" height="240" alt="The Hollin Frost: the yard">
+</p>
 
 ## Install
 
@@ -179,7 +217,10 @@ made from `examples/<skill>/<case>/`:
 - `meta.json`: `lang`, the request it was given (`prompt`, `prompt_en`),
   `title`, `title_en`, `inputs` and the date the facts were `checked`;
 - `note.md`: `title: …` on the first line, then the Markdown the agent saves
-  into the dodojo Note.
+  into the dodojo Note;
+- `preview/` (optional): `cover.jpg`, the page's top as dodojo's library shows
+  it (400 x 400 CSS px at 2x, light), and `1.jpg`, `2.jpg` … screens of it in
+  use at 390 px wide. The gallery's cards and this README show these.
 
 English examples come first. In the gallery each page runs inside
 `site-src/dodojo-runtime.js`, a stand-in for dodojo's frame (its palette in

@@ -1,0 +1,1292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../../assets/dodojo-runtime.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="dodojo-page-id" content="odd-word-out.v1">
+<title>Odd Word Out</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Oswald:wght@500;700&display=swap">
+<style>
+/* layout: a status strip; the green desk blotter holding the envelopes (it is also the Note's cover); one wide button and a row of small ones; the language switch; then how to play, players, settings, tally, full rules and word lists. From 760px wide the players, settings and tally sit beside the game. */
+/* prop: kraft-paper envelopes with a typed address sticker and a red PRIVATE stamp, a cream index card in typewriter ink that slides out of them, paper ballot slips and a ballot box, all on a green felt desk blotter. Red stamp ink for verdicts, blue ink for the common word. The material keeps its colours in dark mode, only dimmed a step. */
+/* players: ten colours, each with its seat number on a round badge: 1 brick, 2 orange, 3 ochre, 4 green, 5 teal, 6 blue, 7 violet, 8 magenta, 9 brown, 10 slate; one step brighter in dark mode. Colour is never the only cue. */
+/* tokens: paper, panel, ink, soft, line on dodojo's palette; accent = stamp red for the main button and focus; accent-ink on it. */
+/* type: Oswald 700 for the big English word and names; PingFang SC / Hiragino Sans at 800 for Chinese and Japanese; Courier Prime for typed labels and stamps; system tabular figures for counts and the clock. */
+:root {
+  --paper: var(--dodojo-bg, #f3f0e8);
+  --panel: var(--dodojo-surface, #fffdf7);
+  --ink: var(--dodojo-fg, #1f1c17);
+  --soft: var(--dodojo-muted-fg, #686155);
+  --line: var(--dodojo-border, rgba(31, 28, 23, .14));
+  --accent: #a8321f;
+  --accent-ink: #ffffff;
+  --blotter: #2f4b3d; --blotter-2: #233a2e; --blotter-ink: #eef3ea; --blotter-soft: #b9c9bc;
+  --kraft: #c9a36b; --kraft-2: #b48c52; --kraft-3: #d6b47f;
+  --card: #fbf7ea; --type: #1e1b16; --type-soft: #645d50;
+  --red: #b3261e; --blue: #23508e;
+  --p1: #c0392b; --p2: #d9731c; --p3: #b38f00; --p4: #2e8540; --p5: #0f8686;
+  --p6: #2f5fb3; --p7: #6b46b8; --p8: #b4327a; --p9: #8a5a2b; --p10: #46505c;
+  --pi: #ffffff; --pi3: #1e1b16;
+  --ui: var(--dodojo-font-sans, system-ui, -apple-system, "Segoe UI", "PingFang SC", "Hiragino Sans", "Noto Sans SC", "Noto Sans JP", sans-serif);
+  --big: "Oswald", "Arial Narrow", "Roboto Condensed", "PingFang SC", "Hiragino Sans", sans-serif;
+  --typed: "Courier Prime", "Courier New", ui-monospace, monospace;
+  --cjk-sc: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --cjk-jp: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
+}
+:root[data-dodojo-theme="dark"] {
+  --paper: var(--dodojo-bg, #141311);
+  --panel: var(--dodojo-surface, #1f1d1a);
+  --ink: var(--dodojo-fg, #ece9e2);
+  --soft: var(--dodojo-muted-fg, #a59f94);
+  --line: var(--dodojo-border, rgba(236, 233, 226, .14));
+  --accent: #e0644d; --accent-ink: #1b0d09;
+  --blotter: #223a2e; --blotter-2: #182a21; --blotter-ink: #e2eadf; --blotter-soft: #9fb3a5;
+  --kraft: #b08d5c; --kraft-2: #997747; --kraft-3: #bf9d6c;
+  --card: #e9e2cf; --type: #1e1b16; --type-soft: #5b5447;
+  --p1: #ec5f55; --p2: #f39243; --p3: #e0bb2a; --p4: #4cb062; --p5: #2fb3b3;
+  --p6: #6390e6; --p7: #9c7ce8; --p8: #e05ca4; --p9: #c38d58; --p10: #8d9aa9;
+  --pi: #111111; --pi3: #111111;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dodojo-theme]) {
+    --paper: #141311; --panel: #1f1d1a; --ink: #ece9e2; --soft: #a59f94; --line: rgba(236, 233, 226, .14);
+    --accent: #e0644d; --accent-ink: #1b0d09;
+    --blotter: #223a2e; --blotter-2: #182a21; --blotter-ink: #e2eadf; --blotter-soft: #9fb3a5;
+    --kraft: #b08d5c; --kraft-2: #997747; --kraft-3: #bf9d6c;
+    --card: #e9e2cf; --type: #1e1b16; --type-soft: #5b5447;
+    --p1: #ec5f55; --p2: #f39243; --p3: #e0bb2a; --p4: #4cb062; --p5: #2fb3b3;
+    --p6: #6390e6; --p7: #9c7ce8; --p8: #e05ca4; --p9: #c38d58; --p10: #8d9aa9;
+    --pi: #111111; --pi3: #111111;
+  }
+}
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+img { max-width: 100%; height: auto; }
+body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink); font-family: var(--ui); font-size: 16px; line-height: 1.5; }
+:lang(zh), :lang(ja) { line-break: strict; }
+:lang(zh) body, :lang(ja) body { line-height: 1.7; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.app { display: grid; gap: 28px; max-width: 920px; margin: 0 auto; }
+.game, .side { min-width: 0; display: grid; gap: 0; align-content: start; }
+.side { gap: 26px; }
+@media (min-width: 760px) {
+  .app { grid-template-columns: minmax(0, 460px) minmax(0, 1fr); align-items: start; }
+}
+
+/* status strip */
+.strip { height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 12px 0 10px; border-radius: 12px; background: color-mix(in srgb, var(--who-c, var(--soft)) 13%, var(--panel)); border: 1px solid var(--line); border-left: 6px solid var(--who-c, var(--line)); margin-bottom: 10px; overflow: hidden; }
+.strip .who { display: flex; align-items: center; gap: 8px; min-width: 0; font-weight: 700; font-size: 20px; line-height: 1; }
+.strip .sname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.strip .info { flex: 0 0 auto; font-size: 14px; font-weight: 600; color: var(--soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* badges: colour plus seat number */
+.badge { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--pc, var(--soft)); color: var(--pi); font: 700 14px/1 var(--ui); font-variant-numeric: tabular-nums; flex: 0 0 auto; box-shadow: 0 0 0 2px rgba(255, 255, 255, .55); }
+.p1 { --pc: var(--p1); } .p2 { --pc: var(--p2); } .p3 { --pc: var(--p3); color: var(--pi3); } .p4 { --pc: var(--p4); } .p5 { --pc: var(--p5); }
+.p6 { --pc: var(--p6); } .p7 { --pc: var(--p7); } .p8 { --pc: var(--p8); } .p9 { --pc: var(--p9); } .p10 { --pc: var(--p10); }
+
+/* the desk blotter: the play area */
+.desk { position: relative; height: 360px; border-radius: 16px; border: 4px solid var(--who-c, var(--blotter-2)); background-color: var(--blotter);
+  background-image: radial-gradient(rgba(255, 255, 255, .05) 1px, transparent 1.3px), radial-gradient(rgba(0, 0, 0, .1) 1px, transparent 1.3px);
+  background-size: 4px 4px, 5px 5px; background-position: 0 0, 2px 3px; overflow: hidden; color: var(--blotter-ink);
+  user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.view { position: absolute; inset: 0; padding: 12px; display: flex; }
+.stage { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
+.stage.top { justify-content: flex-start; }
+.say { margin: 0; font-size: 20px; font-weight: 700; line-height: 1.3; color: var(--blotter-ink); text-wrap: balance; max-width: 100%; }
+.hint { margin: 0; font-size: 15px; line-height: 1.35; color: var(--blotter-soft); text-wrap: balance; }
+
+/* envelope */
+.env { position: relative; width: min(100%, 290px); aspect-ratio: 1.62; border-radius: 5px; flex: 0 0 auto;
+  background-color: var(--kraft);
+  background-image: repeating-linear-gradient(115deg, rgba(255, 255, 255, .06) 0 2px, transparent 2px 7px), repeating-linear-gradient(28deg, rgba(60, 35, 0, .05) 0 1px, transparent 1px 5px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .25) inset, 0 8px 18px rgba(0, 0, 0, .38); }
+.env::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 56%; background: var(--kraft-2); clip-path: polygon(0 0, 100% 0, 50% 100%); border-radius: 5px 5px 0 0; opacity: .95; }
+.env::after { content: ""; position: absolute; inset: auto 0 0 0; height: 62%; background: linear-gradient(to top, rgba(0, 0, 0, .06), transparent); clip-path: polygon(0 100%, 50% 30%, 100% 100%); }
+.stamp { position: absolute; top: 9%; right: 6%; z-index: 2; transform: rotate(-7deg); border: 2px solid var(--red); color: var(--red); border-radius: 4px; padding: 1px 7px; font: 700 13px/1.3 var(--typed); letter-spacing: .14em; opacity: .88; background: rgba(255, 255, 255, .06); }
+:lang(zh) .stamp, :lang(ja) .stamp { letter-spacing: .2em; font-family: var(--ui); font-weight: 800; }
+.label { position: absolute; z-index: 1; left: 8%; right: 8%; bottom: 9%; min-height: 44%; background: var(--card); color: var(--type); border-radius: 3px; box-shadow: 0 1px 3px rgba(0, 0, 0, .3); padding: 7px 10px; display: flex; flex-direction: column; justify-content: center; gap: 2px; text-align: left; }
+.lab-for { font: 700 12px/1.2 var(--typed); letter-spacing: .18em; color: var(--type-soft); text-transform: uppercase; }
+.lab-title { font: 700 26px/1.05 var(--big); letter-spacing: .04em; color: var(--type); }
+:lang(zh) .lab-title, :lang(ja) .lab-title { font-family: var(--ui); font-weight: 800; letter-spacing: .06em; }
+.lab-line { font: 400 13px/1.3 var(--typed); color: var(--type-soft); }
+:lang(zh) .lab-line, :lang(ja) .lab-line { font-family: var(--ui); }
+.lab-name { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.fitbox { display: block; flex: 1 1 auto; min-width: 0; width: 100%; overflow: hidden; white-space: nowrap; }
+.nm-big { display: inline-block; white-space: nowrap; font: 700 40px/1.1 var(--big); color: var(--type); }
+:lang(zh) .nm-big, :lang(ja) .nm-big { font-family: var(--ui); font-weight: 800; }
+.stack { position: relative; width: min(100%, 290px); }
+.stack .ghost { position: absolute; inset: 0; width: 100%; }
+.stack .ghost::before, .stack .ghost::after { display: none; }
+.stack .g2 { transform: rotate(-6deg) translate(-6px, 6px); filter: brightness(.86); }
+.stack .g1 { transform: rotate(4deg) translate(5px, 3px); filter: brightness(.93); }
+.stack .top { position: relative; }
+.under { margin: 4px 0 0; font: 700 14px/1.3 var(--typed); letter-spacing: .12em; text-transform: uppercase; color: var(--blotter-soft); }
+:lang(zh) .under, :lang(ja) .under { font-family: var(--ui); letter-spacing: .08em; }
+
+/* the secret: an index card slid out of the envelope */
+.secret { position: absolute; inset: 8px; z-index: 5; border-radius: 8px; color: var(--type); padding: 16px 10px 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center;
+  background-color: var(--card);
+  background-image: linear-gradient(to bottom, transparent 46px, rgba(179, 38, 30, .55) 46px 48px, transparent 48px), repeating-linear-gradient(to bottom, transparent 0 31px, rgba(35, 80, 142, .17) 31px 32px);
+  background-position: 0 0, 0 48px; box-shadow: 0 12px 26px rgba(0, 0, 0, .45); animation: slide .14s ease-out; }
+@keyframes slide { from { transform: translateY(24px); } to { transform: none; } }
+.secret .cap { display: flex; align-items: center; gap: 8px; font: 700 13px/1.3 var(--typed); letter-spacing: .16em; text-transform: uppercase; color: var(--type-soft); }
+:lang(zh) .secret .cap, :lang(ja) .secret .cap { font-family: var(--ui); letter-spacing: .06em; font-size: 15px; }
+.secret .fitbox { text-align: center; }
+.w { display: inline-block; white-space: nowrap; font: 700 96px/1.08 var(--big); color: var(--type); }
+.w:lang(zh) { font-family: var(--cjk-sc); font-weight: 800; }
+.w:lang(ja) { font-family: var(--cjk-jp); font-weight: 800; }
+.secret .sub { font-size: 15px; line-height: 1.4; color: var(--type-soft); max-width: 24em; text-wrap: balance; }
+:lang(ja) .say, :lang(ja) .hint, :lang(ja) .title, :lang(ja) .card-line, :lang(ja) .sub { word-break: auto-phrase; }
+
+/* index card on the desk (speaker, results) */
+.card { width: 100%; background: var(--card); color: var(--type); border-radius: 8px; padding: 14px 14px 12px; box-shadow: 0 8px 18px rgba(0, 0, 0, .35); display: flex; flex-direction: column; align-items: stretch; gap: 8px; text-align: left; }
+.card-line { margin: 0; font-size: 15px; line-height: 1.4; color: var(--type-soft); }
+.card-line.strong { color: var(--type); font-weight: 700; }
+.card .title { margin: 0; font-size: 22px; font-weight: 800; line-height: 1.25; color: var(--type); text-wrap: balance; }
+.speak .lab-name { gap: 10px; }
+.speak .badge { width: 34px; height: 34px; font-size: 17px; }
+.clock { display: flex; align-items: center; gap: 10px; }
+.fuse { flex: 1; height: 10px; border-radius: 5px; background: rgba(30, 27, 22, .12); overflow: hidden; }
+.fuse i { display: block; height: 100%; width: 100%; transform-origin: left; background: linear-gradient(90deg, var(--red), #e0874b); border-radius: 5px; }
+.secs { min-width: 3.2em; text-align: right; font: 700 20px/1 var(--ui); font-variant-numeric: tabular-nums; color: var(--type); }
+.secs.out { color: var(--red); }
+.order { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.pip { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; }
+.pip.now { box-shadow: 0 0 0 3px var(--blotter-ink); }
+.pip.done { opacity: .35; }
+.pip .badge { width: 28px; height: 28px; }
+
+/* slips: ballot, peek, show of hands */
+.slips { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
+.slip { position: relative; height: 44px; display: flex; align-items: center; gap: 7px; padding: 0 8px; border: 0; border-radius: 4px; background: var(--card); color: var(--type); text-align: left; box-shadow: 0 2px 4px rgba(0, 0, 0, .3); min-width: 0; touch-action: manipulation; }
+.slip .nm { flex: 1; min-width: 0; font-size: 20px; font-weight: 700; line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.slip .cnt { font: 700 22px/1 var(--ui); font-variant-numeric: tabular-nums; color: var(--red); min-width: 1.2em; text-align: right; }
+.slip.picked { outline: 3px solid var(--red); outline-offset: -3px; }
+.slip.picked::after { content: "✕"; position: absolute; right: 8px; top: 50%; transform: translateY(-50%) rotate(-8deg); font: 700 26px/1 var(--typed); color: var(--red); }
+.slip.picked .nm { padding-right: 24px; }
+
+/* ballot box */
+.box { position: relative; width: 170px; height: 112px; border-radius: 6px; background: linear-gradient(#7b5532, #5d3f24); box-shadow: 0 8px 18px rgba(0, 0, 0, .4), inset 0 2px 0 rgba(255, 255, 255, .15); display: grid; place-items: end center; padding-bottom: 14px; }
+.box .slot { position: absolute; top: 14px; left: 30px; right: 30px; height: 8px; border-radius: 4px; background: #23160b; }
+.box .box-label { background: var(--card); color: var(--type); font: 700 13px/1.2 var(--typed); letter-spacing: .16em; padding: 3px 8px; border-radius: 2px; }
+
+/* the count */
+.counts { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px; }
+.crow { display: flex; align-items: center; gap: 6px; height: 36px; padding: 0 8px; text-align: left; border-radius: 4px; background: rgba(255, 255, 255, .08); min-width: 0; }
+.crow .nm { flex: 1; min-width: 0; font-size: 20px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.crow .cnt { font: 700 22px/1 var(--ui); font-variant-numeric: tabular-nums; }
+.crow.top { background: var(--card); color: var(--type); }
+.crow.top .cnt { color: var(--red); }
+
+/* verdict */
+.outstage { position: relative; width: min(100%, 290px); }
+.outstage .env { width: 100%; }
+.outstage .card { position: absolute; left: 7%; right: 7%; bottom: 26%; width: auto; padding: 12px 12px 14px; gap: 10px; transform: rotate(-1.5deg); }
+.verdict { align-self: flex-start; transform: rotate(-6deg); border: 3px solid currentColor; border-radius: 5px; padding: 2px 10px; font: 700 30px/1.1 var(--big); letter-spacing: .08em; }
+:lang(zh) .verdict, :lang(ja) .verdict { font-family: var(--ui); font-weight: 900; letter-spacing: .12em; }
+.v-C { color: var(--blue); } .v-O, .v-B { color: var(--red); }
+.outstage .nm { font-size: 22px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* result and final */
+.banner { align-self: flex-start; font: 700 24px/1.15 var(--big); letter-spacing: .03em; color: var(--type); }
+:lang(zh) .banner, :lang(ja) .banner { font-family: var(--ui); font-weight: 900; letter-spacing: .04em; }
+.banner.b-o { color: var(--red); } .banner.b-c { color: var(--blue); }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.pw { display: flex; flex-direction: column; gap: 2px; min-width: 0; border-top: 2px solid var(--blue); padding-top: 4px; }
+.pw.odd { border-top-color: var(--red); }
+.pl { font: 700 12px/1.2 var(--typed); letter-spacing: .12em; text-transform: uppercase; color: var(--type-soft); }
+:lang(zh) .pl, :lang(ja) .pl { font-family: var(--ui); letter-spacing: .04em; font-size: 13px; }
+.pw .w { font-size: 40px; }
+.podium { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.podium li { display: flex; align-items: center; gap: 8px; min-width: 0; height: 40px; border-bottom: 1px dashed rgba(30, 27, 22, .2); }
+.podium .place { width: 1.4em; font: 700 22px/1 var(--big); color: var(--type-soft); }
+.podium .nm { flex: 1; min-width: 0; font-size: 22px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.podium .pts { font: 700 24px/1 var(--ui); font-variant-numeric: tabular-nums; }
+
+/* controls */
+.controls { margin-top: 12px; display: grid; gap: 8px; }
+.main { width: 100%; height: 60px; border: 0; border-radius: 12px; background: var(--accent); color: var(--accent-ink); font-size: 19px; font-weight: 750; line-height: 1.1; padding: 0 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; box-shadow: 0 2px 0 rgba(0, 0, 0, .25); }
+.main:active:not(:disabled) { transform: translateY(1px); box-shadow: none; }
+.main:disabled { opacity: .45; cursor: default; }
+.main.is-hold { background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .09) 0 8px, transparent 8px 16px); }
+.row { display: flex; gap: 8px; height: 48px; }
+.row > * { flex: 1 1 0; min-width: 0; }
+.sec { height: 48px; border: 1px solid var(--line); background: var(--panel); border-radius: 10px; font-size: 15px; font-weight: 650; padding: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.sec:disabled { opacity: .45; cursor: default; }
+.row .snd { flex: 0 0 48px; margin-left: auto; display: grid; place-items: center; padding: 0; }
+.snd svg { width: 22px; height: 22px; }
+.step { display: flex; flex: 0 0 auto; height: 48px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); overflow: hidden; }
+.step button { width: 44px; height: 46px; border: 0; background: transparent; font-size: 22px; font-weight: 600; }
+.step button:disabled { opacity: .35; }
+.step .cnt { width: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; gap: 2px; }
+.step .cnt b { font-size: 20px; font-variant-numeric: tabular-nums; }
+.step .cnt small { font-size: 11px; color: var(--soft); }
+.langs { display: flex; justify-content: center; align-items: center; gap: 0; margin-top: 4px; color: var(--soft); font-size: 14px; }
+.langs button { min-height: 44px; padding: 0 10px; border: 0; background: transparent; color: var(--soft); }
+.langs button[aria-pressed="true"] { color: var(--ink); font-weight: 700; text-decoration: underline 2px var(--accent); text-underline-offset: 5px; }
+.langnote { margin: 0; text-align: center; font-size: 14px; color: var(--soft); }
+
+/* what is read */
+h2 { margin: 0 0 8px; font-size: 18px; line-height: 1.3; text-wrap: balance; }
+h3 { margin: 14px 0 6px; font-size: 15px; }
+.how { margin-top: 20px; }
+.how p { margin: 0 0 6px; max-width: 65ch; }
+.side section { min-width: 0; }
+.pcount { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.pcount button { width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); font-size: 22px; }
+.pcount button:disabled { opacity: .35; }
+.pcount b { font-size: 22px; min-width: 1.5em; text-align: center; font-variant-numeric: tabular-nums; }
+.names { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.nrow { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.nrow input { flex: 1; min-width: 0; height: 44px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--ink); padding: 0 10px; font: inherit; font-size: 16px; }
+.note { margin: 8px 0 0; font-size: 14px; color: var(--soft); }
+.set { display: grid; gap: 6px; margin-bottom: 14px; }
+.set-l { font-size: 14px; font-weight: 700; color: var(--soft); }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button { flex: 1 0 auto; min-height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); font-size: 15px; white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); font-weight: 700; }
+.danger { display: flex; flex-wrap: wrap; gap: 8px; }
+.danger button { min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--line); background: transparent; font-size: 15px; }
+.danger button[data-armed] { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+.tally { width: 100%; border-collapse: collapse; }
+.tally td { padding: 8px 4px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.tally .tn { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.tally .tn span { font-size: 20px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tally .tl { display: block; font-size: 14px; color: var(--soft); margin-left: 34px; }
+.tally .tp { text-align: right; font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; width: 3.5em; }
+.tally .tr { width: 1.6em; color: var(--soft); font-weight: 700; font-variant-numeric: tabular-nums; }
+details { border-top: 1px solid var(--line); padding-top: 8px; }
+summary { cursor: pointer; font-weight: 700; min-height: 44px; display: flex; align-items: center; }
+.rules ol { padding-left: 1.3em; margin: 6px 0 0; }
+.rules li { margin-bottom: 8px; max-width: 65ch; }
+.words details { margin-top: 6px; }
+.pairs { columns: 2; column-gap: 20px; padding-left: 2.2em; margin: 0; font-size: 15px; }
+.pairs li { break-inside: avoid; }
+.warn { margin: 0 0 4px; font-size: 14px; color: var(--soft); }
+@media (prefers-reduced-motion: reduce) { .secret { animation: none; } }
+/* the narrowest phones: give names the room */
+@media (max-width: 360px) {
+  .view { padding: 8px; }
+  .slip, .crow { padding: 0 6px; gap: 5px; }
+  .slip .badge, .crow .badge { width: 22px; height: 22px; font-size: 12px; }
+  .slip .cnt, .crow .cnt { font-size: 20px; min-width: 1em; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <main class="game">
+    <div class="strip" id="strip" aria-live="polite">
+      <span class="who"><span id="stripBadge"></span><span class="sname" id="stripName">5 players · Siblings</span></span>
+      <span class="info" id="stripInfo">5 deals</span>
+    </div>
+    <section class="desk" id="desk" aria-label="Table">
+      <div class="view" id="view">
+        <div class="stage">
+          <div class="stack">
+            <div class="env ghost g2"></div><div class="env ghost g1"></div>
+            <div class="env top"><span class="stamp" aria-hidden="true">PRIVATE</span><div class="label"><span class="lab-title">ODD WORD OUT</span><span class="lab-line">5 sealed envelopes. One word is not quite the same.</span></div></div>
+          </div>
+          <p class="under">Siblings level</p>
+        </div>
+      </div>
+      <div class="secret" id="secret" hidden aria-live="off"></div>
+    </section>
+    <div class="controls">
+      <button type="button" class="main" id="main">Deal 5 envelopes</button>
+      <div class="row" id="row"></div>
+    </div>
+    <nav class="langs" id="langs" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button><span aria-hidden="true">·</span><button type="button" data-lang="zh" lang="zh-CN" aria-pressed="false">中文</button><span aria-hidden="true">·</span><button type="button" data-lang="ja" lang="ja" aria-pressed="false">日本語</button>
+    </nav>
+    <p class="langnote" id="langNote" hidden></p>
+    <section class="how" aria-labelledby="howH">
+      <h2 id="howH" data-t="hHow">How to play</h2>
+      <p data-t="how1">Everyone gets a secret word. One or two of you get a word that is almost the same, and nobody knows who.</p>
+      <p data-t="how2">Go round describing your word in one short line, then vote out the player you think has the odd word.</p>
+      <p data-t="how3">Catch every odd one and the civilians win; survive until you are as many as them and the odd side wins.</p>
+    </section>
+  </main>
+
+  <aside class="side">
+    <section id="players" aria-labelledby="playersH">
+      <h2 id="playersH" data-t="hPlayers">Players</h2>
+      <div class="pcount"><button type="button" id="pMinus" aria-label="Fewer players">−</button><b id="pNum">5</b><button type="button" id="pPlus" aria-label="More players">+</button></div>
+      <div class="names" id="names"></div>
+      <p class="note" id="lockedNote" data-t="lockedPlayers" hidden>Players can change between deals.</p>
+    </section>
+
+    <section id="settings" aria-labelledby="settingsH">
+      <h2 id="settingsH" data-t="hSettings">Settings</h2>
+      <div class="set"><span class="set-l" data-t="setLevel">Level</span>
+        <div class="seg" data-set="level"><button type="button" data-v="1" data-t="lv1">Cousins</button><button type="button" data-v="2" data-t="lv2">Siblings</button><button type="button" data-v="3" data-t="lv3">Twins</button><button type="button" data-v="mix" data-t="lvmix">Mixed</button></div>
+        <span class="note" data-t="levelsNote">Cousins: related things. Siblings: close relatives. Twins: near-synonyms people argue about.</span></div>
+      <div class="set"><span class="set-l" data-t="setVote">Voting</span>
+        <div class="seg" data-set="vote"><button type="button" data-v="pass" data-t="votePass">Pass the phone</button><button type="button" data-v="hands" data-t="voteHands">Show of hands</button></div></div>
+      <div class="set"><span class="set-l" data-t="setBlank">Blank player (6+)</span>
+        <div class="seg" data-set="blank"><button type="button" data-v="auto" data-t="blankAuto">Auto: 8+</button><button type="button" data-v="on" data-t="on">On</button><button type="button" data-v="off" data-t="off">Off</button></div></div>
+      <div class="set"><span class="set-l" data-t="setClock">Speaking timer</span>
+        <div class="seg" data-set="clock"><button type="button" data-v="0" data-t="off">Off</button><button type="button" data-v="15" data-t="sec" data-n="15">15 s</button><button type="button" data-v="20" data-t="sec" data-n="20">20 s</button><button type="button" data-v="30" data-t="sec" data-n="30">30 s</button></div></div>
+      <div class="set"><span class="set-l" data-t="setEvening">Evening</span>
+        <div class="seg" data-set="deals"><button type="button" data-v="3" data-t="dealsN" data-n="3">3 deals</button><button type="button" data-v="5" data-t="dealsN" data-n="5">5 deals</button><button type="button" data-v="8" data-t="dealsN" data-n="8">8 deals</button></div></div>
+      <div class="set"><span class="set-l" data-t="setSound">Sound</span>
+        <div class="seg" data-set="sound"><button type="button" data-v="on" data-t="on">On</button><button type="button" data-v="off" data-t="off">Off</button></div></div>
+      <div class="danger"><button type="button" id="endDeal" data-t="endDeal">End this deal</button><button type="button" id="newEvening" data-t="newEvening">New evening</button></div>
+    </section>
+
+    <section id="tally" aria-labelledby="tallyH">
+      <h2 id="tallyH" data-t="hTally">Tonight's tally</h2>
+      <div id="tallyBody"><p class="note" data-t="tallyEmpty">No deals played yet.</p></div>
+    </section>
+
+    <details class="rules">
+      <summary data-t="hRules">Full rules</summary>
+      <ol>
+        <li data-t="r1">Players: 3 to 10. With 3 to 6 players one person gets the odd word; with 7 to 10, two do. From 6 players you can add a blank, who gets no word at all (on by default from 8).</li>
+        <li data-t="r2">The deal: pass the phone round. Each player holds the button, reads their word, lets go and passes on. Nobody knows whether their own word is the odd one; only the blank knows they have none.</li>
+        <li data-t="r3">Describing: the named player starts and it goes round the table. Each says one short line about their word: never the word itself, part of it, a rhyme or a translation. Be vague enough to hide and clear enough to be trusted.</li>
+        <li data-t="r4">Voting by passing the phone: each player opens their ballot alone and picks one name; nobody votes for themselves. Voting by a show of hands: on three everyone points, and the host taps each name once per hand.</li>
+        <li data-t="r5">The player with the most votes goes out and their envelope is opened: civilian, odd one or blank. Their word stays secret.</li>
+        <li data-t="r6">A tie: the tied players each say one more line, then everyone votes again between them only. Tied again: nobody goes out and a new round of describing begins.</li>
+        <li data-t="r7">Winning: the civilians win when every odd one and the blank are out. The odd side wins as soon as they are as many as the civilians still in.</li>
+        <li data-t="r8">Scoring: when the civilians win, every civilian scores 1, in or out. When the odd side wins, every odd one and the blank score 3. After the last deal the most points wins the evening; ties share the place.</li>
+        <li data-t="r9">Breaking the rules: say your word aloud and the table votes you out that round. If someone sees another player's word, end the deal under Settings and deal again.</li>
+        <li data-t="r10">Fair turns: each deal starts one seat further round the table, and a random player describes first.</li>
+      </ol>
+    </details>
+
+    <section class="words" aria-labelledby="wordsH">
+      <h2 id="wordsH" data-t="hWords">Word pairs</h2>
+      <p class="warn" data-t="wordsWarn">Spoilers: don't open these during a game.</p>
+      <details lang="en">
+        <summary>English: 150 pairs</summary>
+        <h3>Cousins: related things</h3>
+        <ol class="pairs" data-lang="en" data-level="1">
+          <li>Coffee / Tea</li><li>Guitar / Ukulele</li><li>Train / Tram</li><li>Pizza / Lasagna</li><li>Sun / Moon</li>
+          <li>Piano / Organ</li><li>Bicycle / Scooter</li><li>Dentist / Doctor</li><li>Rain / Snow</li><li>Lion / Tiger</li>
+          <li>Rose / Tulip</li><li>Pencil / Crayon</li><li>Shower / Bath</li><li>Tennis / Badminton</li><li>Hammer / Wrench</li>
+          <li>Library / Bookshop</li><li>Ketchup / Mustard</li><li>Candle / Lantern</li><li>Socks / Gloves</li><li>Pancakes / Waffles</li>
+          <li>Apple / Pear</li><li>Elevator / Escalator</li><li>Chess / Checkers</li><li>Camping / Picnic</li><li>Zoo / Aquarium</li>
+          <li>Ghost / Zombie</li><li>Pirate / Viking</li><li>Snowman / Scarecrow</li><li>Karaoke / Concert</li><li>Bowling / Darts</li>
+          <li>Toothbrush / Comb</li><li>Magician / Clown</li><li>Volcano / Geyser</li><li>Spider / Ant</li><li>Doughnut / Bagel</li>
+          <li>Kangaroo / Koala</li><li>Carousel / Ferris wheel</li><li>Hiking / Jogging</li><li>Mermaid / Fairy</li><li>Dragon / Dinosaur</li>
+          <li>Penguin / Puffin</li><li>Cereal / Toast</li><li>Garden / Park</li><li>Umbrella / Raincoat</li><li>Lipstick / Nail polish</li>
+          <li>Laptop / Tablet</li><li>Swimming / Surfing</li><li>Skiing / Skating</li><li>Kite / Balloon</li><li>Fireworks / Bonfire</li>
+        </ol>
+        <h3>Siblings: close relatives</h3>
+        <ol class="pairs" data-lang="en" data-level="2">
+          <li>Muffin / Cupcake</li><li>Bee / Wasp</li><li>Sushi / Sashimi</li><li>Castle / Palace</li><li>Crocodile / Alligator</li>
+          <li>Frog / Toad</li><li>Rabbit / Hare</li><li>Butter / Margarine</li><li>Hotel / Hostel</li><li>Jeans / Chinos</li>
+          <li>Cello / Double bass</li><li>Canoe / Kayak</li><li>Sleet / Hail</li><li>Mouse / Rat</li><li>Moth / Butterfly</li>
+          <li>Sweater / Hoodie</li><li>Cinema / Theatre</li><li>Novel / Comic</li><li>Sandals / Flip-flops</li><li>Cheesecake / Tiramisu</li>
+          <li>Lemon / Lime</li><li>Peach / Nectarine</li><li>Scarf / Shawl</li><li>Blender / Mixer</li><li>Microwave / Oven</li>
+          <li>Kettle / Teapot</li><li>Fork / Chopsticks</li><li>Map / Globe</li><li>Letter / Postcard</li><li>Necklace / Bracelet</li>
+          <li>Nurse / Paramedic</li><li>Pilot / Astronaut</li><li>Detective / Spy</li><li>Witch / Wizard</li><li>Cave / Tunnel</li>
+          <li>Robin / Sparrow</li><li>Eagle / Hawk</li><li>Honey / Syrup</li><li>Salsa / Guacamole</li><li>Ballet / Gymnastics</li>
+          <li>Trumpet / Trombone</li><li>Drum / Tambourine</li><li>Helicopter / Drone</li><li>Tractor / Digger</li><li>Strawberry / Raspberry</li>
+          <li>Plum / Cherry</li><li>Cucumber / Courgette</li><li>Ravioli / Dumplings</li><li>Squirrel / Chipmunk</li><li>Jellyfish / Octopus</li>
+        </ol>
+        <h3>Twins: near-synonyms people argue about</h3>
+        <ol class="pairs" data-lang="en" data-level="3">
+          <li>Couch / Sofa</li><li>Jam / Jelly</li><li>Biscuit / Cookie</li><li>Dinner / Supper</li><li>Pasta / Noodles</li>
+          <li>Fog / Mist</li><li>Pond / Lake</li><li>Hill / Mountain</li><li>Wallet / Purse</li><li>Turtle / Tortoise</li>
+          <li>Raisin / Sultana</li><li>Stone / Rock</li><li>Road / Street</li><li>Town / City</li><li>Stream / Creek</li>
+          <li>Jacket / Coat</li><li>Soda / Pop</li><li>Sneakers / Trainers</li><li>Holiday / Vacation</li><li>Grill / Barbecue</li>
+          <li>Soup / Stew</li><li>Pie / Tart</li><li>Brunch / Lunch</li><li>Wood / Forest</li><li>Boat / Ship</li>
+          <li>Clock / Watch</li><li>Chair / Stool</li><li>Cupboard / Wardrobe</li><li>Rug / Carpet</li><li>Blanket / Duvet</li>
+          <li>Pillow / Cushion</li><li>Cap / Hat</li><li>Nap / Snooze</li><li>Shout / Scream</li><li>Boss / Manager</li>
+          <li>Teacher / Tutor</li><li>Chef / Cook</li><li>Fridge / Freezer</li><li>Fries / Chips</li><li>Bun / Roll</li>
+          <li>Path / Trail</li><li>Raven / Crow</li><li>Alley / Lane</li><li>Porridge / Oatmeal</li><li>Mansion / Villa</li>
+          <li>Gift / Present</li><li>Laugh / Giggle</li><li>Puzzle / Riddle</li><li>Song / Tune</li><li>Bucket / Pail</li>
+        </ol>
+      </details>
+      <details lang="zh-CN">
+        <summary>中文：150 对</summary>
+        <h3>表亲：相关的东西</h3>
+        <ol class="pairs" data-lang="zh" data-level="1">
+          <li>烧烤 / 自助餐</li><li>广场舞 / 健身操</li><li>火车 / 飞机</li><li>月饼 / 青团</li><li>春联 / 窗花</li>
+          <li>熊猫 / 考拉</li><li>筷子 / 勺子</li><li>电脑 / 平板</li><li>篮球 / 排球</li><li>嫦娥 / 织女</li>
+          <li>西瓜 / 哈密瓜</li><li>自行车 / 滑板车</li><li>口红 / 指甲油</li><li>牙膏 / 洗面奶</li><li>雨伞 / 雨衣</li>
+          <li>医生 / 护士</li><li>警察 / 保安</li><li>钢琴 / 古筝</li><li>二胡 / 小提琴</li><li>京剧 / 芭蕾</li>
+          <li>春晚 / 庙会</li><li>咖啡 / 绿茶</li><li>可乐 / 橙汁</li><li>空调 / 电风扇</li><li>外卖 / 快递</li>
+          <li>麻将 / 扑克</li><li>象棋 / 围棋</li><li>风筝 / 气球</li><li>长城 / 故宫</li><li>红烧肉 / 糖醋排骨</li>
+          <li>蜡烛 / 灯笼</li><li>老虎 / 狮子</li><li>鲨鱼 / 海豚</li><li>蝴蝶 / 蜻蜓</li><li>剪刀 / 菜刀</li>
+          <li>牙刷 / 梳子</li><li>跳绳 / 踢毽子</li><li>滑雪 / 滑冰</li><li>游泳 / 冲浪</li><li>机器人 / 外星人</li>
+          <li>恐龙 / 大象</li><li>太阳 / 月亮</li><li>彩虹 / 闪电</li><li>动物园 / 水族馆</li><li>毕业照 / 结婚照</li>
+          <li>运动会 / 春游</li><li>电影 / 电视剧</li><li>红绿灯 / 斑马线</li><li>吉他 / 尤克里里</li><li>铅笔 / 橡皮</li>
+        </ol>
+        <h3>兄弟：很近的亲戚</h3>
+        <ol class="pairs" data-lang="zh" data-level="2">
+          <li>饺子 / 锅贴</li><li>包子 / 烧卖</li><li>薯条 / 薯片</li><li>奶茶 / 果茶</li><li>蛋糕 / 蛋挞</li>
+          <li>汉堡 / 肉夹馍</li><li>酸奶 / 牛奶</li><li>土豆 / 山药</li><li>辣条 / 豆干</li><li>洗发水 / 护发素</li>
+          <li>沐浴露 / 香皂</li><li>围巾 / 领带</li><li>电饭煲 / 高压锅</li><li>微波炉 / 烤箱</li><li>吸尘器 / 扫地机</li>
+          <li>出租车 / 网约车</li><li>电动车 / 摩托车</li><li>地铁 / 轻轨</li><li>酒店 / 民宿</li><li>图书馆 / 书店</li>
+          <li>电影院 / 剧场</li><li>演唱会 / 音乐节</li><li>凉面 / 拌面</li><li>粽子 / 年糕</li><li>鸡腿 / 鸡翅</li>
+          <li>结婚 / 订婚</li><li>班长 / 班主任</li><li>演员 / 歌手</li><li>主持人 / 播音员</li><li>武侠 / 仙侠</li>
+          <li>孙悟空 / 六耳猕猴</li><li>蚊子 / 苍蝇</li><li>鸽子 / 麻雀</li><li>金鱼 / 锦鲤</li><li>仓鼠 / 松鼠</li>
+          <li>骆驼 / 羊驼</li><li>鞭炮 / 烟花</li><li>眼镜 / 墨镜</li><li>电梯 / 扶梯</li><li>油条 / 麻花</li>
+          <li>烤鸭 / 烧鹅</li><li>荔枝 / 龙眼</li><li>草莓 / 杨梅</li><li>柠檬 / 青柠</li><li>拖鞋 / 凉鞋</li>
+          <li>口罩 / 面膜</li><li>闹钟 / 挂钟</li><li>冰箱 / 冰柜</li><li>螃蟹 / 龙虾</li><li>鱿鱼 / 章鱼</li>
+        </ol>
+        <h3>双胞胎：吵得起来的近义词</h3>
+        <ol class="pairs" data-lang="zh" data-level="3">
+          <li>汤圆 / 元宵</li><li>葡萄 / 提子</li><li>橘子 / 橙子</li><li>米线 / 米粉</li><li>动车 / 高铁</li>
+          <li>红包 / 压岁钱</li><li>老板 / 领导</li><li>馒头 / 花卷</li><li>豆花 / 豆腐脑</li><li>煎饼 / 烙饼</li>
+          <li>馄饨 / 抄手</li><li>冰淇淋 / 雪糕</li><li>酱油 / 生抽</li><li>陈醋 / 香醋</li><li>小区 / 社区</li>
+          <li>宿舍 / 公寓</li><li>枕头 / 抱枕</li><li>卫生纸 / 纸巾</li><li>毛巾 / 浴巾</li><li>外套 / 夹克</li>
+          <li>卫衣 / 毛衣</li><li>背包 / 书包</li><li>钱包 / 卡包</li><li>手表 / 手环</li><li>耳机 / 音箱</li>
+          <li>充电宝 / 充电器</li><li>加班 / 熬夜</li><li>午睡 / 打盹</li><li>散步 / 遛弯</li><li>聊天 / 唠嗑</li>
+          <li>吵架 / 拌嘴</li><li>发呆 / 走神</li><li>网吧 / 网咖</li><li>小卖部 / 便利店</li><li>菜市场 / 超市</li>
+          <li>小吃 / 零食</li><li>火锅 / 打边炉</li><li>冒菜 / 麻辣烫</li><li>凉粉 / 凉皮</li><li>面包 / 吐司</li>
+          <li>酸菜 / 泡菜</li><li>豆芽 / 豆苗</li><li>香菜 / 芹菜</li><li>西兰花 / 花菜</li><li>樱桃 / 车厘子</li>
+          <li>闺蜜 / 发小</li><li>晚饭 / 夜宵</li><li>沙发 / 躺椅</li><li>被子 / 毯子</li><li>地瓜 / 红薯</li>
+        </ol>
+      </details>
+      <details lang="ja">
+        <summary>日本語：150ペア</summary>
+        <h3>いとこ：関係のあるもの</h3>
+        <ol class="pairs" data-lang="ja" data-level="1">
+          <li>こたつ / ストーブ</li><li>満員電車 / 渋滞</li><li>ラーメン / パスタ</li><li>お花見 / 紅葉狩り</li><li>花火 / 盆踊り</li>
+          <li>年賀状 / 暑中見舞い</li><li>おにぎり / サンドイッチ</li><li>新幹線 / 飛行機</li><li>コンビニ / 自販機</li><li>カラオケ / ボウリング</li>
+          <li>傘 / レインコート</li><li>猫 / たぬき</li><li>パンダ / コアラ</li><li>箸 / スプーン</li><li>歯ブラシ / くし</li>
+          <li>掃除機 / 洗濯機</li><li>冷蔵庫 / 電子レンジ</li><li>鉛筆 / ボールペン</li><li>消しゴム / 修正テープ</li><li>サッカー / 野球</li>
+          <li>柔道 / 相撲</li><li>ピアノ / バイオリン</li><li>遊園地 / 水族館</li><li>運動会 / 文化祭</li><li>修学旅行 / 遠足</li>
+          <li>医者 / 看護師</li><li>警察官 / 消防士</li><li>お弁当 / 給食</li><li>カレー / シチュー</li><li>餃子 / 焼売</li>
+          <li>たこ焼き / お好み焼き</li><li>豆腐 / 納豆</li><li>梅干し / たくあん</li><li>コーヒー / 紅茶</li><li>かき氷 / アイス</li>
+          <li>ケーキ / プリン</li><li>雪だるま / かまくら</li><li>忍者 / 侍</li><li>鬼 / 河童</li><li>招き猫 / だるま</li>
+          <li>お正月 / お盆</li><li>鯉のぼり / ひな人形</li><li>漫画 / アニメ</li><li>担任 / 校長</li><li>自転車 / 一輪車</li>
+          <li>動物園 / 植物園</li><li>将棋 / 囲碁</li><li>けん玉 / こま</li><li>七夕 / 節分</li><li>ハロウィン / クリスマス</li>
+        </ol>
+        <h3>きょうだい：近い親戚</h3>
+        <ol class="pairs" data-lang="ja" data-level="2">
+          <li>寿司 / 刺身</li><li>温泉 / 銭湯</li><li>浴衣 / 着物</li><li>桜 / 梅</li><li>うどん / そば</li>
+          <li>牛丼 / 親子丼</li><li>天ぷら / フライ</li><li>コロッケ / メンチカツ</li><li>大福 / おはぎ</li><li>あんぱん / メロンパン</li>
+          <li>ようかん / ういろう</li><li>焼きそば / 焼うどん</li><li>スーパー / デパート</li><li>原付 / バイク</li><li>電車 / 地下鉄</li>
+          <li>タクシー / バス</li><li>ホテル / 旅館</li><li>図書館 / 本屋</li><li>映画館 / 劇場</li><li>マフラー / ストール</li>
+          <li>手袋 / 軍手</li><li>スニーカー / サンダル</li><li>リュック / ランドセル</li><li>パソコン / タブレット</li><li>イヤホン / ヘッドホン</li>
+          <li>テレビ / ラジオ</li><li>炊飯器 / 土鍋</li><li>扇風機 / エアコン</li><li>布団 / ベッド</li><li>枕 / クッション</li>
+          <li>カブトムシ / クワガタ</li><li>セミ / コオロギ</li><li>ハト / カラス</li><li>ペンギン / アザラシ</li><li>イルカ / クジラ</li>
+          <li>タコ / イカ</li><li>マグロ / カツオ</li><li>イチゴ / サクランボ</li><li>スイカ / メロン</li><li>ジャガイモ / サツマイモ</li>
+          <li>ネギ / ニラ</li><li>味噌汁 / 豚汁</li><li>麦茶 / ほうじ茶</li><li>柴犬 / 秋田犬</li><li>ラッコ / カワウソ</li>
+          <li>金魚 / メダカ</li><li>消防車 / 救急車</li><li>新聞 / 雑誌</li><li>手紙 / はがき</li><li>たい焼き / どら焼き</li>
+        </ol>
+        <h3>ふたご：言い争いになる似た言葉</h3>
+        <ol class="pairs" data-lang="ja" data-level="3">
+          <li>カフェ / 喫茶店</li><li>せんべい / おかき</li><li>ピーマン / パプリカ</li><li>みかん / オレンジ</li><li>冷やし中華 / 冷麺</li>
+          <li>ぜんざい / おしるこ</li><li>大判焼き / 今川焼き</li><li>ジャージ / スウェット</li><li>パーカー / トレーナー</li><li>ズボン / パンツ</li>
+          <li>昼寝 / うたた寝</li><li>散歩 / ウォーキング</li><li>雑談 / おしゃべり</li><li>先輩 / 上司</li><li>友達 / 知り合い</li>
+          <li>夕立 / にわか雨</li><li>霧 / もや</li><li>池 / 沼</li><li>お祭り / 縁日</li><li>ほうき / モップ</li>
+          <li>タオル / 手ぬぐい</li><li>毛布 / ブランケット</li><li>座布団 / 座椅子</li><li>マグカップ / 湯のみ</li><li>ポット / やかん</li>
+          <li>フライパン / 中華鍋</li><li>醤油 / ポン酢</li><li>唐揚げ / 竜田揚げ</li><li>オムライス / オムレツ</li><li>グラタン / ドリア</li>
+          <li>ホットケーキ / パンケーキ</li><li>シュークリーム / エクレア</li><li>ラムネ / サイダー</li><li>抹茶 / 緑茶</li><li>ごはん / ライス</li>
+          <li>仕事 / バイト</li><li>遅刻 / 寝坊</li><li>宿題 / 課題</li><li>ペンション / 民宿</li><li>ノート / メモ帳</li>
+          <li>公園 / 広場</li><li>小銭 / お札</li><li>しゃぶしゃぶ / すき焼き</li><li>おじや / 雑炊</li><li>目玉焼き / 卵焼き</li>
+          <li>定規 / ものさし</li><li>のれん / カーテン</li><li>靴下 / タイツ</li><li>帽子 / キャップ</li><li>押し入れ / 物置</li>
+        </ol>
+      </details>
+    </section>
+  </aside>
+</div>
+<script>
+(() => {
+"use strict";
+
+/* ---------- words on the page, per language ---------- */
+const UI = {
+  en: {
+    player: "Player {i}", deal: "Deal {n} envelopes", playersCap: "players",
+    lv1: "Cousins", lv2: "Siblings", lv3: "Twins", lvmix: "Mixed", levelBtn: "{l} ▸",
+    stackTitle: "ODD WORD OUT", stackLine: "{n} sealed envelopes. One word is not quite the same.", stackLevel: "{level} level",
+    private: "PRIVATE", ballotStamp: "BALLOT", boxLabel: "VOTES", for: "For",
+    onlyLooks: "Only {name} looks.", holdHint: "Hold the button to open. Let go and it seals again.",
+    hold: "Hold to see your word", seenTitle: "Sealed again.", seenLine: "Pass the phone to {name}.",
+    seenLast: "That was the last envelope.", pass: "Pass to {name}", lookAgain: "Look again", allLooked: "Everyone has looked",
+    yourWord: "Your word", blankWord: "No word", blankSub: "You are the blank. Listen first, then bluff.",
+    tableTitle: "Lay the phone in the middle.", tableLine: "{name} describes first, then round the table.",
+    startDescribing: "Start describing", describes: "Describe your word in one short line.",
+    runoffLine: "One more line before the run-off.", orderLabel: "Speaking order",
+    next: "Next: {name}", toVote: "Time to vote", toRunoff: "Vote between them",
+    pause: "Pause", resume: "Resume", timeUp: "Time!", myWord: "My word",
+    peekTitle: "Who wants to see their word again?", back: "Back to the table",
+    voteOnly: "Only {name} votes.", voteHint: "Nobody else sees who you pick.", openBallot: "Open my ballot",
+    whoOdd: "{name}, who has the odd word?", drop: "Drop my vote in", allIn: "All {n} votes are in.",
+    openBox: "Open the ballot box", handsTitle: "On three, everyone points at one player.",
+    handsHint: "Tap a name once for each hand.", countHands: "Count the hands", undo: "Undo", clear: "Clear",
+    most: "{name} has the most votes.", mostSub: "Open the envelope to see what they were.", openEnv: "Open the envelope",
+    tie: "Tie for the most votes.", tieSub: "Each says one more line, then everyone votes between them.", runoff: "Run-off",
+    tieAgain: "Tied again. Nobody goes out.", tieAgainSub: "Start a new round of describing.", nextRound: "Next round",
+    wasC: "{name} had the common word.", wasO: "{name} had the odd word!", wasB: "{name} was the blank!",
+    stampC: "CIVILIAN", stampO: "ODD ONE", stampB: "BLANK", leftLine: "{n} still in · {k} on the odd side",
+    nextRoundBy: "Next round: {name}", seeWho: "See who won",
+    winC: "The civilians win", winO: "The odd side wins", common: "Common word", odd: "Odd word",
+    oddWere: "Odd: {names}", blankWas: "Blank: {names}", ptsC: "+1 to every civilian", ptsO: "+3 to {names}",
+    nextDeal: "Next deal ({d} of {D})", final: "Final ranking", overTitle: "The evening is over",
+    fullBelow: "Everyone's line is in the tally below.", again: "Play again", changePlayers: "Change players",
+    sSetup: "{n} players · {level}", sDeals: "{D} deals", sEnvelope: "Turn {i}/{n}", sMiddle: "Phone down",
+    sDealOf: "Deal {d}/{D}", sRound: "Round {r} · {n} in", sRunoff: "Run-off", sVoted: "{c} of {n} voted",
+    sBox: "Ballot box", sHands: "Show of hands", sHandsN: "{c} hands", sIn: "{n} still in", sDealOver: "Deal {d} over",
+    sOver: "Evening over", sMyWord: "My word", soundOn: "Sound on", soundOff: "Sound off",
+    fewer: "Fewer players", more: "More players",
+    langNote: "This deal's words stay in {lang}; the next deal switches.",
+    lang_en: "English", lang_zh: "Chinese", lang_ja: "Japanese",
+    lineNone: "No deals yet", lineWins: "won {w} of {d}", lineOdd: "odd side {o}×, caught {c}×", lineCiv: "always had the common word",
+    endDealSure: "Tap again to end it", newEveningSure: "Tap again to clear the tally",
+    hHow: "How to play",
+    how1: "Everyone gets a secret word. One or two of you get a word that is almost the same, and nobody knows who.",
+    how2: "Go round describing your word in one short line, then vote out the player you think has the odd word.",
+    how3: "Catch every odd one and the civilians win; survive until you are as many as them and the odd side wins.",
+    hPlayers: "Players", hSettings: "Settings", hTally: "Tonight's tally", hRules: "Full rules", hWords: "Word pairs",
+    wordsWarn: "Spoilers: don't open these during a game.", lockedPlayers: "Players can change between deals.",
+    setLevel: "Level", setVote: "Voting", votePass: "Pass the phone", voteHands: "Show of hands",
+    setBlank: "Blank player (6+)", blankAuto: "Auto: 8+", on: "On", off: "Off", setClock: "Speaking timer", sec: "{n} s",
+    setEvening: "Evening", dealsN: "{n} deals", setSound: "Sound",
+    levelsNote: "Cousins: related things. Siblings: close relatives. Twins: near-synonyms people argue about.",
+    endDeal: "End this deal", newEvening: "New evening", tallyEmpty: "No deals played yet.",
+    r1: "Players: 3 to 10. With 3 to 6 players one person gets the odd word; with 7 to 10, two do. From 6 players you can add a blank, who gets no word at all (on by default from 8).",
+    r2: "The deal: pass the phone round. Each player holds the button, reads their word, lets go and passes on. Nobody knows whether their own word is the odd one; only the blank knows they have none.",
+    r3: "Describing: the named player starts and it goes round the table. Each says one short line about their word: never the word itself, part of it, a rhyme or a translation. Be vague enough to hide and clear enough to be trusted.",
+    r4: "Voting by passing the phone: each player opens their ballot alone and picks one name; nobody votes for themselves. Voting by a show of hands: on three everyone points, and the host taps each name once per hand.",
+    r5: "The player with the most votes goes out and their envelope is opened: civilian, odd one or blank. Their word stays secret.",
+    r6: "A tie: the tied players each say one more line, then everyone votes again between them only. Tied again: nobody goes out and a new round of describing begins.",
+    r7: "Winning: the civilians win when every odd one and the blank are out. The odd side wins as soon as they are as many as the civilians still in.",
+    r8: "Scoring: when the civilians win, every civilian scores 1, in or out. When the odd side wins, every odd one and the blank score 3. After the last deal the most points wins the evening; ties share the place.",
+    r9: "Breaking the rules: say your word aloud and the table votes you out that round. If someone sees another player's word, end the deal under Settings and deal again.",
+    r10: "Fair turns: each deal starts one seat further round the table, and a random player describes first."
+  },
+  zh: {
+    player: "玩家{i}", deal: "发 {n} 个信封", playersCap: "人",
+    lv1: "表亲", lv2: "兄弟", lv3: "双胞胎", lvmix: "混合", levelBtn: "{l} ▸",
+    stackTitle: "差一点", stackLine: "{n} 个封好的信封，有人的词跟大家差一点。", stackLevel: "难度：{level}",
+    private: "亲启", ballotStamp: "选票", boxLabel: "票箱", for: "致",
+    onlyLooks: "只有{name}能看。", holdHint: "按住按钮打开，松手就重新封好。",
+    hold: "按住看你的词", seenTitle: "已经封好了。", seenLine: "把手机交给{name}。",
+    seenLast: "这是最后一个信封。", pass: "交给{name}", lookAgain: "再看一眼", allLooked: "大家都看过了",
+    yourWord: "你的词", blankWord: "没有词", blankSub: "你是白板。先听别人说，再跟着编。",
+    tableTitle: "手机放到桌子中间。", tableLine: "{name}先描述，然后按座位轮下去。",
+    startDescribing: "开始描述", describes: "用一句话描述你的词。",
+    runoffLine: "加赛前再说一句。", orderLabel: "发言顺序",
+    next: "下一位：{name}", toVote: "都说完了，投票", toRunoff: "在他们中间投票",
+    pause: "暂停", resume: "继续", timeUp: "时间到！", myWord: "看我的词",
+    peekTitle: "谁想再看一眼自己的词？", back: "回到桌上",
+    voteOnly: "只有{name}投票。", voteHint: "你投给谁，别人看不到。", openBallot: "打开我的选票",
+    whoOdd: "{name}，谁的词不一样？", drop: "投进票箱", allIn: "{n} 票都投完了。",
+    openBox: "打开票箱", handsTitle: "数到三，大家一起指一个人。",
+    handsHint: "有几只手指着谁，就点谁几下。", countHands: "统计举手", undo: "撤销", clear: "清空",
+    most: "{name}票数最多。", mostSub: "拆开信封，看看身份。", openEnv: "拆开信封",
+    tie: "最高票平票。", tieSub: "他们各再说一句，然后大家只在他们中间投票。", runoff: "加赛",
+    tieAgain: "又平票了，这轮没人出局。", tieAgainSub: "开始新一轮描述。", nextRound: "下一轮",
+    wasC: "{name}是平民。", wasO: "{name}就是卧底！", wasB: "{name}是白板！",
+    stampC: "平民", stampO: "卧底", stampB: "白板", leftLine: "还剩 {n} 人 · 卧底方 {k} 人",
+    nextRoundBy: "下一轮：{name}先说", seeWho: "看看谁赢了",
+    winC: "平民获胜", winO: "卧底方获胜", common: "多数人的词", odd: "卧底的词",
+    oddWere: "卧底：{names}", blankWas: "白板：{names}", ptsC: "每位平民 +1", ptsO: "{names}各 +3",
+    nextDeal: "下一局（{d}/{D}）", final: "最终排名", overTitle: "今晚的游戏结束了",
+    fullBelow: "每个人的战绩在下面的记分表里。", again: "再玩一晚", changePlayers: "换人",
+    sSetup: "{n} 人 · {level}", sDeals: "共 {D} 局", sEnvelope: "信封 {i}/{n}", sMiddle: "手机放在中间",
+    sDealOf: "第 {d}/{D} 局", sRound: "第 {r} 轮 · 剩 {n} 人", sRunoff: "加赛", sVoted: "已投 {c}/{n}",
+    sBox: "票箱", sHands: "举手投票", sHandsN: "{c} 只手", sIn: "还剩 {n} 人", sDealOver: "第 {d} 局结束",
+    sOver: "游戏结束", sMyWord: "看我的词", soundOn: "声音开", soundOff: "声音关",
+    fewer: "减少人数", more: "增加人数",
+    langNote: "这一局的词仍是{lang}，下一局再换。",
+    lang_en: "英文", lang_zh: "中文", lang_ja: "日文",
+    lineNone: "还没玩过", lineWins: "{d} 局赢 {w} 局", lineOdd: "当卧底方 {o} 次，被抓 {c} 次", lineCiv: "一直是平民",
+    endDealSure: "再点一次结束", newEveningSure: "再点一次清空记分",
+    hHow: "玩法",
+    how1: "每人拿到一个秘密词，其中一两个人的词跟大家差一点，而且谁也不知道是谁。",
+    how2: "轮流用一句话描述自己的词，然后投票，把你觉得词不一样的人请出去。",
+    how3: "卧底全部出局，平民赢；卧底撑到和平民一样多，卧底方赢。",
+    hPlayers: "玩家", hSettings: "设置", hTally: "今晚记分", hRules: "完整规则", hWords: "词对",
+    wordsWarn: "剧透：玩的时候别打开。", lockedPlayers: "每局之间才能改人数。",
+    setLevel: "难度", setVote: "投票方式", votePass: "传手机", voteHands: "举手",
+    setBlank: "白板（6 人起）", blankAuto: "自动：8 人起", on: "开", off: "关", setClock: "发言计时", sec: "{n} 秒",
+    setEvening: "一晚几局", dealsN: "{n} 局", setSound: "声音",
+    levelsNote: "表亲：相关的东西。兄弟：很近的亲戚。双胞胎：吵得起来的近义词。",
+    endDeal: "结束这一局", newEvening: "重新开一晚", tallyEmpty: "还没有打完的局。",
+    r1: "人数：3 到 10 人。3–6 人时有 1 个卧底，7–10 人时有 2 个。6 人起可以加一个白板，白板拿不到任何词（8 人起默认加上）。",
+    r2: "发词：手机轮流传。每人按住按钮看自己的词，松手，再传给下一位。谁也不知道自己是不是卧底，只有白板知道自己没有词。",
+    r3: "描述：从指定的人开始，按座位轮流。每人用一句话描述自己的词：不能说出词本身、词里的字、谐音或翻译。说得含糊一点藏住自己，又要让同伴信你。",
+    r4: "传手机投票：每人单独打开选票，选一个名字，不能投自己。举手投票：数到三大家一起指，由一个人按手数逐个点名字。",
+    r5: "票数最多的人出局，拆开他的信封：平民、卧底还是白板。他的词不公开。",
+    r6: "平票：平票的人各再说一句，然后大家只在他们中间重新投票。再平票：这轮没人出局，开始新一轮描述。",
+    r7: "胜负：卧底和白板全部出局，平民获胜。卧底方人数一旦等于场上平民人数，卧底方获胜。",
+    r8: "计分：平民获胜，每位平民 +1（出局的也算）。卧底方获胜，每个卧底和白板 +3。最后一局打完，总分最高的人赢下今晚；同分并列。",
+    r9: "犯规：说出自己的词，这一轮大家直接投你出局。有人看到了别人的词，就在设置里结束这一局，重新发。",
+    r10: "轮换：每一局从下一个座位开始发，第一个描述的人随机。"
+  },
+  ja: {
+    player: "{i}番", deal: "封筒を{n}通配る", playersCap: "人",
+    lv1: "いとこ", lv2: "きょうだい", lv3: "ふたご", lvmix: "ミックス", levelBtn: "{l} ▸",
+    stackTitle: "ひとつ違い", stackLine: "封をした封筒が{n}通。ひとつだけ、ほぼ同じ言葉。", stackLevel: "レベル：{level}",
+    private: "親展", ballotStamp: "投票", boxLabel: "投票箱", for: "宛",
+    onlyLooks: "見るのは{name}だけ。", holdHint: "押している間だけ開きます。離すと封が閉じます。",
+    hold: "長押しで言葉を見る", seenTitle: "封を閉じました。", seenLine: "スマホを{name}に渡す。",
+    seenLast: "これが最後の封筒です。", pass: "{name}に渡す", lookAgain: "もう一度見る", allLooked: "全員見ました",
+    yourWord: "あなたの言葉", blankWord: "言葉なし", blankSub: "あなたは白紙。話を合わせて。",
+    tableTitle: "スマホを真ん中へ。", tableLine: "{name}から順番に説明します。",
+    startDescribing: "説明をはじめる", describes: "自分の言葉をひとことで説明。",
+    runoffLine: "決選投票の前にもうひとこと。", orderLabel: "話す順番",
+    next: "次：{name}", toVote: "全員話した。投票へ", toRunoff: "この中から投票",
+    pause: "一時停止", resume: "再開", timeUp: "時間切れ！", myWord: "自分の言葉",
+    peekTitle: "もう一度言葉を見たいのは？", back: "テーブルに戻る",
+    voteOnly: "投票するのは{name}だけ。", voteHint: "誰に入れたかは誰にも見えません。", openBallot: "投票用紙を開く",
+    whoOdd: "{name}、少数派は誰？", drop: "投票箱に入れる", allIn: "{n}票そろいました。",
+    openBox: "投票箱を開ける", handsTitle: "せーので全員ひとりを指さす。",
+    handsHint: "指された数だけ名前をタップ。", countHands: "集計する", undo: "取り消す", clear: "クリア",
+    most: "{name}が最多票。", mostSub: "封筒を開けて正体を見ます。", openEnv: "封筒を開ける",
+    tie: "最多票が同数。", tieSub: "もうひとことずつ話して、その中から決選投票。", runoff: "決選投票",
+    tieAgain: "また同票。誰も抜けません。", tieAgainSub: "次の説明ラウンドへ。", nextRound: "次のラウンド",
+    wasC: "{name}は多数派でした。", wasO: "{name}が少数派！", wasB: "{name}は白紙でした！",
+    stampC: "多数派", stampO: "少数派", stampB: "白紙", leftLine: "残り{n}人 · 少数派側{k}人",
+    nextRoundBy: "次は{name}から", seeWho: "勝敗を見る",
+    winC: "多数派の勝ち", winO: "少数派の勝ち", common: "多数派の言葉", odd: "少数派の言葉",
+    oddWere: "少数派：{names}", blankWas: "白紙：{names}", ptsC: "多数派全員に+1", ptsO: "{names}に+3",
+    nextDeal: "次のゲーム（{d}/{D}）", final: "最終順位", overTitle: "今夜のゲーム終了",
+    fullBelow: "全員の成績は下の得点表に。", again: "もう一度遊ぶ", changePlayers: "メンバー変更",
+    sSetup: "{n}人 · {level}", sDeals: "全{D}ゲーム", sEnvelope: "封筒 {i}/{n}", sMiddle: "真ん中に置く",
+    sDealOf: "ゲーム {d}/{D}", sRound: "ラウンド{r} · 残り{n}人", sRunoff: "決選投票", sVoted: "{c}/{n}票",
+    sBox: "投票箱", sHands: "挙手で投票", sHandsN: "{c}票", sIn: "残り{n}人", sDealOver: "ゲーム{d}終了",
+    sOver: "終了", sMyWord: "自分の言葉", soundOn: "音あり", soundOff: "音なし",
+    fewer: "人数を減らす", more: "人数を増やす",
+    langNote: "このゲームの言葉は{lang}のまま。次のゲームから切り替わります。",
+    lang_en: "英語", lang_zh: "中国語", lang_ja: "日本語",
+    lineNone: "まだ遊んでいません", lineWins: "{d}戦{w}勝", lineOdd: "少数派側{o}回・見破られ{c}回", lineCiv: "ずっと多数派",
+    endDealSure: "もう一度押すと終了", newEveningSure: "もう一度押すと得点を消去",
+    hHow: "遊び方",
+    how1: "全員に秘密の言葉が配られます。1〜2人だけ、ほぼ同じだけど違う言葉。誰が違うかは誰も知りません。",
+    how2: "順番にひとことずつ説明して、言葉が違いそうな人に投票します。",
+    how3: "少数派を全員見つけたら多数派の勝ち。人数が並ぶまで逃げ切れば少数派の勝ち。",
+    hPlayers: "プレイヤー", hSettings: "設定", hTally: "今夜の得点", hRules: "くわしいルール", hWords: "言葉のペア",
+    wordsWarn: "ネタバレ注意：ゲーム中は開かないで。", lockedPlayers: "人数はゲームの合間に変えられます。",
+    setLevel: "レベル", setVote: "投票のしかた", votePass: "スマホを回す", voteHands: "挙手",
+    setBlank: "白紙（6人以上）", blankAuto: "自動：8人以上", on: "オン", off: "オフ", setClock: "説明タイマー", sec: "{n}秒",
+    setEvening: "ゲーム数", dealsN: "{n}ゲーム", setSound: "音",
+    levelsNote: "いとこ：関係のあるもの。きょうだい：近い親戚。ふたご：言い争いになる似た言葉。",
+    endDeal: "このゲームを終える", newEvening: "最初からやり直す", tallyEmpty: "まだ終わったゲームはありません。",
+    r1: "人数：3〜10人。3〜6人なら少数派は1人、7〜10人なら2人。6人以上なら、言葉をもらえない「白紙」を1人加えられます（8人以上では最初からオン）。",
+    r2: "配る：スマホを順番に回します。ボタンを押している間だけ言葉が見え、離したら次の人へ。自分が少数派かどうかは誰にもわかりません。白紙だけは自分が白紙だとわかります。",
+    r3: "説明：指名された人から時計回りに、自分の言葉をひとことで説明します。言葉そのもの、その一部、ダジャレ、翻訳は禁止。ぼかしすぎず、はっきりさせすぎず。",
+    r4: "スマホを回す投票：ひとりずつ投票用紙を開いて名前をひとつ選びます。自分には入れられません。挙手の投票：せーので全員が指さし、進行役が指された数だけ名前をタップします。",
+    r5: "最多票の人は退場し、封筒を開けます：多数派、少数派、白紙のどれか。言葉は明かしません。",
+    r6: "同票：同票の人がもうひとことずつ話し、その人たちの中から決選投票。また同票なら誰も退場せず、次の説明ラウンドへ。",
+    r7: "勝敗：少数派と白紙が全員退場したら多数派の勝ち。少数派側の人数が残った多数派と同じになったら少数派側の勝ち。",
+    r8: "得点：多数派が勝ったら多数派全員に1点（退場した人も）。少数派側が勝ったら少数派と白紙に3点。最後のゲームが終わったら合計点の多い人が今夜の勝者。同点は同順位。",
+    r9: "反則：自分の言葉を口にしたら、そのラウンドは全員でその人に投票。他人の言葉を見てしまったら、設定からゲームを終えて配り直し。",
+    r10: "公平に：配る順番は毎回ひとつずつずれ、最初に説明する人はランダムです。"
+  }
+};
+const TAGS = { en: "en", zh: "zh-CN", ja: "ja" };
+const LANGS = ["en", "zh", "ja"];
+
+/* ---------- saved state ---------- */
+const api = window.dodojo || null;
+const written = {};
+function save(patch) {
+  Object.assign(written, patch);
+  try { const p = api && api.setState ? api.setState(patch) : null; if (p && p.catch) p.catch(() => {}); } catch (e) { /* outside dodojo: memory only */ }
+}
+function readSaved() { try { return (api && api.getState && api.getState()) || {}; } catch (e) { return {}; } }
+
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const clampInt = (v, lo, hi, d) => { v = parseInt(v, 10); return Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d; };
+function mulberry32(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let x = Math.imul(a ^ a >>> 15, 1 | a); x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x; return ((x ^ x >>> 14) >>> 0) / 4294967296; }; }
+function shuffled(n, seed) { const o = [...Array(n).keys()], r = mulberry32(seed); for (let i = n - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [o[i], o[j]] = [o[j], o[i]]; } return o; }
+function newSeed() { try { return crypto.getRandomValues(new Uint32Array(1))[0]; } catch (e) { return (Math.random() * 4294967296) >>> 0; } }
+function parseJSON(s) { try { return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+function bitsFromHex(hex, len) { const b = []; for (let i = 0; i < len; i++) { const d = parseInt(String(hex || "")[i >> 2] || "0", 16) || 0; b.push(!!(d & (1 << (i & 3)))); } return b; }
+function hexFromBits(b) { let s = ""; for (let i = 0; i < b.length; i += 4) { let d = 0; for (let k = 0; k < 4; k++) if (b[i + k]) d |= 1 << k; s += d.toString(16); } return s; }
+function deviceLang() {
+  const l = String((navigator.languages && navigator.languages[0]) || navigator.language || "en").toLowerCase();
+  return l.startsWith("zh") ? "zh" : l.startsWith("ja") ? "ja" : "en";
+}
+
+/* the pairs come from the lists written in the page */
+const PAIRS = { en: [], zh: [], ja: [] };
+document.querySelectorAll("ol.pairs").forEach(ol => {
+  const L = ol.dataset.lang, lv = ol.dataset.level;
+  ol.querySelectorAll("li").forEach(li => { const [a, b] = li.textContent.split("/").map(s => s.trim()); if (PAIRS[L] && a && b) PAIRS[L].push({ a, b, lv }); });
+});
+
+/* ---------- state ---------- */
+const S = {};
+function load(st) {
+  S.lang = LANGS.includes(st.lang) ? st.lang : deviceLang();
+  S.sound = st.sound !== false;
+  S.n = clampInt(st.n, 3, 10, 5);
+  S.names = String(st.names || "").split("|").slice(0, 10);
+  S.level = ["1", "2", "3", "mix"].includes(String(st.level)) ? String(st.level) : "2";
+  S.vote = st.vote === "hands" ? "hands" : "pass";
+  S.blank = ["auto", "on", "off"].includes(st.blank) ? st.blank : "auto";
+  S.clock = st.clock != null && [0, 15, 20, 30].includes(Number(st.clock)) ? Number(st.clock) : 20;
+  S.deals = [3, 5, 8].includes(Number(st.deals)) ? Number(st.deals) : 5;
+  const tl = String(st.tally || "").split(",");
+  S.tally = Array.from({ length: 10 }, (_, i) => clampInt(tl[i], 0, 99999, 0));
+  const sl = String(st.stats || "").split("|");
+  S.stats = Array.from({ length: 10 }, (_, i) => { const p = (sl[i] || "").split("."); return { o: +p[0] || 0, c: +p[1] || 0, w: +p[2] || 0, d: +p[3] || 0 }; });
+  S.dealNo = clampInt(st.dealNo, 0, 999, 0);
+  S.decks = parseJSON(st.decks) || {};
+  const R = parseJSON(st.round);
+  S.R = validRound(R) ? R : null;
+}
+function validRound(R) {
+  return !!R && typeof R.ph === "string" && R.n >= 3 && R.n <= 10 && PAIRS[R.L] && PAIRS[R.L][R.pi] && typeof R.alive === "string" && R.alive.length === R.n;
+}
+const persistRound = () => save({ round: S.R ? JSON.stringify(S.R) : null });
+const persistScore = () => save({ tally: S.tally.join(","), stats: S.stats.map(x => [x.o, x.c, x.w, x.d].join(".")).join("|"), dealNo: S.dealNo });
+
+/* ---------- text ---------- */
+function raw(key) { const d = UI[S.lang] || UI.en; return d[key] != null ? d[key] : UI.en[key] != null ? UI.en[key] : key; }
+function fmt(s, vars, html) {
+  if (html) s = esc(s);
+  return vars ? s.replace(/\{(\w+)\}/g, (_, k) => vars[k] == null ? "" : html ? esc(vars[k]) : String(vars[k])) : s;
+}
+const t = (key, vars) => fmt(raw(key), vars, false);
+const h = (key, vars) => fmt(raw(key), vars, true);
+function shortName(s) { const a = Array.from(s); return a.length > 10 ? a.slice(0, 9).join("") + "…" : s; }
+function nameOf(s) { const v = String(S.names[s] || "").trim(); return shortName(v || t("player", { i: s + 1 })); }
+const badge = s => `<b class="badge p${s + 1}" aria-hidden="true">${s + 1}</b>`;
+const joinNames = seats => seats.map(nameOf).join(S.lang === "en" ? ", " : "、");
+
+/* ---------- the deal ---------- */
+const isIn = (R, s) => R.alive[s] === "1";
+function aliveFrom(R, start, only) {
+  const out = [];
+  for (let k = 0; k < R.n; k++) { const s = (start + k) % R.n; if (isIn(R, s) && (!only || only.includes(s))) out.push(s); }
+  return out;
+}
+const candidates = R => R.cand ? R.cand.split(",").map(Number) : [];
+const dealSeq = R => Array.from({ length: R.n }, (_, k) => (R.dl + k) % R.n);
+const speakOrder = R => aliveFrom(R, R.st, R.cand ? candidates(R) : null);
+const voteOrder = R => aliveFrom(R, R.st);
+const candList = R => { const c = R.cand ? candidates(R) : null; return [...Array(R.n).keys()].filter(s => isIn(R, s) && (!c || c.includes(s))); };
+function roles(R) {
+  const order = shuffled(R.n, R.rs), k = R.n >= 7 ? 2 : 1, r = Array(R.n).fill("C");
+  order.slice(0, k).forEach(s => { r[s] = "O"; });
+  if (R.b) r[order[k]] = "B";
+  return r;
+}
+function words(R) { const p = PAIRS[R.L][R.pi]; return R.sw ? [p.b, p.a] : [p.a, p.b]; }
+function wordFor(R, s) { const r = roles(R)[s]; return r === "B" ? null : words(R)[r === "O" ? 1 : 0]; }
+function votes(R) { const v = String(R.votes || "").split(",").map(Number); return Array.from({ length: R.n }, (_, i) => v[i] || 0); }
+function setVotes(R, v) { R.votes = v.join(","); }
+function sideCounts(R) { const r = roles(R); let c = 0, o = 0; for (let s = 0; s < R.n; s++) if (isIn(R, s)) { if (r[s] === "C") c++; else o++; } return { c, o }; }
+function checkWin(R) { const { c, o } = sideCounts(R); return o === 0 ? "c" : c <= o ? "o" : ""; }
+function nextAliveAfter(R, s) { for (let k = 1; k <= R.n; k++) { const x = (s + k) % R.n; if (isIn(R, x)) return x; } return s; }
+
+function drawPair(L, level) {
+  const list = PAIRS[L], D = S.decks[L] && typeof S.decks[L] === "object" ? S.decks[L] : (S.decks[L] = { s: newSeed(), u: "" });
+  const used = bitsFromHex(D.u, list.length);
+  const fits = i => level === "mix" || list[i].lv === level;
+  let order = shuffled(list.length, D.s >>> 0);
+  let pick = order.find(i => fits(i) && !used[i]);
+  if (pick === undefined) {
+    list.forEach((_, i) => { if (fits(i)) used[i] = false; });
+    D.s = newSeed(); order = shuffled(list.length, D.s);
+    pick = order.find(i => fits(i) && !used[i]);
+  }
+  used[pick] = true; D.u = hexFromBits(used);
+  save({ decks: JSON.stringify(S.decks) });
+  return pick;
+}
+
+function newDeal() {
+  const n = S.n, rs = newSeed(), r = mulberry32(rs ^ 0x5bd1e995);
+  const b = (S.blank === "on" && n >= 6) || (S.blank === "auto" && n >= 8) ? 1 : 0;
+  S.R = { ph: "deal", n, L: S.lang, pi: drawPair(S.lang, S.level), sw: r() < 0.5 ? 0 : 1, rs, b,
+    dl: S.dealNo % n, st: Math.floor(r() * n), i: 0, seen: 0, alive: "1".repeat(n), rnd: 1,
+    cand: "", ro: 0, votes: "", hl: "", vi: 0, pick: -1, out: -1, win: "", paid: 0, left: 0, pk: -1, ret: "" };
+  persistRound(); render();
+}
+function passOn() {
+  const R = S.R;
+  if (R.i < R.n - 1) { R.i++; R.seen = 0; } else { R.ph = "table"; R.i = 0; R.seen = 0; }
+  persistRound(); render();
+}
+function startSpeaking() { const R = S.R; R.ph = "speak"; R.i = 0; R.left = S.clock * 1000; persistRound(); clockStart(S.clock * 1000); render(); }
+function nextSpeaker() {
+  const R = S.R, ord = speakOrder(R);
+  if (R.i < ord.length - 1) { R.i++; R.left = S.clock * 1000; persistRound(); clockStart(S.clock * 1000); render(); return; }
+  clockStop();
+  R.vm = S.vote; R.vi = 0; R.pick = -1; R.hl = ""; setVotes(R, Array(R.n).fill(0));
+  R.ph = R.vm === "hands" ? "hands" : "vcover";
+  persistRound(); render();
+}
+function openPeek() { const R = S.R; clockPause(); R.ret = R.ph; R.ph = "peekpick"; persistRound(); render(); }
+function backToTable() { const R = S.R; R.ph = R.ret || "speak"; R.pk = -1; R.seen = 0; persistRound(); render(); }
+function dropVote() {
+  const R = S.R, voters = voteOrder(R);
+  if (R.pick < 0) return;
+  const v = votes(R); v[R.pick]++; setVotes(R, v);
+  R.pick = -1; R.vi++;
+  R.ph = R.vi < voters.length ? "vcover" : "votesin";
+  sfx.drop(); persistRound(); render();
+}
+function eliminate(s) {
+  const R = S.R;
+  R.alive = R.alive.slice(0, s) + "0" + R.alive.slice(s + 1);
+  R.out = s; R.win = checkWin(R); R.ph = "out";
+  sfx.stamp(); persistRound(); render();
+}
+function startRunoff(top) {
+  const R = S.R;
+  R.cand = top.join(","); R.ro = 1; R.ph = "speak"; R.i = 0; R.votes = ""; R.hl = ""; R.vi = 0; R.left = S.clock * 1000;
+  persistRound(); clockStart(S.clock * 1000); render();
+}
+function nextRound() {
+  const R = S.R;
+  R.cand = ""; R.ro = 0; R.rnd++; R.st = nextAliveAfter(R, R.st); R.ph = "speak"; R.i = 0; R.votes = ""; R.hl = ""; R.vi = 0; R.left = S.clock * 1000;
+  persistRound(); clockStart(S.clock * 1000); render();
+}
+function finishDeal() {
+  const R = S.R;
+  if (!R.paid) {
+    const r = roles(R), gain = [];
+    for (let s = 0; s < R.n; s++) {
+      const side = r[s] === "C" ? "c" : "o", st = S.stats[s];
+      const g = side === R.win ? (R.win === "c" ? 1 : 3) : 0;
+      gain.push(g); S.tally[s] += g;
+      st.d++; if (side === "o") { st.o++; if (!isIn(R, s)) st.c++; } if (g) st.w++;
+    }
+    R.gain = gain.join(""); R.paid = 1; S.dealNo++;
+    persistScore();
+  }
+  R.ph = "result"; sfx.win(); persistRound(); render();
+}
+function showFinal() { S.R.ph = "final"; sfx.win(); persistRound(); render(); }
+function resetEvening() {
+  S.tally = Array(10).fill(0); S.stats = Array.from({ length: 10 }, () => ({ o: 0, c: 0, w: 0, d: 0 })); S.dealNo = 0; S.R = null;
+  clockStop(); persistScore(); persistRound();
+}
+function playAgain() { resetEvening(); render(); }
+function changePlayers() { resetEvening(); render(); const first = $("#names input"); if (first) first.focus({ preventScroll: false }); }
+function setN(n) {
+  n = Math.min(10, Math.max(3, n));
+  if (n === S.n || (S.R && !["result", "final"].includes(S.R.ph))) return;
+  S.n = n; save({ n }); renderNames(); render();
+}
+function cycleLevel() { const order = ["1", "2", "3", "mix"]; S.level = order[(order.indexOf(S.level) + 1) % 4]; save({ level: S.level }); render(); }
+
+/* ---------- sound (Web Audio, from the first tap) ---------- */
+let audio = null;
+function ac() {
+  if (!S.sound) return null;
+  try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); if (audio.state === "suspended") audio.resume(); return audio; } catch (e) { return null; }
+}
+function tone(freq, dur, type = "sine", vol = 0.12, when = 0) {
+  const a = ac(); if (!a) return;
+  const t0 = a.currentTime + when, o = a.createOscillator(), g = a.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g).connect(a.destination); o.start(t0); o.stop(t0 + dur + 0.02);
+}
+function hiss(dur, f0, f1, vol = 0.1) {
+  const a = ac(); if (!a) return;
+  const len = Math.floor(a.sampleRate * dur), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(), t0 = a.currentTime;
+  src.buffer = buf; f.type = "lowpass"; f.frequency.setValueAtTime(f0, t0); f.frequency.exponentialRampToValueAtTime(f1, t0 + dur);
+  g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  src.connect(f).connect(g).connect(a.destination); src.start(t0); src.stop(t0 + dur + 0.02);
+}
+const sfx = {
+  open: () => hiss(0.16, 3200, 700, 0.09),
+  seal: () => tone(190, 0.08, "triangle", 0.1),
+  tick: hi => tone(hi ? 1320 : 880, 0.05, "square", 0.05),
+  time: () => { tone(196, 0.42, "sawtooth", 0.07); tone(207, 0.42, "sawtooth", 0.05); },
+  drop: () => { tone(150, 0.12, "sine", 0.2); hiss(0.07, 1400, 300, 0.05); },
+  stamp: () => { hiss(0.14, 1800, 160, 0.16); tone(70, 0.32, "sine", 0.28); },
+  win: () => [523, 659, 784].forEach((f, k) => tone(f, 0.24, "triangle", 0.1, k * 0.13))
+};
+
+/* ---------- the speaking clock ---------- */
+const clk = { run: false, endsAt: 0, left: 0, total: 0, raf: 0, last: -1, wasRunning: false };
+function clockStart(ms) {
+  cancelAnimationFrame(clk.raf);
+  if (!S.clock || !ms) { clk.run = false; clk.left = 0; return; }
+  clk.total = S.clock * 1000; clk.left = ms; clk.endsAt = performance.now() + ms; clk.run = true; clk.last = -1;
+  tick();
+}
+function clockStop() { cancelAnimationFrame(clk.raf); clk.run = false; }
+function clockPause() {
+  if (!clk.run) return;
+  clk.left = Math.max(0, clk.endsAt - performance.now()); clk.run = false; cancelAnimationFrame(clk.raf);
+  if (S.R) { S.R.left = Math.round(clk.left); persistRound(); }
+  drawClock();
+}
+function clockResume() { if (clk.run || clk.left <= 0) return; clockStart(clk.left); }
+function tick() {
+  if (!clk.run) return;
+  clk.left = Math.max(0, clk.endsAt - performance.now());
+  drawClock();
+  const s = Math.ceil(clk.left / 1000);
+  if (s !== clk.last) { clk.last = s; if (s <= 10 && s > 0) sfx.tick(s <= 3); }
+  if (clk.left === 0) { clk.run = false; if (S.R) { S.R.left = 0; persistRound(); } sfx.time(); render(); return; }
+  clk.raf = requestAnimationFrame(tick);
+}
+function drawClock() {
+  const fuse = $("#fuse"), secs = $("#secs");
+  if (!fuse || !secs) return;
+  const total = clk.total || S.clock * 1000 || 1;
+  fuse.style.transform = `scaleX(${Math.max(0, Math.min(1, clk.left / total))})`;
+  const out = clk.left <= 0;
+  secs.textContent = out ? t("timeUp") : String(Math.ceil(clk.left / 1000));
+  secs.classList.toggle("out", out);
+}
+function togglePause() { if (clk.run) clockPause(); else clockResume(); render(); }
+
+/* ---------- the secret ---------- */
+const view = $("#view"), main = $("#main"), row = $("#row"), desk = $("#desk"), secret = $("#secret");
+const strip = $("#strip"), stripBadge = $("#stripBadge"), stripName = $("#stripName"), stripInfo = $("#stripInfo");
+let hideTimer = 0, holding = false, pressing = false, lockUntil = 0, mainMode = "tap", mainFn = null, rowItems = [], lastKey = "";
+const locked = () => performance.now() < lockUntil;
+const lock = ms => { lockUntil = Math.max(lockUntil, performance.now() + ms); };
+function holdSeat() { const R = S.R; if (!R) return -1; if (R.ph === "deal") return dealSeq(R)[R.i]; if (R.ph === "peekcover") return R.pk; return -1; }
+function reveal() {
+  const R = S.R, seat = holdSeat();
+  if (!R || seat < 0 || locked()) return;
+  const w = wordFor(R, seat);
+  secret.lang = TAGS[S.lang];
+  secret.innerHTML = w === null
+    ? `<span class="cap">${h("yourWord")}</span><span class="fitbox"><span class="w" data-fit="72,30">${h("blankWord")}</span></span><span class="sub">${h("blankSub")}</span>`
+    : `<span class="cap">${h("yourWord")}</span><span class="fitbox"><span class="w" lang="${TAGS[R.L]}" data-fit="96,30">${esc(w)}</span></span><span class="cap">${badge(seat)}${esc(nameOf(seat))}</span>`;
+  secret.hidden = false;
+  fitAll(secret);
+  holding = true;
+  clearTimeout(hideTimer);
+  hideTimer = setTimeout(() => { conceal(); markSeen(); }, 4000);   // a forgotten hold still covers itself
+  sfx.open();
+}
+function conceal() { clearTimeout(hideTimer); secret.hidden = true; secret.textContent = ""; }
+function markSeen() {
+  const R = S.R;
+  if (R && (R.ph === "deal" || R.ph === "peekcover") && !R.seen) { R.seen = 1; persistRound(); render(); sfx.seal(); }
+}
+function release() {
+  // the click that follows a press must not reach the button's next action, even if the card covered itself already
+  if (pressing) { pressing = false; lock(450); }
+  if (!holding) return;
+  holding = false; conceal(); lock(450); markSeen();
+}
+
+/* ---------- drawing ---------- */
+function envelopeHTML(inner, stamp, cls = "") {
+  return `<div class="env ${cls}"><span class="stamp" aria-hidden="true">${esc(stamp)}</span><div class="label">${inner}</div></div>`;
+}
+const addrHTML = s => `<span class="lab-for">${h("for")}</span><span class="lab-name">${badge(s)}<span class="fitbox"><span class="nm-big" data-fit="40,20">${esc(nameOf(s))}</span></span></span>`;
+const coverHTML = (s, say, hint, stamp) => `<div class="stage">${envelopeHTML(addrHTML(s), stamp)}<p class="say">${say}</p>${hint ? `<p class="hint">${hint}</p>` : ""}</div>`;
+function stackHTML() {
+  return `<div class="stage"><div class="stack"><div class="env ghost g2"></div><div class="env ghost g1"></div>${envelopeHTML(`<span class="lab-title">${h("stackTitle")}</span><span class="lab-line">${h("stackLine", { n: S.n })}</span>`, t("private"), "top")}</div><p class="under">${h("stackLevel", { level: t("lv" + S.level) })}</p></div>`;
+}
+const slipsHTML = (seats, attr, extra) => `<div class="slips">${seats.map(s => `<button type="button" class="slip${extra && extra.picked === s ? " picked" : ""}" data-${attr}="${s}"${extra && "picked" in extra ? ` aria-pressed="${extra.picked === s}"` : ""}>${badge(s)}<span class="nm" data-shrink="20,14">${esc(nameOf(s))}</span>${extra && extra.counts ? `<b class="cnt">${extra.counts[s]}</b>` : ""}</button>`).join("")}</div>`;
+function speakHTML(R, ord, s) {
+  return `<div class="stage"><div class="card speak"><span class="lab-name">${badge(s)}<span class="fitbox"><span class="nm-big" data-fit="64,26">${esc(nameOf(s))}</span></span></span>` +
+    `<p class="card-line">${h(R.ro ? "runoffLine" : "describes")}</p>` +
+    (S.clock ? `<span class="clock"><span class="fuse"><i id="fuse"></i></span><b class="secs" id="secs">${S.clock}</b></span>` : "") +
+    `</div><div class="order" role="list" aria-label="${h("orderLabel")}">${ord.map((x, k) => `<span role="listitem" class="pip${k < R.i ? " done" : k === R.i ? " now" : ""}" title="${esc(nameOf(x))}">${badge(x)}</span>`).join("")}</div></div>`;
+}
+function stepperHTML() {
+  const busy = S.R && !["result", "final"].includes(S.R.ph);
+  return `<div class="step"><button type="button" data-k="n-" aria-label="${h("fewer")}"${S.n <= 3 || busy ? " disabled" : ""}>−</button><span class="cnt"><b>${S.n}</b><small>${h("playersCap")}</small></span><button type="button" data-k="n+" aria-label="${h("more")}"${S.n >= 10 || busy ? " disabled" : ""}>+</button></div>`;
+}
+const SOUND_ON = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.6 6a8.6 8.6 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+const SOUND_OFF = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+
+function setMain(label, mode, fn, disabled) {
+  main.textContent = label; mainMode = mode; mainFn = fn || null;
+  main.disabled = !!disabled; main.classList.toggle("is-hold", mode === "hold");
+}
+function setStrip(who, left, right) {
+  stripBadge.innerHTML = who >= 0 ? badge(who) : "";
+  stripName.textContent = left; stripInfo.textContent = right;
+  for (const el of [strip, desk]) { if (who >= 0) el.style.setProperty("--who-c", `var(--p${who + 1})`); else el.style.removeProperty("--who-c"); }
+}
+function renderRow(items) {
+  rowItems = items;
+  row.innerHTML = items.map((b, k) => b.html || `<button type="button" class="sec${b.hold ? " hold" : ""}" data-k="${k}"${b.disabled ? " disabled" : ""}>${esc(b.label)}</button>`).join("") +
+    `<button type="button" class="sec snd" data-k="snd" aria-pressed="${S.sound}" aria-label="${h(S.sound ? "soundOn" : "soundOff")}">${S.sound ? SOUND_ON : SOUND_OFF}</button>`;
+}
+
+function render() {
+  const R = S.R, items = [];
+  let who = -1, left = "", right = "", html = "";
+  const D = S.deals, d = Math.max(1, S.dealNo + (R && !R.paid ? 1 : 0));
+  if (!R) {
+    html = stackHTML();
+    left = t("sSetup", { n: S.n, level: t("lv" + S.level) }); right = t("sDeals", { D });
+    setMain(t("deal", { n: S.n }), "tap", newDeal);
+    items.push({ html: stepperHTML() }, { label: t("levelBtn", { l: t("lv" + S.level) }), fn: cycleLevel });
+  } else if (R.ph === "deal" || R.ph === "peekcover") {
+    const seat = holdSeat();
+    who = seat; left = nameOf(seat);
+    right = R.ph === "deal" ? t("sEnvelope", { i: R.i + 1, n: R.n }) : t("sMyWord");
+    if (!R.seen) {
+      html = coverHTML(seat, h("onlyLooks", { name: nameOf(seat) }), h("holdHint"), t("private"));
+      setMain(t("hold"), "hold");
+    } else if (R.ph === "deal") {
+      const last = R.i >= R.n - 1, next = last ? -1 : dealSeq(R)[R.i + 1];
+      html = coverHTML(seat, h("seenTitle"), last ? h("seenLast") : h("seenLine", { name: nameOf(next) }), t("private"));
+      setMain(last ? t("allLooked") : t("pass", { name: nameOf(next) }), "tap", passOn);
+      items.push({ label: t("lookAgain"), hold: true });
+    } else {
+      html = coverHTML(seat, h("seenTitle"), "", t("private"));
+      setMain(t("back"), "tap", backToTable);
+      items.push({ label: t("lookAgain"), hold: true });
+    }
+  } else if (R.ph === "table") {
+    left = t("sMiddle"); right = t("sDealOf", { d, D });
+    html = `<div class="stage"><div class="card"><p class="title">${h("tableTitle")}</p><p class="card-line">${h("tableLine", { name: nameOf(R.st) })}</p></div></div>`;
+    setMain(t("startDescribing"), "tap", startSpeaking);
+    items.push({ label: t("myWord"), fn: openPeek });
+  } else if (R.ph === "speak") {
+    const ord = speakOrder(R), s = ord[Math.min(R.i, ord.length - 1)], last = R.i >= ord.length - 1;
+    who = s; left = nameOf(s);
+    right = R.ro ? t("sRunoff") : t("sRound", { r: R.rnd, n: aliveFrom(R, 0).length });
+    html = speakHTML(R, ord, s);
+    setMain(last ? t(R.ro ? "toRunoff" : "toVote") : t("next", { name: nameOf(ord[R.i + 1]) }), "tap", nextSpeaker);
+    if (S.clock) items.push({ label: clk.run ? t("pause") : t("resume"), fn: togglePause, disabled: !clk.run && clk.left <= 0 });
+    items.push({ label: t("myWord"), fn: openPeek });
+  } else if (R.ph === "peekpick") {
+    left = t("sMyWord"); right = t("sRound", { r: R.rnd, n: aliveFrom(R, 0).length });
+    html = `<div class="stage top"><p class="say">${h("peekTitle")}</p>${slipsHTML(candListAll(R), "peek")}</div>`;
+    setMain(t("back"), "tap", backToTable);
+  } else if (R.ph === "vcover" || R.ph === "ballot") {
+    const voters = voteOrder(R), v = voters[R.vi];
+    who = v; left = nameOf(v); right = t("sVoted", { c: R.vi, n: voters.length });
+    if (R.ph === "vcover") {
+      html = coverHTML(v, h("voteOnly", { name: nameOf(v) }), h("voteHint"), t("ballotStamp"));
+      setMain(t("openBallot"), "tap", () => { S.R.ph = "ballot"; S.R.pick = -1; persistRound(); render(); });
+    } else {
+      const c = candList(R).filter(s => s !== v);
+      html = `<div class="stage top"><p class="say">${h("whoOdd", { name: nameOf(v) })}</p><div id="ballot">${slipsHTML(c, "pick", { picked: R.pick })}</div></div>`;
+      setMain(t("drop"), "tap", dropVote, R.pick < 0);
+    }
+  } else if (R.ph === "votesin") {
+    left = t("sBox"); right = R.ro ? t("sRunoff") : t("sRound", { r: R.rnd, n: aliveFrom(R, 0).length });
+    html = `<div class="stage"><div class="box" aria-hidden="true"><span class="slot"></span><span class="box-label">${h("boxLabel")}</span></div><p class="say">${h("allIn", { n: voteOrder(R).length })}</p></div>`;
+    setMain(t("openBox"), "tap", () => { S.R.ph = "count"; persistRound(); render(); });
+  } else if (R.ph === "hands") {
+    const v = votes(R), sum = v.reduce((a, b) => a + b, 0);
+    left = t("sHands"); right = t("sHandsN", { c: sum });
+    html = `<div class="stage top"><p class="say">${h("handsTitle")}</p><p class="hint">${h("handsHint")}</p>${slipsHTML(candList(R), "hand", { counts: v })}</div>`;
+    setMain(t("countHands"), "tap", () => { S.R.ph = "count"; persistRound(); render(); }, sum === 0);
+    items.push({ label: t("undo"), fn: undoHand, disabled: !R.hl }, { label: t("clear"), fn: clearHands, disabled: !R.hl });
+  } else if (R.ph === "count") {
+    const c = candList(R), v = votes(R), max = Math.max(...c.map(s => v[s])), top = c.filter(s => v[s] === max);
+    left = t("sBox"); right = R.ro ? t("sRunoff") : t("sRound", { r: R.rnd, n: aliveFrom(R, 0).length });
+    let say, sub;
+    if (top.length === 1) { say = h("most", { name: nameOf(top[0]) }); sub = h("mostSub"); setMain(t("openEnv"), "tap", () => eliminate(top[0])); }
+    else if (!R.ro) { say = h("tie"); sub = h("tieSub"); setMain(t("runoff"), "tap", () => startRunoff(top)); }
+    else { say = h("tieAgain"); sub = h("tieAgainSub"); setMain(t("nextRound"), "tap", nextRound); }
+    html = `<div class="stage top"><div class="counts">${c.map(s => `<div class="crow${top.includes(s) ? " top" : ""}">${badge(s)}<span class="nm" data-shrink="20,14">${esc(nameOf(s))}</span><b class="cnt">${v[s]}</b></div>`).join("")}</div><p class="say">${say}</p><p class="hint">${sub}</p></div>`;
+  } else if (R.ph === "out") {
+    const s = R.out, r = roles(R)[s], { c, o } = sideCounts(R);
+    who = s; left = nameOf(s); right = t("sIn", { n: c + o });
+    html = `<div class="stage"><div class="outstage"><div class="env"></div><div class="card"><span class="lab-name">${badge(s)}<span class="nm">${esc(nameOf(s))}</span></span><span class="verdict v-${r}">${h("stamp" + r)}</span></div></div><p class="say">${h("was" + r, { name: nameOf(s) })}</p>${R.win ? "" : `<p class="hint">${h("leftLine", { n: c + o, k: o })}</p>`}</div>`;
+    if (R.win) setMain(t("seeWho"), "tap", finishDeal);
+    else setMain(t("nextRoundBy", { name: nameOf(nextAliveAfter(R, R.st)) }), "tap", nextRound);
+  } else if (R.ph === "result") {
+    const [cw, ow] = words(R), r = roles(R), odd = [], blank = [], gain = String(R.gain || "");
+    r.forEach((x, s) => { if (x === "O") odd.push(s); if (x === "B") blank.push(s); });
+    const winners = [...Array(R.n).keys()].filter(s => +gain[s] > 0);
+    left = t("sDealOver", { d: S.dealNo }); right = t("sDealOf", { d: S.dealNo, D });
+    html = `<div class="stage"><div class="card"><span class="banner b-${R.win}">${h(R.win === "c" ? "winC" : "winO")}</span>` +
+      `<div class="pair"><div class="pw"><span class="pl">${h("common")}</span><span class="fitbox"><span class="w" lang="${TAGS[R.L]}" data-fit="40,20">${esc(cw)}</span></span></div>` +
+      `<div class="pw odd"><span class="pl">${h("odd")}</span><span class="fitbox"><span class="w" lang="${TAGS[R.L]}" data-fit="40,20">${esc(ow)}</span></span></div></div>` +
+      `<p class="card-line">${h("oddWere", { names: joinNames(odd) })}${blank.length ? "<br>" + h("blankWas", { names: joinNames(blank) }) : ""}</p>` +
+      `<p class="card-line strong">${R.win === "c" ? h("ptsC") : h("ptsO", { names: joinNames(winners) })}</p></div></div>`;
+    if (S.dealNo < D) setMain(t("nextDeal", { d: S.dealNo + 1, D }), "tap", newDeal);
+    else setMain(t("final"), "tap", showFinal);
+  } else if (R.ph === "final") {
+    left = t("sOver"); right = t("sDeals", { D: S.dealNo });
+    html = `<div class="stage"><div class="card"><span class="banner">${h("overTitle")}</span><ol class="podium">${ranking().slice(0, 3).map(x => `<li><span class="place">${x.place}</span>${badge(x.s)}<span class="nm" data-shrink="22,16">${esc(nameOf(x.s))}</span><b class="pts">${x.pts}</b></li>`).join("")}</ol><p class="card-line">${h("fullBelow")}</p></div></div>`;
+    setMain(t("again"), "tap", playAgain);
+    items.push({ label: t("changePlayers"), fn: changePlayers });
+  }
+  view.innerHTML = html;
+  setStrip(who, left, right);
+  renderRow(items);
+  const key = R ? [R.ph, R.i, R.vi, R.ro, R.rnd, who].join(":") : "setup";
+  if (key !== lastKey) { lastKey = key; lock(600); }   // a fresh hand-off ignores taps for a moment
+  fitAll(view);
+  if (R && R.ph === "speak") drawClock();
+  renderSide();
+}
+const candListAll = R => [...Array(R.n).keys()].filter(s => isIn(R, s));
+function undoHand() { const R = S.R; if (!R.hl) return; const s = +R.hl.slice(-1); R.hl = R.hl.slice(0, -1); const v = votes(R); v[s] = Math.max(0, v[s] - 1); setVotes(R, v); persistRound(); render(); }
+function clearHands() { const R = S.R; R.hl = ""; setVotes(R, Array(R.n).fill(0)); persistRound(); render(); }
+function ranking() {
+  const seats = [...Array(S.n).keys()].map(s => ({ s, pts: S.tally[s] })).sort((a, b) => b.pts - a.pts || a.s - b.s);
+  seats.forEach((x, k) => { x.place = k && x.pts === seats[k - 1].pts ? seats[k - 1].place : k + 1; });
+  return seats;
+}
+
+/* ---------- fitting the big word ---------- */
+function fit(el, max, min) {
+  el.style.fontSize = max + "px";
+  const room = el.parentElement.clientWidth, w = el.scrollWidth;
+  if (!room || !w) return;
+  el.style.fontSize = Math.max(min, Math.floor(max * Math.min(1, room / w))) + "px";
+}
+function shrink(el, max, min) {
+  el.style.fontSize = max + "px";
+  const room = el.clientWidth, w = el.scrollWidth;
+  if (room && w > room) el.style.fontSize = Math.max(min, Math.floor(max * room / w)) + "px";
+}
+function fitAll(root = document) {
+  root.querySelectorAll("[data-fit]").forEach(el => { const [max, min] = el.dataset.fit.split(",").map(Number); fit(el, max, min); });
+  root.querySelectorAll("[data-shrink]").forEach(el => { const [max, min] = el.dataset.shrink.split(",").map(Number); shrink(el, max, min); });
+}
+
+/* ---------- what is read below the game ---------- */
+const namesEl = $("#names");
+function renderNames() {
+  namesEl.innerHTML = Array.from({ length: S.n }, (_, i) => `<label class="nrow">${badge(i)}<input type="text" maxlength="16" autocomplete="off" enterkeyhint="next" data-seat="${i}" aria-label="${h("player", { i: i + 1 })}" placeholder="${h("player", { i: i + 1 })}" value="${esc(S.names[i] || "")}"></label>`).join("");
+}
+function renderSide() {
+  const R = S.R, busy = !!R && !["result", "final"].includes(R.ph);
+  $("#pNum").textContent = S.n;
+  $("#pMinus").disabled = busy || S.n <= 3; $("#pPlus").disabled = busy || S.n >= 10;
+  $("#lockedNote").hidden = !busy;
+  $("#endDeal").hidden = !busy;
+  const vals = { level: S.level, vote: S.vote, blank: S.blank, clock: String(S.clock), deals: String(S.deals), sound: S.sound ? "on" : "off" };
+  document.querySelectorAll(".seg[data-set]").forEach(g => g.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === vals[g.dataset.set]))));
+  const note = $("#langNote");
+  if (R && R.L !== S.lang && !["result", "final"].includes(R.ph)) { note.hidden = false; note.textContent = t("langNote", { lang: t("lang_" + R.L) }); } else note.hidden = true;
+  const body = $("#tallyBody");
+  if (!S.stats.slice(0, S.n).some(x => x.d)) { body.innerHTML = `<p class="note">${h("tallyEmpty")}</p>`; return; }
+  body.innerHTML = `<table class="tally"><tbody>${ranking().map(x => { const st = S.stats[x.s];
+    const line = !st.d ? t("lineNone") : t("lineWins", { w: st.w, d: st.d }) + " · " + (st.o ? t("lineOdd", { o: st.o, c: st.c }) : t("lineCiv"));
+    return `<tr><td class="tr">${x.place}</td><td><span class="tn">${badge(x.s)}<span>${esc(nameOf(x.s))}</span></span><span class="tl">${esc(line)}</span></td><td class="tp">${x.pts}</td></tr>`; }).join("")}</tbody></table>`;
+}
+function applyLang() {
+  document.documentElement.lang = TAGS[S.lang];
+  document.querySelectorAll("[data-t]").forEach(el => { el.textContent = t(el.dataset.t, el.dataset.n ? { n: el.dataset.n } : undefined); });
+  document.querySelectorAll("#langs [data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === S.lang)));
+  $("#pMinus").setAttribute("aria-label", t("fewer")); $("#pPlus").setAttribute("aria-label", t("more"));
+  renderNames();
+}
+
+/* ---------- input ---------- */
+main.addEventListener("pointerdown", e => {
+  if (mainMode !== "hold" || e.button > 0) return;
+  e.preventDefault();
+  pressing = true;
+  if (locked()) return;
+  try { main.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+  reveal();
+});
+main.addEventListener("keydown", e => {
+  if (mainMode === "hold" && (e.key === " " || e.key === "Enter")) { e.preventDefault(); pressing = true; if (!e.repeat && !holding) reveal(); }
+});
+main.addEventListener("keyup", e => { if (mainMode === "hold" && (e.key === " " || e.key === "Enter")) { e.preventDefault(); release(); } });
+main.addEventListener("click", () => { if (mainMode !== "tap" || main.disabled || locked() || !mainFn) return; mainFn(); });
+main.addEventListener("contextmenu", e => e.preventDefault());
+for (const type of ["pointerup", "pointercancel"]) document.addEventListener(type, release, true);
+main.addEventListener("lostpointercapture", release);
+
+row.addEventListener("pointerdown", e => {
+  const b = e.target.closest("[data-k]");
+  if (!b || b.disabled || e.button > 0) return;
+  const it = rowItems[b.dataset.k];
+  if (it && it.hold) { e.preventDefault(); pressing = true; if (locked()) return; try { b.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } reveal(); }
+});
+row.addEventListener("keydown", e => {
+  const b = e.target.closest("[data-k]"), it = b && rowItems[b.dataset.k];
+  if (it && it.hold && (e.key === " " || e.key === "Enter")) { e.preventDefault(); pressing = true; if (!e.repeat && !holding) reveal(); }
+});
+row.addEventListener("keyup", e => {
+  const b = e.target.closest("[data-k]"), it = b && rowItems[b.dataset.k];
+  if (it && it.hold && (e.key === " " || e.key === "Enter")) { e.preventDefault(); release(); }
+});
+row.addEventListener("contextmenu", e => e.preventDefault());
+row.addEventListener("click", e => {
+  const b = e.target.closest("[data-k]");
+  if (!b || b.disabled) return;
+  const k = b.dataset.k;
+  if (k === "snd") { S.sound = !S.sound; save({ sound: S.sound }); if (S.sound) tone(660, 0.06, "triangle", 0.08); render(); return; }
+  if (k === "n-" || k === "n+") { setN(S.n + (k === "n+" ? 1 : -1)); return; }
+  const it = rowItems[k];
+  if (!it || it.hold || locked()) return;
+  it.fn();
+});
+view.addEventListener("click", e => {
+  const R = S.R; if (!R || locked()) return;
+  const pick = e.target.closest("[data-pick]"), hand = e.target.closest("[data-hand]"), peek = e.target.closest("[data-peek]");
+  if (pick && R.ph === "ballot") { R.pick = +pick.dataset.pick; persistRound(); render(); tone(520, 0.04, "triangle", 0.06); }
+  else if (hand && R.ph === "hands") { const s = +hand.dataset.hand, v = votes(R); v[s]++; setVotes(R, v); R.hl = (R.hl || "") + s; persistRound(); render(); tone(600, 0.04, "triangle", 0.06); }
+  else if (peek && R.ph === "peekpick") { R.pk = +peek.dataset.peek; R.seen = 0; R.ph = "peekcover"; persistRound(); render(); }
+});
+$("#langs").addEventListener("click", e => {
+  const b = e.target.closest("[data-lang]"); if (!b) return;
+  S.lang = b.dataset.lang; save({ lang: S.lang }); applyLang(); render();
+});
+$("#pMinus").addEventListener("click", () => setN(S.n - 1));
+$("#pPlus").addEventListener("click", () => setN(S.n + 1));
+namesEl.addEventListener("input", e => {
+  const inp = e.target.closest("input[data-seat]"); if (!inp) return;
+  const i = +inp.dataset.seat; S.names[i] = inp.value.replace(/\|/g, "");
+  for (let k = 0; k < 10; k++) if (S.names[k] == null) S.names[k] = "";
+  save({ names: S.names.slice(0, 10).join("|") }); render();
+});
+$("#settings").addEventListener("click", e => {
+  const b = e.target.closest(".seg[data-set] button"); if (!b) return;
+  const key = b.closest(".seg").dataset.set, v = b.dataset.v;
+  if (key === "level") S.level = v;
+  else if (key === "vote") S.vote = v;
+  else if (key === "blank") S.blank = v;
+  else if (key === "clock") S.clock = +v;
+  else if (key === "deals") S.deals = +v;
+  else if (key === "sound") S.sound = v === "on";
+  save({ [key]: key === "clock" || key === "deals" ? +v : key === "sound" ? S.sound : v });
+  render();
+});
+function armed(btn, sureKey, act) {
+  if (btn.dataset.armed) { delete btn.dataset.armed; btn.textContent = t(btn.dataset.t); act(); return; }
+  btn.dataset.armed = "1"; btn.textContent = t(sureKey);
+  setTimeout(() => { if (btn.dataset.armed) { delete btn.dataset.armed; btn.textContent = t(btn.dataset.t); } }, 3500);
+}
+$("#endDeal").addEventListener("click", e => armed(e.currentTarget, "endDealSure", () => { clockStop(); conceal(); S.R = null; persistRound(); render(); }));
+$("#newEvening").addEventListener("click", e => armed(e.currentTarget, "newEveningSure", () => { conceal(); resetEvening(); render(); }));
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    if (holding) { holding = false; conceal(); markSeen(); } else conceal();
+    if (clk.run) { clk.wasRunning = true; clockPause(); }
+  } else if (clk.wasRunning) { clk.wasRunning = false; clockResume(); render(); }
+});
+window.addEventListener("resize", () => { fitAll(); });
+window.addEventListener("dodojo-state-change", e => {
+  const d = (e && e.detail) || readSaved();
+  const changed = Object.keys(d).some(k => !(d[k] === written[k] || (d[k] == null && written[k] == null)));
+  if (!changed) return;
+  Object.assign(written, d);
+  const before = S.lang;
+  load(Object.assign({}, readSaved(), d));
+  if (S.lang !== before) applyLang(); else renderNames();
+  if (holding) { holding = false; conceal(); }
+  render();
+});
+
+/* ---------- start ---------- */
+const start = readSaved();
+Object.assign(written, start);
+load(start);
+applyLang();
+if (S.R && S.R.ph === "speak" && S.clock) { clk.total = S.clock * 1000; clk.left = S.R.left > 0 ? S.R.left : (S.R.left === 0 ? 0 : S.clock * 1000); clk.run = false; }
+render();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitAll());
+})();
+</script>
+<script>
+// Outside dodojo, show the attached photos from the folder beside the page.
+if (!window.dodojo) document.querySelectorAll('[src^="attachment:"]').forEach(el => { el.src = el.getAttribute('src').slice(11); });
+</script>
+</body>
+</html>

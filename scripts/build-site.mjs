@@ -69,7 +69,13 @@ function examplesOf(skill) {
     }
     const cards = existsSync(join(folder, "cards")) ? readdirSync(join(folder, "cards")).filter(name => name.endsWith(".png")).sort() : [];
     const photos = readdirSync(folder).filter(name => /\.(jpe?g|png|webp|gif|avif)$/i.test(name));
-    return { slug, folder, meta, note, cards, photos };
+    // preview/: rendered images of the page (cover.jpg as dodojo's library
+    // shows it, 1.jpg … screens of it in use), for the gallery and the README.
+    const previewDir = join(folder, "preview");
+    const preview = existsSync(previewDir)
+      ? { cover: existsSync(join(previewDir, "cover.jpg")), screens: readdirSync(previewDir).filter(name => /^\d+\.jpg$/.test(name)).sort() }
+      : { cover: false, screens: [] };
+    return { slug, folder, meta, note, cards, photos, preview };
   }).sort((a, b) => (a.meta.lang === "en" ? 0 : 1) - (b.meta.lang === "en" ? 0 : 1));
 }
 
@@ -196,7 +202,9 @@ const dateLabel = iso => {
 
 function tile(up, skill, example, { href, heading, line, blurb }) {
   return `<a class="tile" href="${href}">
-  <div class="cover"><iframe data-src="${exampleUrl(up, skill, example)}" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe></div>
+  <div class="cover">${example.preview.cover
+    ? `<img src="${up}examples/${skill.name}/${example.slug}/preview/cover.jpg" alt="" width="400" height="400" loading="lazy">`
+    : `<iframe data-src="${exampleUrl(up, skill, example)}" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe>`}</div>
   <h3>${heading}</h3>
   <div class="meta">${line}</div>
   ${blurb ? `<p>${blurb}</p>` : ""}
@@ -244,7 +252,7 @@ ${rows}
   <h2>${t("配合 dodojo 用", "With dodojo")}</h2>
   <p class="sub">${t("在 Agent 里连接 dodojo 的 MCP（<code>https://www.dodojo.ai/api/mcp</code>，登录一次），skill 就能搜你的记忆、把页面存成笔记。dodojo 桌面版里的 Agent 已经连好。不连也能用：页面存成本地文件。", "Connect your agent to dodojo's MCP server (<code>https://www.dodojo.ai/api/mcp</code>, sign in once) and the skills can search your memories and save pages as Notes. The agent in the dodojo desktop app is already connected. Without it, pages are saved as local files.")}</p>
 </section>`;
-  return page({ title: "dodojo skills", description: "Open agent skills from dodojo: dodojo-travel, trip pages checked for your dates with a map and real photos, and dodojo-game, games you play on one page.", body, depth: 0 });
+  return page({ title: "dodojo skills", description: "Open agent skills from dodojo: dodojo-travel, trip pages checked for your dates with a map and real photos, and five game skills for board games, party games, puzzles, arcade games and story games you play on one page.", body, depth: 0 });
 }
 
 function pngSize(path) {
@@ -293,6 +301,12 @@ ${steps}
     ${example.note ? `<article class="note" lang="${meta.lang === "zh" ? "zh-CN" : "en"}"><h4>${esc(example.note.title)}</h4>${markdown(example.note.body)}<div class="attach">${attachments}</div></article>` : ""}
   </div>
 </section>
+${example.preview.screens.length ? `
+<section class="section">
+  <h2>${t("玩起来的样子", "In use")}</h2>
+  <p class="sub">${t("手机上的几个画面（390 宽，浅色）。", "A few screens on a phone (390 px wide, light).")}</p>
+  <div class="strip">${example.preview.screens.map(name => `<img src="../examples/${skill.name}/${example.slug}/preview/${name}" alt="" loading="lazy" width="200" height="338">`).join("")}</div>
+</section>` : ""}
 ${example.cards.length ? `
 <section class="section">
   <h2>${t("导出的 PNG", "Exported PNGs")}</h2>
