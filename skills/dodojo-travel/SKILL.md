@@ -143,4 +143,5 @@ layout, type, spacing, interaction, copy and sources).
   write the folder (the `.html` and its photos side by side) and tell the
   person where it is.
 - To revise a trip page, keep its `dodojo-page-id` and `data-dodojo-key` names
-  and update the same Note.
+  and replace the page in the same Note (references/save-to-dodojo.md,
+  Revising).

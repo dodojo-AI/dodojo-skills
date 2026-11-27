@@ -122,8 +122,13 @@ any of their devices. Outside dodojo the same file opens in any browser.
 
 ## 5. Lay it out with the scene first
 
-The page sits in the Note under its title and scrolls with the Note. From the
-top:
+Declare it a game in the head with
+`<meta name="dodojo-page-kind" content="game">` (references/frame.md). On a
+computer the page sits in the Note under its title and scrolls with the Note.
+On a phone or tablet the Note shows it as a preview that one tap opens on a
+screen of its own: the whole screen below a slim bar, where the page scrolls
+inside itself and nothing floats over it. So the first screen is what is
+played: about 700px tall on a phone. From the top:
 
 1. **A slim strip**, one line: the chapter or the place, and the clues found
    or the time on the case clock.

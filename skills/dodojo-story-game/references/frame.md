@@ -14,6 +14,7 @@ detecting them.
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <meta name="dodojo-page-id" content="PAGE-ID">
+<meta name="dodojo-page-kind" content="game">
 <title>WHAT THIS PAGE IS</title>
 <style>
 /* layout: ONE LINE ON THE LAYOUT CONCEPT FOR THIS SUBJECT */
@@ -74,6 +75,13 @@ body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink);
   (on its own).
 - `dodojo-page-id` (letters, numbers, dots, underscores, hyphens) names the
   page's saved state. Keep it when you revise the page.
+- `dodojo-page-kind` `game` says the page is a game. On a phone or tablet
+  dodojo then shows it in the Note as a preview that one tap opens on a screen
+  of its own: the page fills the screen below a slim bar and scrolls inside
+  itself, the edges do not navigate, the screen stays on, and a held finger
+  does not select text or raise a menu, nor do two quick taps zoom (text
+  fields still select). On a computer it plays in the Note. Without the meta
+  the game is shown as an ordinary page that scrolls with the Note.
 - The closing script is the only line that cares where the page runs; keep it
   last.
 

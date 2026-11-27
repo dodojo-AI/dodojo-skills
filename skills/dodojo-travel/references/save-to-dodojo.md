@@ -49,6 +49,20 @@ for the few words that must not be missed; write amounts without a bare `$`.
 
 ## Revising
 
-Update the same Note with `update_memory` and its card id. Keep the page's
-`dodojo-page-id` and its `data-dodojo-key` names so what the person already
-ticked carries over.
+Replace the page in the same Note, so what the person already ticked and the
+Note's place carry over, and the old page stays as an earlier version:
+
+1. `get_document_review_packet` with the card id gives the page's current
+   version: its file name, its version id and a download link. Edit that
+   exact file.
+2. `begin_document_version_upload` with the document id, that version id as
+   `based_on_version_id`, the same file name, `content_type: "text/html"` and
+   the size in bytes; PUT the file to `upload_url` with the header
+   `Content-Type: text/html`; then `complete_document_version_upload`.
+3. Pass a new `cover` with `update_memory` when the top of the page changed,
+   and change the body or title there if they no longer fit.
+
+Keep the page's `dodojo-page-id` and its `data-dodojo-key` names: saved
+state belongs to the Note and the page id, not the file.
+`update_memory` with an `.html` in `attachments` adds a second file and does
+not replace the page.

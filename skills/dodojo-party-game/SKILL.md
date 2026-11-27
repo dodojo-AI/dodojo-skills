@@ -120,8 +120,13 @@ it. Choose one and build the whole page around it:
 
 ## 4. Lay it out for the table
 
-The page sits in the Note under its title and scrolls with the Note. From the
-top:
+Declare it a game in the head with
+`<meta name="dodojo-page-kind" content="game">` (references/frame.md). On a
+computer the page sits in the Note under its title and scrolls with the Note.
+On a phone or tablet the Note shows it as a preview that one tap opens on a
+screen of its own: the whole screen below a slim bar, where the page scrolls
+inside itself and nothing floats over it. So the first screen is what is
+played: about 700px tall on a phone. From the top:
 
 1. **A status strip**, one line about 48-56px tall: whose turn it is (their
    name in their colour), the round, the score or what is left.
