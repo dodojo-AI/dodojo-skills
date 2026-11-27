@@ -18,17 +18,62 @@
 
 示例（都由 Agent 按 skill 真实做出）：[里斯本的一个周六](examples/dodojo-travel/lisbon-saturday/)（英文）、[京都东山一日步行](examples/dodojo-travel/kyoto-higashiyama/)（中文）。
 
-## dodojo-game
+## 游戏 skills
 
-[`skills/dodojo-game`](skills/dodojo-game/SKILL.md) 做一个手机和电脑上都能玩的游戏：棋类、牌类、益智、街机、文字游戏，或者一台手机传着玩的聚会游戏。
+五个 skill 做一页就能玩的游戏，各管一类。它们用同一套 dodojo 画框规矩：游戏在上、要读的在下，点下去马上有反应和声音，画面取自游戏本身的世界、深浅色都做，玩到哪儿都存在页面里，换台设备打开还在原处。
 
-- 游戏放在最上面：细细一条对局条、棋盘和按钮一屏装下，玩法、设置、战绩和规则放在下面，下棋时界面不跳；
-- 触屏、鼠标、键盘点下去马上有反应，反馈和事情大小相称，声音用 Web Audio 在页面里现做；
+### dodojo-game
+
+[`skills/dodojo-game`](skills/dodojo-game/SKILL.md) 做棋类、牌类和桌游：
+
+- 细细一条对局条、棋盘和按钮一屏装下，玩法、设置、战绩和规则放在下面，下棋时界面不跳；
 - 电脑对手分档且真的不一样强，存之前让各档互相对下检查过；
-- 每一步都存着，下到一半关掉，换台设备打开也停在同一手；在 dodojo 团队空间里，大家用各自的设备轮流下；
-- 画面取自游戏本身的材质（榧木棋盘、黑石和贝壳白子、绿色台呢），深浅色都做。
+- 两个人用一台手机下，或者在 dodojo 团队空间里各用各的设备；
+- 每一步都存着，画面取自棋盘棋子（榧木棋盘、黑石和贝壳白子、绿色台呢）。
 
-示例（按 skill 做出）：[榧木棋盘五子棋](examples/dodojo-game/gomoku/)（英文），可以跟三档电脑下，也可以两个人用一台手机下，带复盘和战绩。
+示例：[榧木棋盘五子棋](examples/dodojo-game/gomoku/)（英文），可以跟三档电脑下，也可以两个人用一台手机下，带复盘和战绩。
+
+### dodojo-party-game
+
+[`skills/dodojo-party-game`](skills/dodojo-party-game/SKILL.md) 做 2 到 10 个人围着一部手机玩的聚会游戏：
+
+- 按这一桌挑核心玩法（猜、骗、赌运气、抢、投票、抽签），想好手机怎么放：传着玩、平放在中间、举起来；
+- 最要紧的词隔着桌子也看得清，每次看秘密前先盖住，手机放中间时每人在自己那边有一块拍区；
+- 听得见的倒计时，每轮在高潮处收，一晚上的比分都记着；
+- 题库几百条，每种语言按自己的文化写，不逐字翻译。
+
+示例：[数字炸弹 Number Bomb](examples/dodojo-party-game/number-bomb/)，拆弹箱、越缩越小的范围和导火索，2–10 人，English / 中文 / 日本語。
+
+### dodojo-puzzle-game
+
+[`skills/dodojo-puzzle-game`](skills/dodojo-puzzle-game/SKILL.md) 做一个人解的谜题，每日一题或关卡包：
+
+- 每道题都在 Node 里过求解器：有解、该唯一的唯一，难度按需要的推理来定；
+- 关卡一次教一个新招，有难度曲线，中间留喘口气的关；
+- 标记、笔记、无限撤销，错误只在想看时才显示，提示指出下一步能推出什么、为什么。
+
+示例：[退潮 Low Tide](examples/dodojo-puzzle-game/low-tide/)，排成潮汐表小册子的看图解谜：12 幅海边小画从 5 × 5 到 10 × 10，外加每日一题，每道都验过解唯一，English / 中文 / 日本語。
+
+### dodojo-arcade-game
+
+[`skills/dodojo-arcade-game`](skills/dodojo-arcade-game/SKILL.md) 做一根手指就能玩的小游戏：
+
+- 三秒学会一个动作，配一个给它理由的场景；
+- 固定步长循环，60 Hz 和 120 Hz 的手机玩起来一样，输入缓冲到下一步，拇指、鼠标、键盘都顺手；
+- 反馈和事情大小相称，判定比画面宽容，前一分钟慢慢加难，一秒内重开，最高分存着；
+- 存之前让机器人在 Node 里跑几百个种子，降速测过帧时间。
+
+示例：[路灯蜘蛛 Lamplight Spider](examples/dodojo-arcade-game/lamplight-spider/)，钠灯下的蜘蛛吊着丝下去捉飞蛾、爬上来躲蝙蝠：按住下降，松手上爬。English / 中文 / 日本語。
+
+### dodojo-story-game
+
+[`skills/dodojo-story-game`](skills/dodojo-story-game/SKILL.md) 做讲故事的游戏：分支剧情、推理案卷、密室逃脱、文字冒险，或者用共同回忆做的寻宝：
+
+- 动笔前先画故事地图，选择会在后面起作用，每种结局都要自己挣来；
+- 每段场景短，谜题线索都在文字里，答案框容得下小笔误，提示一级一级给；
+- 存之前用脚本走遍每条路：每个场景和结局都能到，没有死路。
+
+示例：[霍林霜冻案 The Hollin Frost](examples/dodojo-story-game/hollin-frost/)（英文），1956 年的保险理赔案卷：四点钟前查出是谁让一株名贵兰花冻死。29 个场景、两道锁、三种结局。
 
 ## 安装
 

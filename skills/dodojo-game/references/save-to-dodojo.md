@@ -25,17 +25,25 @@ phone and the computer, and keeps what they tick and type.
    the returned private URL with the returned headers, then pass
    `{ "upload_id": … }` in `attachments`. Small files may go inline as base64
    instead, as long as the whole request stays under about 3 MB.
-3. Call `save_memory` with:
+3. Take the cover: open the page fresh (no saved state) in a 400 x 400 CSS px
+   viewport at device scale factor 2, light theme, wait for fonts and about
+   1.5 s, and screenshot that viewport (an 800 x 800 PNG).
+   `scripts/shoot.mjs <page.html> <prefix> --cover` does exactly this. Upload
+   it like the page and pass it as `cover: { "upload_id": … }`; it is not
+   added to the Note as an attachment. Without a headless browser, leave it
+   out and the person's app takes one.
+4. Call `save_memory` with:
    - `title`: a short noun phrase naming the game ("Gomoku"), not a sentence;
-   - `content_type: "markdown"` and a body of two or three lines: what the
-     game is, how to start and the main rule. dodojo shows this text under
-     the page (older app versions show it above, so keep it short); the full
-     rules live in the page, under the game;
-   - `attachments`: the `.html`, plus any images or sounds the page shows.
-4. File it into a folder only when the person named one (then call
+   - `content_type: "markdown"` and the short body the skill's last step
+     describes, in two or three short paragraphs. dodojo shows this text
+     under the page (older app versions show it above, so keep it short);
+     the full rules live in the page, under the game;
+   - `attachments`: the `.html`, plus any images the page shows;
+   - `cover`: the upload from step 3.
+5. File it into a folder only when the person named one (then call
    `list_collections` and use its exact path). Otherwise leave the collection
    out: it lands in their Personal space, newest first.
-5. Tell the person the Note's title and what is in it. Do not paste the page.
+6. Tell the person the Note's title and what is in it. Do not paste the page.
 
 ## dodojo Markdown, briefly
 
@@ -50,4 +58,5 @@ for the few words that must not be missed; write amounts without a bare `$`.
 
 Update the same Note with `update_memory` and its card id. Keep the page's
 `dodojo-page-id` and its `data-dodojo-key` and `setState` names so a game in
-progress and the record carry over.
+progress and the record carry over, and pass a new `cover` when the top of the
+page changed.

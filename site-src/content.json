@@ -2,7 +2,11 @@
   "repo": "dodojo-AI/dodojo-skills",
   "order": [
     "dodojo-travel",
-    "dodojo-game"
+    "dodojo-game",
+    "dodojo-party-game",
+    "dodojo-puzzle-game",
+    "dodojo-arcade-game",
+    "dodojo-story-game"
   ],
   "skills": {
     "dodojo-travel": {
@@ -51,8 +55,8 @@
     },
     "dodojo-game": {
       "zh": {
-        "title": "小游戏",
-        "tagline": "棋类、益智、街机、两人同屏：游戏放在最上面，点下去马上有手感和声音，电脑对手分档，每一步都存着，画面取自游戏本身的材质。",
+        "title": "棋牌对战",
+        "tagline": "五子棋、象棋、围棋、牌类和原创桌游：游戏放在最上面，点下去马上有手感和声音，电脑对手分档，两人同屏或团队空间里各用各的手机，每一步都存着，画面取自棋盘棋子的材质。",
         "input": "想玩什么、几个人、在哪儿玩；连上 dodojo 时，还有你以前做过的版本",
         "output": "一页打开就能玩的游戏：对局条、棋盘或场地、一排按钮，规则、设置和战绩放在下面",
         "steps": [
@@ -87,10 +91,186 @@
         ]
       },
       "en": {
-        "title": "Game",
-        "tagline": "Board games, puzzles, arcade and pass-and-play: the game on top, input and sound that answer at once, a computer opponent with real levels, every move kept, and a look taken from the game's own materials.",
+        "title": "Board game",
+        "tagline": "Gomoku, chess, go, card games and original tabletop games: the game on top, input and sound that answer at once, a computer opponent with real levels, two on one phone or each on their own in a team space, every move kept, and a look taken from the board and pieces.",
         "input": "What to play, how many people and where; plus earlier versions in dodojo when connected",
         "output": "A page you play: a status strip, the board or playfield and its controls, with rules, settings and records below"
+      }
+    },
+    "dodojo-party-game": {
+      "zh": {
+        "title": "聚会游戏",
+        "tagline": "2 到 10 个人围着一部手机：你画我猜、比划猜词、数字炸弹、拍桌抢答、抽签、谁是卧底。隔着桌子也看得清，手机交接时秘密不露馅，倒计时听得见，一晚上的比分都记着，题库每种语言各写各的。",
+        "input": "几个人、什么场合、手机怎么放；连上 dodojo 时，还有大家的名字和共同的回忆",
+        "output": "一页拿起来就能玩的聚会游戏：游戏区、一个大按钮、轮到谁，玩法、名单、设置和战绩放在下面",
+        "steps": [
+          [
+            "先想清楚这一桌",
+            "谁来玩、几个人、玩的时候手机放哪儿、一轮和一晚各多久、桌上说哪几种语言"
+          ],
+          [
+            "找到核心玩法",
+            "一个简单动作加上人和人之间的紧张感：猜、骗、赌运气、抢、投票、抽签"
+          ],
+          [
+            "写规则和题库",
+            "一分钟内开局，轮次、计分、一晚怎么收尾；题目几百条，每种语言按自己的文化写"
+          ],
+          [
+            "为一桌人排版",
+            "最要紧的那个词最大，一个大按钮，看秘密前先盖住，桌子中间每人一块拍区"
+          ],
+          [
+            "把场子带起来",
+            "听得见的倒计时，每轮在高潮处收，一晚的总分，轮流公平，等着的人也有事做"
+          ],
+          [
+            "把这一晚存住",
+            "名字、比分、用过的题和进行中的一轮都存在页面里；团队空间里用 dodojo.game 管座位"
+          ],
+          [
+            "假装一桌人试玩再存",
+            "最少和最多人数各玩完整一晚，每次交接、计时、语言都过一遍，手机宽度截图后存成 dodojo 笔记"
+          ]
+        ]
+      },
+      "en": {
+        "title": "Party game",
+        "tagline": "Two to ten people around one phone: drawing, charades, a number bomb, a slap race, drawing lots, the odd word out. Readable across the table, secrets that stay hidden when the phone changes hands, a clock you hear, scores across the evening, prompts written for each language.",
+        "input": "How many, the occasion, where the phone sits; plus the group's names and shared memories in dodojo when connected",
+        "output": "A party game you pick up and play: the play area, one big button and whose turn it is, with how to play, players, settings and the tally below"
+      }
+    },
+    "dodojo-puzzle-game": {
+      "zh": {
+        "title": "益智解谜",
+        "tagline": "数独、数织、华容道、推箱子、连线、文字谜、每日一题：每道题都用求解器验过有解、该唯一的唯一，难度看推理而不是空格多少，关卡一次教一个新招，提示讲清下一步为什么。",
+        "input": "想玩哪种谜题、一道多久、每日一题还是关卡包；连上 dodojo 时，还有可以拿来出题的旅行和照片",
+        "output": "一页安静的谜题：细条、尽量大的棋盘格、一排工具，规则、关卡图和纪录放在下面",
+        "steps": [
+          [
+            "先把谜题定下来",
+            "哪一种、规则写清、手机上放得下的尺寸、每日一题还是关卡包、一道多久"
+          ],
+          [
+            "保证每道题公平",
+            "手做或按种子生成，每道都过求解器：有解、该唯一的唯一、按需要的推理定难度"
+          ],
+          [
+            "排好关卡",
+            "第一关不用文字就能教会规则，一个新招一关，难度上升中间留喘口气的关"
+          ],
+          [
+            "谜题放在最上面",
+            "细细一条状态、尽量大的格子、紧贴着的工具，然后才是规则、关卡和纪录"
+          ],
+          [
+            "让人想得舒服",
+            "标记和笔记、无限撤销、错误只在想看时才显示，提示讲清下一步的理由"
+          ],
+          [
+            "把进度存住",
+            "每个标记、每道做完的题都存在页面里，换台设备打开还在原处"
+          ],
+          [
+            "验完再存",
+            "每关和每个种子都过求解器，用触屏、鼠标、键盘亲手解几关，手机宽度截图后存成 dodojo 笔记"
+          ]
+        ]
+      },
+      "en": {
+        "title": "Puzzle",
+        "tagline": "Number squares, picture logic, sliding blocks, box pushing, paths and word puzzles, daily or in packs: every puzzle proven by a solver, unique where logic should decide, graded by the reasoning it needs, levels that teach one idea at a time, and hints that explain the next step.",
+        "input": "The kind of puzzle, how long one takes, a daily puzzle or a pack; plus trips and photos in dodojo to build puzzles from when connected",
+        "output": "A calm puzzle page: a slim strip, the grid as large as it goes and a row of tools, with rules, the level map and records below"
+      }
+    },
+    "dodojo-arcade-game": {
+      "zh": {
+        "title": "街机反应",
+        "tagline": "一根手指就能玩的跳跃、飞行、躲避、接东西、打砖块、节奏和跑酷：三秒学会一个动作，固定步长的循环 60 帧不卡，死得服气，重开不到一秒，最高分跟着你走。",
+        "input": "想要什么样的动作和场景、一局多长；连上 dodojo 时，还有你生活里的城市、宠物",
+        "output": "一页随时来一局的小游戏：场景在最上面，分数在角落，一排按钮，玩法和纪录放在下面",
+        "steps": [
+          [
+            "找到那一个动作",
+            "一个动作（跳、转向、接、瞄准、踩点），高手和新手差在哪，再配一个给它理由的场景"
+          ],
+          [
+            "场景放在最上面",
+            "场景带着分数在上面，下面一细排按钮，再往下是玩法、纪录和这个世界的来历"
+          ],
+          [
+            "从游戏的世界来设计",
+            "一个画面构想，几种在高速下一眼分得清的颜色和形状，先写成方案再写代码"
+          ],
+          [
+            "做循环和操作",
+            "requestAnimationFrame 上的固定步长模拟，输入缓冲到下一步，拇指、鼠标、键盘都顺手"
+          ],
+          [
+            "手感好、死得服气",
+            "反馈和事情大小相称，判定比画面宽容，前一分钟慢慢加难，死因看得见，一秒内重开"
+          ],
+          [
+            "把最高分存住",
+            "最高分、玩了几局和设置都存在页面里；页面切走就暂停"
+          ],
+          [
+            "跑完再存",
+            "机器人在 Node 里跑几百个种子，人用触屏、鼠标、键盘玩，降速测帧时间，手机宽度截图后存成 dodojo 笔记"
+          ]
+        ]
+      },
+      "en": {
+        "title": "Arcade",
+        "tagline": "One-thumb jumpers, flyers, dodgers, catchers, brick breakers, rhythm games and runners: one verb learned in three seconds, a fixed-step loop at 60 fps, deaths that feel fair, restart in under a second, and a best score that follows you.",
+        "input": "The action and the setting, how long a run lasts; plus a city or a pet from your own life in dodojo when connected",
+        "output": "A game for one more run: the scene on top with the score in a corner and a row of controls, with how to play and records below"
+      }
+    },
+    "dodojo-story-game": {
+      "zh": {
+        "title": "互动故事",
+        "tagline": "分支剧情、推理案卷、密室逃脱、文字冒险，还有用你们共同回忆做的寻宝和生日惊喜：先画好故事地图再动笔，每段短、选择算数，谜题线索都在文字里，提示一级一级给，几种结局都要自己挣来。",
+        "input": "想要什么样的故事、谁来玩、玩多久；连上 dodojo 时，还有可以写进去的旅行、地点和照片",
+        "output": "一页一段一段读下去的故事：场景和文字在上面，选项紧跟着，线索本、结局图和设置放在下面",
+        "steps": [
+          [
+            "先把故事定下来",
+            "哪一种、谁玩给谁玩、玩家的身份和目标、多长，要不要用你自己的回忆来写"
+          ],
+          [
+            "动笔前先画地图",
+            "几幕、每个场景、每个选择改变什么、线索在哪找到、每种结局怎么挣来"
+          ],
+          [
+            "写短场景和真选择",
+            "每段 40 到 150 字，具体的处境，两到四个各有分量的选项"
+          ],
+          [
+            "谜题要公平",
+            "答案都能从页面上推出来，答案框容得下小笔误，提示从点拨到答案一级一级给"
+          ],
+          [
+            "场景放在最上面",
+            "场景的图和文字在上，选项紧跟着，然后是线索本、结局图和设置"
+          ],
+          [
+            "把故事存住",
+            "当前场景、做过的选择、找到的线索和到过的结局都存在页面里，可以从某一章重玩"
+          ],
+          [
+            "走遍每条路再存",
+            "脚本走遍每个场景和结局，亲手从头玩一遍，手机宽度截图后存成 dodojo 笔记"
+          ]
+        ]
+      },
+      "en": {
+        "title": "Story game",
+        "tagline": "Branching stories, mystery case files, escape rooms, text adventures, and treasure hunts or birthday quests built from your shared memories: the story mapped before it is written, short scenes with real choices, fair clues in the text, a hint ladder and endings that are earned.",
+        "input": "The kind of story, who plays, how long; plus trips, places and photos in dodojo to write into it when connected",
+        "output": "A story you read scene by scene: the scene and its text on top, the choices right under it, with the journal, endings and settings below"
       }
     }
   }

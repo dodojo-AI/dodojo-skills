@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="dodojo-page-id" content="lamplight-spider">
+<title>Lamplight Spider</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;800&display=swap">
+<style>
+/* layout: a 4:5 night scene at a bus stop under a sodium streetlamp, score and best in its top corners; a 44px row under it (pause or start again, sound, EN · 中文 · 日本語); then how to play, controls, records, settings and a few lines on the lamp */
+/* scene, the same in both themes: sodium light #F3A852 → #9A4A17, shelter and street #2A1306 / #5A2A0E; player = cold silk #D6F6F1 outlined #1B0E06 (the only cool colour); danger = bats #170B05, jagged; reward = moths #FFF1D1, round */
+/* type: Overpass, a road-sign face, with tabular figures for every number; Chinese and Japanese fall back to the system face, then Noto Sans SC / JP */
+:root {
+  --paper: var(--dodojo-bg, #f6f1ea);
+  --panel: var(--dodojo-surface, #fffdf9);
+  --ink: var(--dodojo-fg, #1f1712);
+  --soft: var(--dodojo-muted-fg, #6b5d52);
+  --line: var(--dodojo-border, rgba(31, 23, 18, .14));
+  --accent: #a4500f;
+  --accent-ink: #ffffff;
+  --hud-bg: rgba(27, 14, 6, .58);
+  --hud-ink: #fff1d1;
+  --radius: var(--dodojo-radius, 14px);
+  --sans: "Overpass", var(--dodojo-font-sans, system-ui), -apple-system, "Segoe UI", sans-serif;
+}
+:root[data-dodojo-theme="dark"] {
+  --paper: var(--dodojo-bg, #15110e);
+  --panel: var(--dodojo-surface, #201a15);
+  --ink: var(--dodojo-fg, #efe7df);
+  --soft: var(--dodojo-muted-fg, #ab9d91);
+  --line: var(--dodojo-border, rgba(239, 231, 223, .14));
+  --accent: #f0a24a;
+  --accent-ink: #1d1006;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dodojo-theme]) {
+    --paper: #15110e; --panel: #201a15; --ink: #efe7df; --soft: #ab9d91;
+    --line: rgba(239, 231, 223, .14); --accent: #f0a24a; --accent-ink: #1d1006;
+  }
+}
+:root[lang="zh-CN"] { --sans: "Overpass", -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif; }
+:root[lang="ja"] { --sans: "Overpass", -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif; }
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink);
+  font: 16px/1.55 var(--sans); -webkit-text-size-adjust: 100%; }
+:root[lang="zh-CN"] body, :root[lang="ja"] body { line-height: 1.7; line-break: strict; }
+
+/* one language shows at a time; without script the English stays */
+.zh, .ja { display: none; }
+:root[data-lang="zh"] .en, :root[data-lang="ja"] .en { display: none; }
+:root[data-lang="zh"] .zh, :root[data-lang="ja"] .ja { display: revert; }
+
+main { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+.game { display: flex; flex-direction: column; gap: 8px; }
+
+/* the playfield */
+.stage { position: relative; width: 100%; aspect-ratio: 4 / 5; border-radius: var(--radius); overflow: hidden;
+  background: linear-gradient(#f3a852, #d27a2e 55%, #9a4a17);
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent; cursor: pointer; outline: none; }
+.stage:focus-visible:not([data-pointer]) { box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--accent); }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.hud { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between;
+  align-items: flex-start; pointer-events: none; }
+.pill { background: var(--hud-bg); color: var(--hud-ink); border-radius: 999px; padding: 3px 10px 1px;
+  font-variant-numeric: tabular-nums; line-height: 1.5; white-space: nowrap; }
+.pill.score { font-size: 20px; font-weight: 800; min-width: 40px; text-align: center; }
+.pill.best { font-size: 14px; font-weight: 600; margin-top: 3px; }
+.msg { position: absolute; left: 0; right: 0; top: 60%; display: flex; justify-content: center; pointer-events: none; padding: 0 12px; }
+.msg p { margin: 0; background: var(--hud-bg); color: var(--hud-ink); border-radius: 999px; padding: 8px 16px 6px;
+  font-size: 15px; font-weight: 600; white-space: nowrap; }
+.result { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -46%); width: min(86%, 300px);
+  background: rgba(27, 14, 6, .72); color: var(--hud-ink); border-radius: 16px; padding: 14px 16px 12px;
+  text-align: center; pointer-events: none; display: flex; flex-direction: column; gap: 2px; }
+.result p { margin: 0; }
+.r-score { font-size: 46px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.r-best { font-size: 15px; font-weight: 600; color: #ffd08a; font-variant-numeric: tabular-nums; }
+.r-line, .r-stats { font-size: 14px; font-variant-numeric: tabular-nums; }
+.r-again { margin-top: 8px !important; font-size: 14px; font-weight: 600; opacity: .85; }
+
+/* the row under it */
+.bar { display: flex; align-items: center; gap: 6px; height: 44px; min-width: 0; }
+.icon { width: 44px; height: 44px; flex: none; display: grid; place-items: center; padding: 0;
+  border: 1px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--ink); cursor: pointer; }
+.icon svg { width: 20px; height: 20px; }
+.icon[aria-pressed="false"] { color: var(--soft); }
+.icon:focus-visible, .langs button:focus-visible, .set input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.langs { margin-left: auto; display: flex; align-items: center; min-width: 0; }
+.langs span { color: var(--soft); font: 13px system-ui, sans-serif; padding: 0 1px; }   /* Overpass sets its middle dot off-centre */
+.langs button { height: 44px; min-width: 34px; padding: 0 6px; border: 0; background: none; color: var(--soft);
+  font: 600 14px var(--sans); cursor: pointer; box-shadow: inset 0 -2px 0 transparent; }
+.langs button[aria-pressed="true"] { color: var(--ink); box-shadow: inset 0 -2px 0 var(--accent); }
+.langs button:lang(zh-CN) { font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif; }
+.langs button:lang(ja) { font-family: -apple-system, "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif; }
+
+/* what is read */
+section { display: flex; flex-direction: column; gap: 8px; }
+h2 { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--soft); text-wrap: balance; }
+:root[lang="zh-CN"] h2, :root[lang="ja"] h2 { letter-spacing: .04em; font-size: 14px; }
+p { margin: 0; }
+ul { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 4px; }
+kbd { font: 600 13px var(--sans); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; padding: 1px 6px 0; background: var(--panel); white-space: nowrap; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.stats div { border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; background: var(--panel); min-width: 0; }
+.stats dt { font-size: 13px; color: var(--soft); }
+.stats dd { margin: 0; font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.recent { display: flex; align-items: flex-end; gap: 4px; height: 48px; margin: 0; padding: 0; list-style: none; }
+.recent li { flex: 1 1 0; min-width: 0; background: var(--accent); border-radius: 3px 3px 0 0; opacity: .75; }
+.recent li:first-child { opacity: 1; }
+.recent-note { font-size: 13px; color: var(--soft); font-variant-numeric: tabular-nums; }
+.set { display: flex; flex-direction: column; gap: 2px; }
+.set label { display: flex; gap: 10px; align-items: flex-start; min-height: 44px; padding: 8px 0; cursor: pointer; border-bottom: 1px solid var(--line); }
+.set input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent); flex: none; }
+.set small { display: block; color: var(--soft); font-size: 13px; }
+.world p + p { margin-top: 6px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+  <div class="game">
+    <div class="stage" id="stage" tabindex="0" role="application" aria-label="Lamplight Spider. Hold Space or Down to drop, let go to climb. P pauses, Enter starts again.">
+      <canvas id="field" aria-hidden="true"></canvas>
+      <div class="hud" aria-hidden="true">
+        <span class="pill score" id="hudScore">0</span>
+        <span class="pill best" id="hudBest">Best 0</span>
+      </div>
+      <div class="msg" id="msg"><p id="msgText">Hold to drop, let go to climb</p></div>
+      <div class="result" id="result" hidden>
+        <p class="r-score" id="rScore">0</p>
+        <p class="r-best" id="rBest"></p>
+        <p class="r-line" id="rLine"></p>
+        <p class="r-stats" id="rStats"></p>
+        <p class="r-again" id="rAgain"></p>
+      </div>
+    </div>
+    <div class="bar">
+      <button class="icon" id="btnRun" type="button" aria-label="Start">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><g id="icoRun" fill="currentColor"><path d="M6 4l10 6-10 6z"/></g></svg>
+      </button>
+      <button class="icon" id="btnSound" type="button" aria-pressed="true" aria-label="Sound">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M3 7.5h3l4-3.5v12l-4-3.5H3z"/><path id="icoWaves" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M13 7.2a4 4 0 0 1 0 5.6M15.4 5a7 7 0 0 1 0 10"/><path id="icoMute" hidden fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M13 7.5l4.5 5M17.5 7.5l-4.5 5"/></svg>
+      </button>
+      <div class="langs" role="group" aria-label="Language">
+        <button type="button" lang="en" data-lang="en" aria-pressed="true">EN</button><span aria-hidden="true">·</span><button type="button" lang="zh-CN" data-lang="zh" aria-pressed="false">中文</button><span aria-hidden="true">·</span><button type="button" lang="ja" data-lang="ja" aria-pressed="false">日本語</button>
+      </div>
+    </div>
+    <p class="sr" id="live" aria-live="polite"></p>
+  </div>
+
+  <section>
+    <h2><span class="en">How to play</span><span class="zh">玩法</span><span class="ja">遊び方</span></h2>
+    <div class="en">
+      <p>Hold to drop on your thread, let go to climb. Catch moths: each one in a row is worth one more, up to five. Dodge the bats: one touch ends the run, a close pass is worth two.</p>
+    </div>
+    <div class="zh">
+      <p>按住放丝下降，松手顺丝上爬。接住飞蛾：连着接，每只多一分，最多五分。躲开蝙蝠：碰到就结束，擦身而过加两分。</p>
+    </div>
+    <div class="ja">
+      <p>長押しで糸を出して下りる、離すと登る。ガは続けてつかむと1匹ごとに1点増え、最大5点。コウモリに触れたら終わり、すれすれでかわすと2点。</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="en">Controls</span><span class="zh">操作</span><span class="ja">操作</span></h2>
+    <ul class="en">
+      <li>Phone: hold anywhere on the scene with one thumb.</li>
+      <li>Mouse: press and hold on the scene.</li>
+      <li>Keyboard: hold <kbd>Space</kbd> or <kbd>↓</kbd>. <kbd>P</kbd> or <kbd>Esc</kbd> pauses, <kbd>Enter</kbd> starts again.</li>
+    </ul>
+    <ul class="zh">
+      <li>手机：单指按住画面任意处。</li>
+      <li>鼠标：在画面上按住不放。</li>
+      <li>键盘：按住 <kbd>空格</kbd> 或 <kbd>↓</kbd>。<kbd>P</kbd> 或 <kbd>Esc</kbd> 暂停，<kbd>Enter</kbd> 重新开始。</li>
+    </ul>
+    <ul class="ja">
+      <li>スマホ：画面のどこでも指で長押し。</li>
+      <li>マウス：画面を押したままにする。</li>
+      <li>キーボード：<kbd>スペース</kbd>か<kbd>↓</kbd>を押し続ける。<kbd>P</kbd>か<kbd>Esc</kbd>で一時停止、<kbd>Enter</kbd>でやり直し。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="en">Records</span><span class="zh">记录</span><span class="ja">記録</span></h2>
+    <dl class="stats">
+      <div><dt><span class="en">Best</span><span class="zh">最佳</span><span class="ja">ベスト</span></dt><dd id="stBest">0</dd></div>
+      <div><dt><span class="en">Runs</span><span class="zh">局数</span><span class="ja">プレイ数</span></dt><dd id="stRuns">0</dd></div>
+      <div><dt><span class="en">Moths</span><span class="zh">飞蛾</span><span class="ja">ガ</span></dt><dd id="stMoths">0</dd></div>
+    </dl>
+    <ol class="recent" id="recent" aria-hidden="true"></ol>
+    <p class="recent-note"><span class="en">Last runs, newest first: </span><span class="zh">最近几局（新的在前）：</span><span class="ja">最近のスコア（新しい順）：</span><span id="recentText">none yet</span></p>
+    <p class="recent-note" id="relaxedLine" hidden><span class="en">Relaxed best: </span><span class="zh">轻松模式最佳：</span><span class="ja">ゆったりのベスト：</span><span id="stRelaxed">0</span></p>
+  </section>
+
+  <section class="set">
+    <h2><span class="en">Settings</span><span class="zh">设置</span><span class="ja">設定</span></h2>
+    <label><input type="checkbox" id="setSound" checked><span><span class="en">Sound</span><span class="zh">声音</span><span class="ja">サウンド</span></span></label>
+    <label><input type="checkbox" id="setCalm"><span><span class="en">Calm motion</span><span class="zh">减少动效</span><span class="ja">動きをおさえる</span>
+      <small><span class="en">No shake and no flashes.</span><span class="zh">不晃动，不闪光。</span><span class="ja">揺れとフラッシュなし。</span></small></span></label>
+    <label><input type="checkbox" id="setRelaxed"><span><span class="en">Relaxed</span><span class="zh">轻松模式</span><span class="ja">ゆったり</span>
+      <small><span class="en">Slower bats from the next run, with its own best.</span><span class="zh">下一局起蝙蝠变慢，最佳另记。</span><span class="ja">次の回からコウモリが遅く。ベストは別記録。</span></small></span></label>
+  </section>
+
+  <section class="world">
+    <h2><span class="en">Under the lamp</span><span class="zh">路灯下</span><span class="ja">街灯の下で</span></h2>
+    <div class="en">
+      <p>On summer nights moths spiral into the streetlights, and the light draws hunters after them: bats sweep through the glow, and spiders spin wherever the insects gather. This one has the bus stop roof to itself.</p>
+      <p>Under an orange sodium lamp every colour turns to amber, so the cold white of the silk is the only cool thing out there.</p>
+    </div>
+    <div class="zh">
+      <p>夏夜里，飞蛾绕着路灯打转，猎手也跟着灯光来了：蝙蝠在光里来回掠过，蜘蛛在虫子聚集的地方结网。这一只占下了公交站的棚顶。</p>
+      <p>橙色的钠灯把一切都染成琥珀色，只有蛛丝那一点冷白，是夜里唯一的凉色。</p>
+    </div>
+    <div class="ja">
+      <p>夏の夜、ガは街灯のまわりをぐるぐる回り、その光に狩人たちも集まってくる。コウモリは光の中をすばやく横切り、クモは虫の集まる場所に糸を張る。このクモはバス停の屋根をひとり占めしている。</p>
+      <p>オレンジ色のナトリウム灯の下では何もかもが琥珀色に染まり、糸の冷たい白だけが、夜の中でただひとつ涼しい色になる。</p>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ---------- the run: a pure simulation, shared with the Node bot ---------- */
+function makeGame() {
+  const C = {
+    W: 100, H: 125, SPIDER_X: 30, ANCHOR_Y: 10, TOP_Y: 17, BOTTOM_Y: 113, REST_Y: 40,
+    DROP_V: 74, CLIMB_V: 60, DROP_A: 900, CLIMB_A: 800,
+    SPAWN_X: 107, SPEED_START: 30, SPEED_TOP: 88, RAMP_T: 75,
+    BAT_RX: 4.4, BAT_RY: 2.4, SPIDER_R: 2.6, MOTH_R: 5.6, NEAR: 2.8, MIN_GAP: 0.32,
+    BAT_LO: 18, BAT_HI: 112, MAX_STREAK: 5, NEAR_POINTS: 2, FIRST_BAT: 2.4, FIRST_BURST: 50,
+    GAP_START: 1.35, GAP_TOP: 0.46, HUNT_START: 0.25, HUNT_TOP: 0.75, LEAD: 0.6,
+    WAVE_FROM: 15, PAIR_FROM: 25, PAIR_TOP: 0.3, PAIR_MIN: 28, PAIR_SPAN: 16
+  };
+  const TAU = Math.PI * 2, NBAT = 16, NMOTH = 10, NEV = 24;
+  // event kinds the page turns into juice: 1 drop, 2 climb, 3 moth caught, 4 streak lost, 5 close pass, 6 hit, 7 bat appears
+  function rnd(w) {
+    let t = (w.r = (w.r + 0x6D2B79F5) | 0);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+  const smooth = x => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
+  const speedAt = t => C.SPEED_START + (C.SPEED_TOP - C.SPEED_START) * smooth(t / C.RAMP_T);
+  function newWorld(seed, opts) {
+    const w = {
+      seed: seed >>> 0, r: (seed >>> 0) || 1, t: 0, over: false, cause: "", hit: -1,
+      scale: opts && opts.relaxed ? 0.78 : 1,
+      y: C.REST_Y, py: C.REST_Y, vy: 0, held: false,
+      score: 0, streak: 0, caught: 0, near: 0, speed: C.SPEED_START,
+      nextBat: C.FIRST_BAT, nextMoth: 0.8, burstUntil: 0, nextBurst: C.FIRST_BURST,
+      bats: [], moths: [], ev: [], evN: 0
+    };
+    w.speed = speedAt(0) * w.scale;
+    for (let i = 0; i < NBAT; i++) w.bats.push({ on: false, passed: false, x: 0, y: 0, px: 0, py: 0, y0: 0, vx: 0, amp: 0, f: 0, ph: 0, age: 0, arr: 0, md: 99 });
+    for (let i = 0; i < NMOTH; i++) w.moths.push({ on: false, missed: false, x: 0, y: 0, px: 0, py: 0, y0: 0, vx: 0, amp: 0, f: 0, ph: 0, age: 0 });
+    for (let i = 0; i < NEV; i++) w.ev.push({ k: 0, x: 0, y: 0, v: 0 });
+    return w;
+  }
+  function clone(w) {
+    const c = Object.assign({}, w);
+    c.bats = w.bats.map(b => Object.assign({}, b));
+    c.moths = w.moths.map(m => Object.assign({}, m));
+    c.ev = w.ev.map(e => Object.assign({}, e));
+    return c;
+  }
+  function emit(w, k, x, y, v) { if (w.evN < NEV) { const e = w.ev[w.evN++]; e.k = k; e.x = x; e.y = y; e.v = v; } }
+  function free(list) { for (let i = 0; i < list.length; i++) if (!list[i].on) return list[i]; return null; }
+  const clamp = (v, lo, hi) => v < lo ? lo : v > hi ? hi : v;
+  function batY(b) { return b.amp ? b.y0 + b.amp * Math.sin(b.ph + TAU * b.f * b.age) : b.y0 + 1.2 * Math.sin(b.ph + 9 * b.age); }
+  function mothY(m) { return m.y0 + m.amp * Math.sin(m.ph + TAU * m.f * m.age) + 1.2 * Math.sin(m.ph * 3 + 11 * m.age); }
+  // every bat reaches the spider's column at least MIN_GAP after any other, so each can be dodged on its own
+  function clash(w, arr) {
+    let wait = 0;
+    for (let i = 0; i < w.bats.length; i++) {
+      const o = w.bats[i];
+      if (o.on && !o.passed && Math.abs(o.arr - arr) < C.MIN_GAP) wait = Math.max(wait, o.arr + C.MIN_GAP - arr + 0.01);
+    }
+    return wait;
+  }
+  function placeBat(w, b, y, vx, wave) {
+    const travel = (C.SPAWN_X - C.SPIDER_X) / vx;
+    b.on = true; b.passed = false; b.md = 99; b.age = 0; b.vx = vx; b.arr = w.t + travel;
+    b.x = b.px = C.SPAWN_X;
+    if (wave) {
+      b.amp = 6 + 7 * rnd(w); b.f = 0.55 + 0.35 * rnd(w); b.ph = rnd(w) * TAU;
+      b.y0 = clamp(y - b.amp * Math.sin(b.ph + TAU * b.f * travel), C.BAT_LO + b.amp, C.BAT_HI - b.amp);
+    } else {
+      b.amp = 0; b.f = 0; b.ph = rnd(w) * TAU;
+      b.y0 = clamp(y, C.BAT_LO + 1.2, C.BAT_HI - 1.2);
+    }
+    b.y = b.py = batY(b);
+    emit(w, 7, b.x, b.y, travel);
+  }
+  function spawnBat(w) {
+    const t = w.t, p = smooth(t / C.RAMP_T);
+    if (t >= w.nextBurst) { w.burstUntil = t + 2.6; w.nextBurst = t + 12 + 6 * rnd(w); }
+    const burst = t < w.burstUntil;
+    const wave = t > C.WAVE_FROM && rnd(w) < 0.12 + 0.25 * p;
+    const vx = w.speed * (wave ? 0.92 : 1.04 + 0.2 * rnd(w));
+    const wait = clash(w, t + (C.SPAWN_X - C.SPIDER_X) / vx);
+    if (wait > 0) { w.nextBat = t + Math.min(wait, 0.25); return; }
+    const b = free(w.bats);
+    if (!b) { w.nextBat = t + 0.1; return; }
+    // a hunter aims at the spider, a little ahead of where it is heading
+    const hunt = burst || rnd(w) < C.HUNT_START + (C.HUNT_TOP - C.HUNT_START) * p;
+    const lead = w.vy * ((C.SPAWN_X - C.SPIDER_X) / vx) * C.LEAD;
+    const y = hunt ? clamp(w.y + lead, C.TOP_Y, C.BOTTOM_Y) + (rnd(w) - 0.5) * 8 : C.BAT_LO + rnd(w) * (C.BAT_HI - C.BAT_LO);
+    placeBat(w, b, y, vx, wave);
+    // now and then a pair: a second bat at the same moment, far enough above or below to leave a way through
+    if (!wave && t > C.PAIR_FROM && rnd(w) < C.PAIR_TOP * p) {
+      const b2 = free(w.bats);
+      if (b2) {
+        const up = b.y0 - C.BAT_LO > C.BAT_HI - b.y0, room = up ? b.y0 - C.BAT_LO : C.BAT_HI - b.y0;
+        if (room >= C.PAIR_MIN) placeBat(w, b2, b.y0 + (up ? -1 : 1) * (C.PAIR_MIN + rnd(w) * Math.min(C.PAIR_SPAN, room - C.PAIR_MIN)), vx, false);
+      }
+    }
+    const gap = burst ? C.MIN_GAP + 0.06 : (C.GAP_START + (C.GAP_TOP - C.GAP_START) * p) * (0.85 + 0.35 * rnd(w));
+    w.nextBat = t + gap / w.scale;
+  }
+  function spawnMoth(w) {
+    const p = smooth(w.t / C.RAMP_T), m = free(w.moths);
+    w.nextMoth = w.t + (0.95 + 0.8 * rnd(w)) * (1 - 0.2 * p) / w.scale;
+    if (!m) return;
+    m.on = true; m.missed = false; m.age = 0;
+    m.x = m.px = C.SPAWN_X - 3; m.vx = w.speed * (0.55 + 0.15 * rnd(w));
+    m.y0 = 22 + rnd(w) * 86; m.amp = 2.5 + 2 * rnd(w); m.f = 0.9 + 0.6 * rnd(w); m.ph = rnd(w) * TAU;
+    m.y = m.py = mothY(m);
+  }
+  function step(w, input, dt) {
+    if (w.over) return;
+    w.t += dt;
+    w.speed = speedAt(w.t) * w.scale;
+    // the spider: hold lets out silk, letting go climbs
+    const held = !!input.held;
+    if (held !== w.held) { emit(w, held ? 1 : 2, C.SPIDER_X, w.y, 0); w.held = held; }
+    w.py = w.y;
+    const target = held ? C.DROP_V : -C.CLIMB_V, acc = held ? C.DROP_A : C.CLIMB_A;
+    w.vy = w.vy < target ? Math.min(target, w.vy + acc * dt) : Math.max(target, w.vy - acc * dt);
+    w.y += w.vy * dt;
+    if (w.y > C.BOTTOM_Y) { w.y = C.BOTTOM_Y; w.vy = 0; }
+    if (w.y < C.TOP_Y) { w.y = C.TOP_Y; w.vy = 0; }
+    if (w.t >= w.nextMoth) spawnMoth(w);
+    if (w.t >= w.nextBat) spawnBat(w);
+    const kx = C.BAT_RX + C.SPIDER_R, ky = C.BAT_RY + C.SPIDER_R;
+    for (let i = 0; i < w.bats.length; i++) {
+      const b = w.bats[i];
+      if (!b.on) continue;
+      b.px = b.x; b.py = b.y; b.age += dt;
+      b.x -= b.vx * dt; b.y = batY(b);
+      const dx = (b.x - C.SPIDER_X) / kx, dy = (b.y - w.y) / ky, d = dx * dx + dy * dy;
+      if (d < 1) { w.over = true; w.hit = i; w.cause = "bat"; w.streak = 0; emit(w, 6, b.x, b.y, 0); return; }
+      if (Math.abs(b.x - C.SPIDER_X) < 7 && d < b.md) b.md = d;
+      if (!b.passed && b.x < C.SPIDER_X - 7) {
+        b.passed = true;
+        if (b.md < C.NEAR) { w.score += C.NEAR_POINTS; w.near++; emit(w, 5, C.SPIDER_X, w.y, C.NEAR_POINTS); }
+      }
+      if (b.x < -12) b.on = false;
+    }
+    for (let i = 0; i < w.moths.length; i++) {
+      const m = w.moths[i];
+      if (!m.on) continue;
+      m.px = m.x; m.py = m.y; m.age += dt;
+      m.x -= m.vx * dt; m.y = mothY(m);
+      const dx = m.x - C.SPIDER_X, dy = m.y - w.y;
+      if (dx * dx + dy * dy < C.MOTH_R * C.MOTH_R) {
+        m.on = false; w.streak = Math.min(w.streak + 1, C.MAX_STREAK); w.score += w.streak; w.caught++;
+        emit(w, 3, m.x, m.y, w.streak); continue;
+      }
+      if (!m.missed && m.x < C.SPIDER_X - 8) { m.missed = true; if (w.streak) emit(w, 4, m.x, m.y, w.streak); w.streak = 0; }
+      if (m.x < -10) m.on = false;
+    }
+  }
+  return { C, newWorld, step, clone, speedAt, batY };
+}
+/* end game */
+
+/* ---------- the page ---------- */
+(() => {
+  const G = makeGame(), C = G.C, STEP = 1 / 60;
+  const $ = id => document.getElementById(id);
+  const root = document.documentElement, stage = $("stage"), canvas = $("field"), ctx = canvas.getContext("2d");
+
+  /* kept with the Note: records and settings */
+  const api = window.dodojo || null;
+  let state = {};
+  try { state = Object.assign({}, api && api.getState ? api.getState() : {}); } catch (e) { state = {}; }
+  function save(patch) { Object.assign(state, patch); try { const p = api && api.setState ? api.setState(patch) : null; if (p && p.catch) p.catch(() => {}); } catch (e) {} }
+  const num = v => Number(v) || 0;
+  const systemCalm = matchMedia("(prefers-reduced-motion: reduce)");
+  const sound = () => state.sound !== false;
+  const calm = () => typeof state.calm === "boolean" ? state.calm : systemCalm.matches;
+  const relaxed = () => state.relaxed === true;
+
+  /* words */
+  const T = {
+    en: { intro: "Hold to drop, let go to climb", paused: "Paused. Tap to carry on", again: "Tap to go again",
+      best: "Best", newBest: "New best!", bestIs: "Best {b}", line: "A bat caught you at {t}.",
+      stats: (m, n) => m + (m === 1 ? " moth, " : " moths, ") + n + (n === 1 ? " close pass" : " close passes"), relaxedTag: " (Relaxed)",
+      field: "Lamplight Spider. Hold Space or Down to drop, let go to climb. P pauses, Enter starts again.",
+      pause: "Pause", resume: "Carry on", start: "Start", restart: "Start again", sound: "Sound", lang: "Language",
+      live: "Run over: {s} points. {b}", none: "none yet", title: "Lamplight Spider" },
+    zh: { intro: "按住下降，松手上爬", paused: "已暂停，轻点继续", again: "轻点再来一局",
+      best: "最佳", newBest: "新纪录！", bestIs: "最佳 {b}", line: "{t} 时被蝙蝠逮住了。",
+      stats: (m, n) => m + " 只飞蛾，" + n + " 次擦身而过", relaxedTag: "（轻松模式）",
+      field: "灯下蜘蛛。按住空格或↓下降，松开上爬。P 暂停，Enter 重新开始。",
+      pause: "暂停", resume: "继续", start: "开始", restart: "重新开始", sound: "声音", lang: "语言",
+      live: "本局结束：{s} 分。{b}", none: "还没有", title: "灯下蜘蛛" },
+    ja: { intro: "長押しで下りる、離すと登る", paused: "一時停止中。タップで再開", again: "タップでもう一回",
+      best: "ベスト", newBest: "自己ベスト更新！", bestIs: "ベスト {b}", line: "{t} でコウモリにつかまった。",
+      stats: (m, n) => "ガ " + m + " 匹、ニアミス " + n + " 回", relaxedTag: "（ゆったり）",
+      field: "街灯のクモ。スペースか↓を押し続けて下りる、離すと登る。Pで一時停止、Enterでやり直し。",
+      pause: "一時停止", resume: "再開", start: "スタート", restart: "やり直し", sound: "サウンド", lang: "言語",
+      live: "終了：{s} 点。{b}", none: "まだなし", title: "街灯のクモ" }
+  };
+  const fill = (s, o) => s.replace(/\{(\w)\}/g, (_, k) => o[k]);
+  function pickLang() {
+    if (state.lang === "en" || state.lang === "zh" || state.lang === "ja") return state.lang;
+    const list = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || "en"];
+    for (const l of list) {
+      const s = String(l).toLowerCase();
+      if (s.startsWith("zh")) return "zh";
+      if (s.startsWith("ja")) return "ja";
+      if (s.startsWith("en")) return "en";
+    }
+    return "en";
+  }
+  let lang = pickLang(), t = T[lang];
+
+  /* sound, made on the spot */
+  let audio = null;
+  function startAudio() {
+    if (!sound()) return null;
+    try {
+      if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === "suspended") audio.resume();
+    } catch (e) { audio = null; }
+    return audio;
+  }
+  function blip(freq, dur, type, vol, slide) {
+    const a = startAudio(); if (!a) return;
+    const now = a.currentTime, o = a.createOscillator(), g = a.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, now); o.frequency.exponentialRampToValueAtTime(freq * slide, now + dur);
+    g.gain.setValueAtTime(vol, now); g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+    o.connect(g).connect(a.destination); o.start(now); o.stop(now + dur + 0.02);
+  }
+  const vary = () => 0.97 + Math.random() * 0.06;
+
+  /* the canvas, sharp at any size */
+  let W = 0, H = 0, dpr = 1, k = 1, sprites = null;
+  new ResizeObserver(() => requestAnimationFrame(() => {
+    const box = canvas.getBoundingClientRect(), d = Math.min(window.devicePixelRatio || 1, 2);
+    if (!box.width || (box.width === W && d === dpr)) return;
+    W = box.width; H = box.height; dpr = d; k = W / C.W;
+    canvas.width = Math.round(W * d); canvas.height = Math.round(H * d);
+    sprites = null;
+    draw(1);
+  })).observe(canvas);
+
+  function makeCanvas(wu, hu, paint) {
+    const c = document.createElement("canvas");
+    c.width = Math.ceil(wu * k * dpr); c.height = Math.ceil(hu * k * dpr);
+    const g = c.getContext("2d");
+    g.setTransform(k * dpr, 0, 0, k * dpr, (wu / 2) * k * dpr, (hu / 2) * k * dpr);
+    paint(g);
+    return { c, w: wu, h: hu };
+  }
+  function paintScene(g) {
+    const u = 1;
+    let gr = g.createLinearGradient(0, 0, 0, C.H);
+    gr.addColorStop(0, "#f3a852"); gr.addColorStop(0.55, "#d27a2e"); gr.addColorStop(1, "#9a4a17");
+    g.fillStyle = gr; g.fillRect(0, 0, C.W, C.H);
+    gr = g.createRadialGradient(56, 10, 0, 56, 10, 78);
+    gr.addColorStop(0, "rgba(255, 228, 168, .9)"); gr.addColorStop(0.3, "rgba(255, 206, 128, .35)"); gr.addColorStop(1, "rgba(255, 196, 112, 0)");
+    g.fillStyle = gr; g.fillRect(0, 0, C.W, C.H);
+    // far blocks, low contrast so they never compete with what flies
+    g.fillStyle = "rgba(150, 70, 22, .32)";
+    const blocks = [[-2, 86, 14], [11, 80, 10], [20, 92, 16], [35, 76, 12], [46, 84, 15], [60, 72, 11], [70, 88, 14], [83, 78, 19]];
+    for (const [x, y, w] of blocks) g.fillRect(x, y, w, 118 - y);
+    g.fillStyle = "rgba(255, 214, 150, .16)";
+    for (const [x, y, w] of blocks) for (let wy = y + 3; wy < 112; wy += 6) for (let wx = x + 2; wx < x + w - 2; wx += 4) if ((wx * 7 + wy * 3) % 5 < 2) g.fillRect(wx, wy, 1.4, 2);
+    // the pavement and kerb
+    g.fillStyle = "#5a2a0e"; g.fillRect(0, 117, C.W, C.H - 117);
+    g.fillStyle = "#7a3a12"; g.fillRect(0, 117, C.W, 1.1);
+    g.fillStyle = "rgba(255, 210, 140, .14)"; g.fillRect(0, 121.5, C.W, .6);
+    // the shelter: glass back panel, post, bench, roof
+    g.fillStyle = "rgba(255, 236, 200, .08)"; g.fillRect(9, 13, 32, 92);
+    g.strokeStyle = "rgba(42, 19, 6, .35)"; g.lineWidth = .7 * u; g.strokeRect(9, 13, 32, 92);
+    g.fillStyle = "#2a1306"; g.fillRect(6, 9, 2.4, 108); g.fillRect(41, 9, 2.4, 108);
+    g.fillRect(12, 103.5, 13, 1.8); g.fillRect(13, 105, 1.2, 12); g.fillRect(22.6, 105, 1.2, 12);
+    g.fillStyle = "#3a1a08"; g.fillRect(1.5, 14.5, 4, 9);
+    g.fillStyle = "rgba(255, 228, 180, .55)"; g.beginPath(); g.arc(3.5, 17.6, 1.3, 0, 7); g.fill();
+    g.fillStyle = "#2a1306"; g.fillRect(-2, 4, 48, 6);
+    g.fillStyle = "#7a3a12"; g.fillRect(-2, 9.4, 48, .6);
+    // the streetlamp
+    g.fillStyle = "#2a1306"; g.fillRect(72, 9, 2.2, 108);
+    g.strokeStyle = "#2a1306"; g.lineWidth = 2; g.beginPath(); g.moveTo(73.1, 10); g.quadraticCurveTo(73, 5.5, 61, 6.2); g.stroke();
+    g.beginPath(); g.moveTo(50.5, 9.2); g.lineTo(61.5, 9.2); g.lineTo(59.5, 5.2); g.lineTo(52.5, 5.2); g.closePath(); g.fill();
+    g.fillStyle = "#fff3cf"; g.beginPath(); g.ellipse(56, 9.8, 5, 1.3, 0, 0, 7); g.fill();
+  }
+  function paintSpider(g, legs) {
+    g.strokeStyle = "#1b0e06"; g.lineWidth = .62; g.lineCap = "round"; g.lineJoin = "round";
+    const sw = legs ? 1 : -1;
+    for (let s = -1; s <= 1; s += 2) for (let i = 0; i < 4; i++) {
+      const by = -2.2 + i * 1.3, kx = s * (3.4 + (i === 1 || i === 2 ? 0.6 : 0)), ky = by - 1.6 + i * 0.5 + sw * (i % 2 ? .5 : -.5) * s;
+      g.beginPath(); g.moveTo(s * 1.2, by); g.lineTo(kx, ky); g.lineTo(s * (4.6 + (i === 0 || i === 3 ? .2 : .8)), ky + 1.8 + (i - 1.5) * 1.1); g.stroke();
+    }
+    g.fillStyle = "#d6f6f1"; g.lineWidth = .7;
+    g.beginPath(); g.ellipse(0, 1, 2.9, 3.3, 0, 0, 7); g.fill(); g.stroke();
+    g.beginPath(); g.arc(0, -2.7, 1.75, 0, 7); g.fill(); g.stroke();
+    g.fillStyle = "rgba(27, 14, 6, .55)"; g.beginPath(); g.ellipse(0, 1.6, 1, 1.5, 0, 0, 7); g.fill();
+    g.fillStyle = "#1b0e06"; g.beginPath(); g.arc(-.6, -3.1, .38, 0, 7); g.arc(.6, -3.1, .38, 0, 7); g.fill();
+  }
+  function paintBat(g, up) {
+    g.fillStyle = "#170b05";
+    const tip = up ? -4.2 : 2.8, mid = up ? -2.4 : 1.2;
+    for (let s = -1; s <= 1; s += 2) {
+      g.beginPath(); g.moveTo(s * 1, -.6); g.lineTo(s * 3.6, mid - .6); g.lineTo(s * 6.6, tip);
+      g.lineTo(s * 5.6, tip + 1.9); g.lineTo(s * 4.7, tip + 1.2); g.lineTo(s * 3.8, mid + 1.9); g.lineTo(s * 2.9, mid + 1.3); g.lineTo(s * 1.6, 1.4); g.closePath(); g.fill();
+    }
+    g.beginPath(); g.ellipse(.4, .2, 2.2, 1.5, 0, 0, 7); g.fill();
+    g.beginPath(); g.arc(-2, -.4, 1.3, 0, 7); g.fill();
+    g.beginPath(); g.moveTo(-2.8, -1); g.lineTo(-3.1, -2.9); g.lineTo(-2.2, -1.5); g.lineTo(-1.5, -2.8); g.lineTo(-1.3, -1.1); g.fill();
+    g.fillStyle = "#ffb347"; g.beginPath(); g.arc(-2.6, -.5, .32, 0, 7); g.fill();
+  }
+  function paintMoth(g, open, small) {
+    const s = small ? .62 : 1, sp = open ? 1 : .55;
+    g.strokeStyle = "rgba(70, 30, 6, .55)"; g.lineWidth = .35;
+    g.fillStyle = "#f3dfb6";
+    for (let side = -1; side <= 1; side += 2) { g.beginPath(); g.ellipse(side * 1.7 * sp * s, 1.2 * s, 1.5 * sp * s, 1.4 * s, side * .5, 0, 7); g.fill(); g.stroke(); }
+    g.fillStyle = "#fff1d1";
+    for (let side = -1; side <= 1; side += 2) { g.beginPath(); g.ellipse(side * 2.1 * sp * s, -.5 * s, 2.2 * sp * s, 1.7 * s, side * -.35, 0, 7); g.fill(); g.stroke(); }
+    g.fillStyle = "#6b3a17"; g.beginPath(); g.ellipse(0, .3 * s, .55 * s, 1.9 * s, 0, 0, 7); g.fill();
+    g.strokeStyle = "#6b3a17"; g.lineWidth = .3; g.beginPath(); g.moveTo(-.2 * s, -1.4 * s); g.lineTo(-1 * s, -2.8 * s); g.moveTo(.2 * s, -1.4 * s); g.lineTo(1 * s, -2.8 * s); g.stroke();
+  }
+  function buildSprites() {
+    const bg = document.createElement("canvas");
+    bg.width = canvas.width; bg.height = canvas.height;
+    const g = bg.getContext("2d"); g.setTransform(k * dpr, 0, 0, k * dpr, 0, 0); paintScene(g);
+    sprites = {
+      bg,
+      spider: [makeCanvas(12, 12, g => paintSpider(g, 0)), makeCanvas(12, 12, g => paintSpider(g, 1))],
+      bat: [makeCanvas(15, 10, g => paintBat(g, 1)), makeCanvas(15, 10, g => paintBat(g, 0))],
+      moth: [makeCanvas(10, 8, g => paintMoth(g, 1, 0)), makeCanvas(10, 8, g => paintMoth(g, 0, 0))],
+      mini: [makeCanvas(7, 5, g => paintMoth(g, 1, 1)), makeCanvas(7, 5, g => paintMoth(g, 0, 1))]
+    };
+  }
+  function put(s, x, y) { ctx.drawImage(s.c, (x - s.w / 2) * k, (y - s.h / 2) * k, s.w * k, s.h * k); }
+
+  /* juice: fixed pools, drawn only */
+  const parts = []; for (let i = 0; i < 48; i++) parts.push({ on: false, x: 0, y: 0, vx: 0, vy: 0, life: 0, max: 1, c: 0 });
+  const pops = []; for (let i = 0; i < 8; i++) pops.push({ on: false, x: 0, y: 0, life: 0, text: "" });
+  const PLUS = ["+0", "+1", "+2", "+3", "+4", "+5"];
+  const dust = []; for (let i = 0; i < 22; i++) dust.push({ x: (i * 37.3) % 100, y: (i * 53.7) % 118, r: .45 + (i % 3) * .2, s: 1.2 + (i % 5) * .5, p: i * 1.7 });
+  function puff(x, y, n, c, spread) {
+    for (let i = 0; i < parts.length && n > 0; i++) {
+      const p = parts[i]; if (p.on) continue;
+      const a = Math.random() * 6.283, v = spread * (.4 + Math.random() * .6);
+      p.on = true; p.x = x; p.y = y; p.vx = Math.cos(a) * v; p.vy = Math.sin(a) * v; p.life = 0; p.max = .35 + Math.random() * .25; p.c = c; n--;
+    }
+  }
+  function pop(x, y, v) { for (let i = 0; i < pops.length; i++) { const p = pops[i]; if (!p.on) { p.on = true; p.x = x; p.y = y; p.life = 0; p.text = PLUS[v] || "+" + v; return; } } }
+
+  /* modes: ready (the cover), play, paused, dying, over */
+  let mode = "ready", world = G.newWorld(1, {}), acc = 0, last = 0, clock = 0;
+  let hitStop = 0, shake = 0, squash = 0, flash = 0, deathAt = 0, fallY = 0, fallV = 0, fallR = 0, newBest = false;
+  let shownScore = -1;
+  const input = { held: false };
+  const pointers = new Set();
+  let keyHeld = false;
+
+  function startRun() {
+    world = G.newWorld((Math.random() * 4294967295) >>> 0, { relaxed: relaxed() });
+    world.held = input.held;
+    acc = 0; hitStop = 0; shake = 0; flash = 0; squash = 0; mode = "play";
+    for (const p of parts) p.on = false; for (const p of pops) p.on = false;
+    $("result").hidden = true; $("msg").hidden = true;
+    renderHud(); renderBar();
+  }
+  function pause() { if (mode === "play") { mode = "paused"; showMsg(t.paused); renderBar(); } }
+  function resume() { if (mode === "paused") { mode = "play"; $("msg").hidden = true; renderBar(); } }
+  function showMsg(s) { $("msgText").textContent = s; $("msg").hidden = false; $("result").hidden = true; }
+  function press() {
+    startAudio();
+    if (mode === "ready") startRun();
+    else if (mode === "paused") resume();
+    else if (mode === "over" && performance.now() - deathAt > 1000) startRun();   // a moment to read the result; Enter and the button skip it
+  }
+  function bestKey() { return world.scale < 1 ? "best_relaxed" : "best"; }
+  function onDeath() {
+    mode = "dying"; deathAt = performance.now(); hitStop = 0.06; shake = calm() ? 0 : 7;
+    fallY = world.y; fallV = 0; fallR = 0;
+    blip(110, .16, "triangle", .14, .5); blip(330, .5, "sine", .1, .3);
+    const s = world.score, key = bestKey(), before = num(state[key]);
+    newBest = s > before;
+    const recent = [s].concat(String(state.recent || "").split(",").filter(Boolean)).slice(0, 10).join(",");
+    const patch = { runs: num(state.runs) + 1, recent, moths_total: num(state.moths_total) + world.caught };
+    if (newBest) patch[key] = s;
+    save(patch);
+    $("live").textContent = fill(t.live, { s, b: newBest ? t.newBest : fill(t.bestIs, { b: before }) });
+    renderHud(); renderRecords();
+  }
+  function showResult() {
+    mode = "over";
+    const s = world.score, best = num(state[bestKey()]);
+    const secs = Math.floor(world.t), time = Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
+    $("rScore").textContent = s;
+    $("rBest").textContent = (newBest && s > 0 ? t.newBest : fill(t.bestIs, { b: best })) + (world.scale < 1 ? t.relaxedTag : "");
+    $("rLine").textContent = fill(t.line, { t: time });
+    $("rStats").textContent = t.stats(world.caught, world.near);
+    $("rAgain").textContent = t.again;
+    $("msg").hidden = true; $("result").hidden = false;
+    renderBar();
+  }
+
+  /* input: a thumb, a mouse button or a key held down */
+  function syncHeld() { input.held = pointers.size > 0 || keyHeld; }
+  stage.addEventListener("pointerdown", e => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    e.preventDefault();
+    stage.dataset.pointer = "1"; stage.focus({ preventScroll: true });
+    try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+    pointers.add(e.pointerId); syncHeld(); press();
+  });
+  for (const type of ["pointerup", "pointercancel", "lostpointercapture"]) stage.addEventListener(type, e => { pointers.delete(e.pointerId); syncHeld(); });
+  stage.addEventListener("contextmenu", e => e.preventDefault());
+  const VERB = new Set([" ", "Spacebar", "ArrowDown", "s", "S"]);
+  stage.addEventListener("keydown", e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    delete stage.dataset.pointer;
+    if (VERB.has(e.key)) { e.preventDefault(); keyHeld = true; syncHeld(); if (!e.repeat) press(); }
+    else if (e.key === "p" || e.key === "P" || e.key === "Escape") { e.preventDefault(); if (mode === "play") pause(); else if (mode === "paused") { startAudio(); resume(); } }
+    else if (e.key === "Enter") { e.preventDefault(); if (mode !== "play") { startAudio(); startRun(); } }
+  });
+  stage.addEventListener("keyup", e => { if (VERB.has(e.key)) { keyHeld = false; syncHeld(); } });
+  document.addEventListener("keydown", e => { if (e.key === "Tab") delete stage.dataset.pointer; });
+  stage.addEventListener("blur", () => { keyHeld = false; syncHeld(); });
+
+  /* a run pauses when the page is hidden or scrolled out of view */
+  document.addEventListener("visibilitychange", () => { if (document.hidden) pause(); });
+  if ("IntersectionObserver" in window) new IntersectionObserver(es => { for (const e of es) if (e.intersectionRatio < .4) pause(); }, { threshold: [0, .4] }).observe(stage);
+
+  /* the row under the playfield */
+  const ICONS = {
+    pause: '<rect x="5" y="4" width="3.5" height="12" rx="1"/><rect x="11.5" y="4" width="3.5" height="12" rx="1"/>',
+    play: '<path d="M6 4l10 6-10 6z"/>',
+    again: '<path d="M10 3.5a6.5 6.5 0 1 0 6.3 8.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 0.8l3.6 2.9L10 6.6z"/>'
+  };
+  let iconNow = "";
+  function renderBar() {
+    const which = mode === "play" ? "pause" : mode === "paused" || mode === "ready" ? "play" : "again";
+    if (which !== iconNow) { $("icoRun").innerHTML = ICONS[which]; iconNow = which; }
+    $("btnRun").setAttribute("aria-label", mode === "play" ? t.pause : mode === "paused" ? t.resume : mode === "ready" ? t.start : t.restart);
+    const on = sound();
+    $("btnSound").setAttribute("aria-pressed", String(on));
+    $("btnSound").setAttribute("aria-label", t.sound);
+    $("icoWaves").toggleAttribute("hidden", !on); $("icoMute").toggleAttribute("hidden", on);
+  }
+  const fromPointer = e => e.detail > 0 || e.pointerType;
+  $("btnRun").addEventListener("click", e => {
+    startAudio();
+    if (mode === "play") pause(); else if (mode === "paused") resume(); else startRun();
+    if (fromPointer(e)) stage.focus({ preventScroll: true });
+  });
+  function setSound(on) {
+    save({ sound: on });
+    if (!on && audio) audio.suspend().catch(() => {});
+    if (on) { startAudio(); blip(660, .08, "sine", .08, 1.3); }
+    $("setSound").checked = on; renderBar();
+  }
+  $("btnSound").addEventListener("click", e => { setSound(!sound()); if (fromPointer(e)) stage.focus({ preventScroll: true }); });
+  $("setSound").addEventListener("change", e => setSound(e.target.checked));
+  $("setCalm").addEventListener("change", e => { save({ calm: e.target.checked }); applyCalm(); });
+  $("setRelaxed").addEventListener("change", e => { save({ relaxed: e.target.checked }); });
+  function applyCalm() { root.dataset.motion = calm() ? "calm" : "full"; $("setCalm").checked = calm(); if (calm()) shake = 0; }
+  systemCalm.addEventListener && systemCalm.addEventListener("change", applyCalm);
+  for (const b of document.querySelectorAll(".langs button")) b.addEventListener("click", () => { setLang(b.dataset.lang); save({ lang }); });
+
+  function setLang(l) {
+    lang = l; t = T[l];
+    root.lang = l === "zh" ? "zh-CN" : l === "ja" ? "ja" : "en";
+    root.dataset.lang = l;
+    document.title = t.title;
+    stage.setAttribute("aria-label", t.field);
+    document.querySelector(".langs").setAttribute("aria-label", t.lang);
+    for (const b of document.querySelectorAll(".langs button")) b.setAttribute("aria-pressed", String(b.dataset.lang === l));
+    if (mode === "ready") showMsg(t.intro);
+    else if (mode === "paused") showMsg(t.paused);
+    else if (mode === "over") showResult();
+    renderHud(); renderBar(); renderRecords();
+  }
+  function renderHud() {
+    const s = mode === "ready" ? 0 : world.score;
+    if (s !== shownScore) { $("hudScore").textContent = s; shownScore = s; }
+    $("hudBest").textContent = t.best + " " + num(state[relaxed() && mode === "ready" ? "best_relaxed" : (world.scale < 1 && mode !== "ready" ? "best_relaxed" : "best")]);
+  }
+  function renderRecords() {
+    $("stBest").textContent = num(state.best);
+    $("stRuns").textContent = num(state.runs);
+    $("stMoths").textContent = num(state.moths_total);
+    const rec = String(state.recent || "").split(",").filter(Boolean).map(Number);
+    $("recentText").textContent = rec.length ? rec.join(lang === "en" ? ", " : "、") : t.none;
+    const top = Math.max(1, ...rec);
+    $("recent").innerHTML = rec.map(v => '<li style="height:' + Math.max(4, Math.round(v / top * 100)) + '%"></li>').join("");
+    $("relaxedLine").hidden = !num(state.best_relaxed);
+    $("stRelaxed").textContent = num(state.best_relaxed);
+    $("setSound").checked = sound(); $("setRelaxed").checked = relaxed();
+  }
+  window.addEventListener("dodojo-state-change", e => {
+    const d = (e && e.detail) || {};
+    state = Object.assign({}, state, d);
+    if ((d.lang === "en" || d.lang === "zh" || d.lang === "ja") && d.lang !== lang) setLang(d.lang);
+    applyCalm(); renderHud(); renderBar(); renderRecords();
+  });
+
+  /* what the run's events look and sound like */
+  function takeEvents() {
+    const w = world;
+    for (let i = 0; i < w.evN; i++) {
+      const e = w.ev[i];
+      if (e.k === 1) { squash = 1; puff(C.SPIDER_X, w.y - 4, 3, 0, 9); blip(440 * vary(), .06, "triangle", .04, .7); }
+      else if (e.k === 3) { puff(e.x, e.y, 8, 1, 22); pop(e.x, e.y - 3, e.v); blip(620 * Math.pow(1.122, e.v - 1) * vary(), .09, "sine", .08, 1.35); }
+      else if (e.k === 5) { pop(C.SPIDER_X + 6, e.y - 4, e.v); if (!calm()) flash = 1; blip(1180 * vary(), .05, "triangle", .035, .6); }
+    }
+    w.evN = 0;
+  }
+
+  /* the loop: fixed steps, drawn on every frame */
+  function frame(now) {
+    requestAnimationFrame(frame);
+    const dt = Math.min(0.1, Math.max(0, (now - last) / 1000)); last = now;
+    if (mode === "paused") { draw(acc / STEP); return; }   // a paused run is a frozen picture
+    clock += dt;
+    if (mode === "play") {
+      acc += dt;
+      while (acc >= STEP) {
+        G.step(world, input, STEP); acc -= STEP; takeEvents();
+        if (world.over) { acc = 0; onDeath(); break; }
+      }
+      if (world.score !== shownScore) renderHud();
+    } else if (mode === "dying") {
+      if (hitStop > 0) hitStop -= dt;
+      else { fallV += 260 * dt; fallY += fallV * dt; fallR += dt * 7; }
+      if (now - deathAt > 650) showResult();
+    } else if (mode === "over" && fallY < C.H + 10) { fallV += 260 * dt; fallY += fallV * dt; fallR += dt * 7; }
+    for (let i = 0; i < parts.length; i++) { const p = parts[i]; if (!p.on) continue; p.life += dt; if (p.life > p.max) { p.on = false; continue; } p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 14 * dt; }
+    for (let i = 0; i < pops.length; i++) { const p = pops[i]; if (!p.on) continue; p.life += dt; p.y -= 14 * dt; if (p.life > .45) p.on = false; }
+    if (squash > 0) squash = Math.max(0, squash - dt * 7);
+    if (flash > 0) flash = Math.max(0, flash - dt * 5);
+    if (shake > 0) shake = Math.max(0, shake - dt * 30);
+    draw(mode === "play" ? acc / STEP : 1);
+  }
+
+  function draw(a) {
+    if (!W) return;
+    if (!sprites) buildSprites();
+    const w = world, still = calm();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.drawImage(sprites.bg, 0, 0, W, H);
+    // dust in the lamplight, slow and faint
+    ctx.fillStyle = "rgba(255, 230, 182, .3)";
+    for (let i = 0; i < dust.length; i++) {
+      const d = dust[i];
+      let y = (d.y - (still ? 0 : clock * d.s)) % 118; if (y < 0) y += 118;
+      const x = d.x + (still ? 0 : Math.sin(clock * .6 + d.p) * 1.4);
+      ctx.fillRect(x * k, y * k, d.r * k, d.r * k);
+    }
+    // small moths circling the lamp
+    for (let i = 0; i < 3; i++) {
+      const ang = clock * (1.3 + i * .45) + i * 2.1;
+      put(sprites.mini[((clock * 16 + i * 3) | 0) & 1], 56 + Math.cos(ang) * (5 + i * 2.6), 13 + Math.sin(ang) * (2.6 + i * 1.2));
+    }
+    const sx = shake ? (Math.random() - .5) * shake : 0, sy = shake ? (Math.random() - .5) * shake : 0;
+    ctx.setTransform(dpr, 0, 0, dpr, sx * dpr, sy * dpr);
+    // moths and bats
+    if (mode !== "ready") {
+      for (let i = 0; i < w.moths.length; i++) {
+        const m = w.moths[i]; if (!m.on) continue;
+        put(sprites.moth[((m.age * 14 + i) | 0) & 1], m.px + (m.x - m.px) * a, m.py + (m.y - m.py) * a);
+      }
+      for (let i = 0; i < w.bats.length; i++) {
+        const b = w.bats[i]; if (!b.on) continue;
+        put(sprites.bat[((b.age * 9 + i) | 0) & 1], b.px + (b.x - b.px) * a, b.py + (b.y - b.py) * a);
+      }
+    } else {
+      // before the first run: two moths on their way in, a bat waiting under the lamp
+      put(sprites.moth[((clock * 12) | 0) & 1], 70 + Math.sin(clock * .9) * 3, 47 + Math.sin(clock * 2.3) * 2.2);
+      put(sprites.moth[((clock * 12 + 1) | 0) & 1], 52 + Math.sin(clock * .7 + 2) * 3, 72 + Math.sin(clock * 2.1 + 1) * 2.2);
+      put(sprites.bat[((clock * 8) | 0) & 1], 84 + Math.sin(clock * 1.1) * 2, 33 + Math.sin(clock * 1.9) * 3);
+    }
+    // the thread and the spider
+    const X = C.SPIDER_X;
+    let y = mode === "ready" ? C.REST_Y + Math.sin(clock * 1.7) * 1.2 : w.py + (w.y - w.py) * a;
+    ctx.strokeStyle = "rgba(226, 252, 247, .9)"; ctx.lineWidth = Math.max(1, .45 * k);
+    ctx.beginPath(); ctx.moveTo(X * k, C.ANCHOR_Y * k);
+    if (mode === "dying" || mode === "over") ctx.lineTo((X + Math.sin(clock * 3) * .8) * k, (C.ANCHOR_Y + (w.y - C.ANCHOR_Y) * .55) * k);
+    else ctx.lineTo(X * k, (y - 3.5) * k);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(226, 252, 247, .9)"; ctx.fillRect((X - .9) * k, (C.ANCHOR_Y - .2) * k, 1.8 * k, .5 * k);
+    const moving = mode === "play" && Math.abs(w.vy) > 5;
+    const sp = sprites.spider[moving ? ((clock * 11) | 0) & 1 : 0];
+    if (mode === "dying" || mode === "over") {
+      y = fallY;
+      ctx.save(); ctx.translate(X * k + sx, y * k + sy); ctx.rotate(fallR); ctx.drawImage(sp.c, -sp.w / 2 * k, -sp.h / 2 * k, sp.w * k, sp.h * k); ctx.restore();
+      ctx.setTransform(dpr, 0, 0, dpr, sx * dpr, sy * dpr);
+      // the bat that did it
+      const b = w.bats[w.hit];
+      if (b) {
+        ctx.strokeStyle = "#fff1d1"; ctx.lineWidth = Math.max(2, .6 * k);
+        ctx.beginPath(); ctx.arc(b.x * k, b.y * k, (8.5 + (still ? 0 : Math.sin(clock * 9) * .8)) * k, 0, 7); ctx.stroke();
+      }
+    } else {
+      const s = squash;
+      ctx.save(); ctx.translate(X * k, y * k); ctx.scale(1 - .12 * s, 1 + .16 * s);
+      ctx.drawImage(sp.c, -sp.w / 2 * k, -sp.h / 2 * k, sp.w * k, sp.h * k); ctx.restore();
+      ctx.setTransform(dpr, 0, 0, dpr, sx * dpr, sy * dpr);
+      if (flash > 0) { ctx.strokeStyle = "rgba(255, 246, 220, " + (flash * .9).toFixed(2) + ")"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X * k, y * k, (6 + (1 - flash) * 6) * k, 0, 7); ctx.stroke(); }
+    }
+    // silk flecks and moth dust
+    for (let i = 0; i < parts.length; i++) {
+      const p = parts[i]; if (!p.on) continue;
+      ctx.globalAlpha = 1 - p.life / p.max;
+      ctx.fillStyle = p.c ? "#fff1d1" : "#e2fcf7";
+      ctx.fillRect((p.x - .4) * k, (p.y - .4) * k, .8 * k, .8 * k);
+    }
+    ctx.globalAlpha = 1;
+    // points where they were won
+    ctx.font = "800 " + Math.max(14, Math.round(4.6 * k)) + "px Overpass, system-ui, sans-serif";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    for (let i = 0; i < pops.length; i++) {
+      const p = pops[i]; if (!p.on) continue;
+      ctx.globalAlpha = Math.min(1, (0.45 - p.life) / .2);
+      ctx.fillStyle = "rgba(27, 14, 6, .6)"; ctx.fillText(p.text, p.x * k + 1, p.y * k + 1);
+      ctx.fillStyle = "#fff6dc"; ctx.fillText(p.text, p.x * k, p.y * k);
+    }
+    ctx.globalAlpha = 1;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  /* start */
+  applyCalm();
+  setLang(lang);
+  requestAnimationFrame(now => { last = now; frame(now); });
+})();
+</script>
+<script>
+// Outside dodojo, show the attached photos from the folder beside the page.
+if (!window.dodojo) document.querySelectorAll('[src^="attachment:"]').forEach(el => { el.src = el.getAttribute('src').slice(11); });
+</script>
+</body>
+</html>

@@ -23,7 +23,7 @@
 <section class="hero">
   <p class="eyebrow"><span data-l="zh">开源 Agent Skills</span><span data-l="en">Open Agent Skills</span></p>
   <h1><span data-l="zh">让 AI 做的东西，<br>值得留下来</span><span data-l="en">Make what your AI makes<br>worth keeping</span></h1>
-  <p class="lede"><span data-l="zh">dodojo 的开源 Agent Skills。dodojo-travel 把一趟行程做成路上能用的一页，营业时间和门票按出行当天核实，路线不走回头路，配真实照片和地图；dodojo-game 做一页打开就能玩的游戏，游戏在最上面，电脑对手分档，每一步都存着。每个 skill 都是一套做法而不是模板。连上 dodojo，它会先翻你存过的东西，做好后直接存进你的记忆库。</span><span data-l="en">Open agent skills from dodojo. dodojo-travel turns a trip into a page you follow on the road: hours and tickets checked for your dates, a route that never backtracks, real photos and a map. dodojo-game makes a game you play on one page: the game on top, a computer opponent with real levels, every move kept. Each skill is a way of working, not a template. Connected to dodojo, it starts from what you already keep and saves the result into your library.</span></p>
+  <p class="lede"><span data-l="zh">dodojo 的开源 Agent Skills。dodojo-travel 把一趟行程做成路上能用的一页，营业时间和门票按出行当天核实，路线不走回头路，配真实照片和地图；五个游戏 skill 分别做棋牌对战、聚会游戏、益智解谜、街机反应和互动故事，一页打开就能玩，游戏在最上面，玩到哪儿都存着。每个 skill 都是一套做法而不是模板。连上 dodojo，它会先翻你存过的东西，做好后直接存进你的记忆库。</span><span data-l="en">Open agent skills from dodojo. dodojo-travel turns a trip into a page you follow on the road: hours and tickets checked for your dates, a route that never backtracks, real photos and a map. Five game skills make board games, party games, puzzles, arcade games and story games you play on one page: the game on top, play kept where it stopped. Each skill is a way of working, not a template. Connected to dodojo, it starts from what you already keep and saves the result into your library.</span></p>
   <div class="install"><code>npx skills add dodojo-AI/dodojo-skills</code><button type="button" data-copy="npx skills add dodojo-AI/dodojo-skills"><span data-l="zh">复制</span><span data-l="en">Copy</span></button></div>
   <p class="works"><span data-l="zh">适用于 Claude Code、Codex、Cursor 等支持 Agent Skills 的工具 · MIT 开源</span><span data-l="en">Works in Claude Code, Codex, Cursor and other tools that support Agent Skills · MIT licensed</span></p>
 </section>
@@ -55,14 +55,78 @@
 
 <article class="skill-row">
   <header>
-    <h3><span data-l="zh">小游戏</span><span data-l="en">Game</span> <span class="mono">dodojo-game</span></h3>
-    <p><span data-l="zh">棋类、益智、街机、两人同屏：游戏放在最上面，点下去马上有手感和声音，电脑对手分档，每一步都存着，画面取自游戏本身的材质。</span><span data-l="en">Board games, puzzles, arcade and pass-and-play: the game on top, input and sound that answer at once, a computer opponent with real levels, every move kept, and a look taken from the game's own materials.</span></p>
+    <h3><span data-l="zh">棋牌对战</span><span data-l="en">Board game</span> <span class="mono">dodojo-game</span></h3>
+    <p><span data-l="zh">五子棋、象棋、围棋、牌类和原创桌游：游戏放在最上面，点下去马上有手感和声音，电脑对手分档，两人同屏或团队空间里各用各的手机，每一步都存着，画面取自棋盘棋子的材质。</span><span data-l="en">Gomoku, chess, go, card games and original tabletop games: the game on top, input and sound that answer at once, a computer opponent with real levels, two on one phone or each on their own in a team space, every move kept, and a look taken from the board and pieces.</span></p>
     <a class="open-link" href="skills/dodojo-game.html"><span data-l="zh">看它怎么做 →</span><span data-l="en">See how it works →</span></a>
   </header>
   <div class="library">
 <a class="tile" href="skills/dodojo-game.html#gomoku">
   <div class="cover"><iframe data-src="examples/dodojo-game/gomoku/index.html?theme=light" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe></div>
   <h3>Gomoku on a kaya board</h3>
+  <div class="meta"><span><span data-l="zh">英文示例</span><span data-l="en">In English</span></span>·<span><span data-l="zh">11月26日</span><span data-l="en">Nov 26</span></span></div>
+  
+</a>
+  </div>
+</article>
+
+<article class="skill-row">
+  <header>
+    <h3><span data-l="zh">聚会游戏</span><span data-l="en">Party game</span> <span class="mono">dodojo-party-game</span></h3>
+    <p><span data-l="zh">2 到 10 个人围着一部手机：你画我猜、比划猜词、数字炸弹、拍桌抢答、抽签、谁是卧底。隔着桌子也看得清，手机交接时秘密不露馅，倒计时听得见，一晚上的比分都记着，题库每种语言各写各的。</span><span data-l="en">Two to ten people around one phone: drawing, charades, a number bomb, a slap race, drawing lots, the odd word out. Readable across the table, secrets that stay hidden when the phone changes hands, a clock you hear, scores across the evening, prompts written for each language.</span></p>
+    <a class="open-link" href="skills/dodojo-party-game.html"><span data-l="zh">看它怎么做 →</span><span data-l="en">See how it works →</span></a>
+  </header>
+  <div class="library">
+<a class="tile" href="skills/dodojo-party-game.html#number-bomb">
+  <div class="cover"><iframe data-src="examples/dodojo-party-game/number-bomb/index.html?theme=light" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe></div>
+  <h3>Number Bomb</h3>
+  <div class="meta"><span><span data-l="zh">英文示例</span><span data-l="en">In English</span></span>·<span><span data-l="zh">11月26日</span><span data-l="en">Nov 26</span></span></div>
+  
+</a>
+  </div>
+</article>
+
+<article class="skill-row">
+  <header>
+    <h3><span data-l="zh">益智解谜</span><span data-l="en">Puzzle</span> <span class="mono">dodojo-puzzle-game</span></h3>
+    <p><span data-l="zh">数独、数织、华容道、推箱子、连线、文字谜、每日一题：每道题都用求解器验过有解、该唯一的唯一，难度看推理而不是空格多少，关卡一次教一个新招，提示讲清下一步为什么。</span><span data-l="en">Number squares, picture logic, sliding blocks, box pushing, paths and word puzzles, daily or in packs: every puzzle proven by a solver, unique where logic should decide, graded by the reasoning it needs, levels that teach one idea at a time, and hints that explain the next step.</span></p>
+    <a class="open-link" href="skills/dodojo-puzzle-game.html"><span data-l="zh">看它怎么做 →</span><span data-l="en">See how it works →</span></a>
+  </header>
+  <div class="library">
+<a class="tile" href="skills/dodojo-puzzle-game.html#low-tide">
+  <div class="cover"><iframe data-src="examples/dodojo-puzzle-game/low-tide/index.html?theme=light" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe></div>
+  <h3>Low Tide picture logic</h3>
+  <div class="meta"><span><span data-l="zh">英文示例</span><span data-l="en">In English</span></span>·<span><span data-l="zh">11月26日</span><span data-l="en">Nov 26</span></span></div>
+  
+</a>
+  </div>
+</article>
+
+<article class="skill-row">
+  <header>
+    <h3><span data-l="zh">街机反应</span><span data-l="en">Arcade</span> <span class="mono">dodojo-arcade-game</span></h3>
+    <p><span data-l="zh">一根手指就能玩的跳跃、飞行、躲避、接东西、打砖块、节奏和跑酷：三秒学会一个动作，固定步长的循环 60 帧不卡，死得服气，重开不到一秒，最高分跟着你走。</span><span data-l="en">One-thumb jumpers, flyers, dodgers, catchers, brick breakers, rhythm games and runners: one verb learned in three seconds, a fixed-step loop at 60 fps, deaths that feel fair, restart in under a second, and a best score that follows you.</span></p>
+    <a class="open-link" href="skills/dodojo-arcade-game.html"><span data-l="zh">看它怎么做 →</span><span data-l="en">See how it works →</span></a>
+  </header>
+  <div class="library">
+<a class="tile" href="skills/dodojo-arcade-game.html#lamplight-spider">
+  <div class="cover"><iframe data-src="examples/dodojo-arcade-game/lamplight-spider/index.html?theme=light" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe></div>
+  <h3>Lamplight Spider</h3>
+  <div class="meta"><span><span data-l="zh">英文示例</span><span data-l="en">In English</span></span>·<span><span data-l="zh">11月26日</span><span data-l="en">Nov 26</span></span></div>
+  
+</a>
+  </div>
+</article>
+
+<article class="skill-row">
+  <header>
+    <h3><span data-l="zh">互动故事</span><span data-l="en">Story game</span> <span class="mono">dodojo-story-game</span></h3>
+    <p><span data-l="zh">分支剧情、推理案卷、密室逃脱、文字冒险，还有用你们共同回忆做的寻宝和生日惊喜：先画好故事地图再动笔，每段短、选择算数，谜题线索都在文字里，提示一级一级给，几种结局都要自己挣来。</span><span data-l="en">Branching stories, mystery case files, escape rooms, text adventures, and treasure hunts or birthday quests built from your shared memories: the story mapped before it is written, short scenes with real choices, fair clues in the text, a hint ladder and endings that are earned.</span></p>
+    <a class="open-link" href="skills/dodojo-story-game.html"><span data-l="zh">看它怎么做 →</span><span data-l="en">See how it works →</span></a>
+  </header>
+  <div class="library">
+<a class="tile" href="skills/dodojo-story-game.html#hollin-frost">
+  <div class="cover"><iframe data-src="examples/dodojo-story-game/hollin-frost/index.html?theme=light" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe></div>
+  <h3>The Hollin Frost</h3>
   <div class="meta"><span><span data-l="zh">英文示例</span><span data-l="en">In English</span></span>·<span><span data-l="zh">11月26日</span><span data-l="en">Nov 26</span></span></div>
   
 </a>

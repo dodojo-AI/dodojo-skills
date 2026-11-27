@@ -1,0 +1,1065 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="dodojo-page-id" content="hollin-frost-1956">
+<title>The Hollin Frost: a case file mystery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap">
+<style>
+/* layout: a loss adjuster's case folder - one typed strip on the folder's top edge, the scene typed on a sheet clipped inside, its choices as the tick-boxes of a form right under the text, then the adjuster's pocket notebook (beside the folder from 760px). */
+/* materials: manila folder board, thin typing paper and carbon flimsies, black ribbon ink, a red adjuster's pencil for choices, ticks and focus, a violet rubber stamp, blue-black fountain pen for handwriting; frost, clay, brass and copper only inside the drawings. At night the paper dims under a desk lamp; it never turns black. */
+/* type: Literata for the scene (18px / 1.6) and the notebook; Courier Prime for documents, the strip, labels and codes. Nothing else. */
+:root {
+  --paper: var(--dodojo-bg, #f2eee6);
+  --panel: var(--dodojo-surface, #fffdf8);
+  --ink: var(--dodojo-fg, #1f1d1a);
+  --soft: var(--dodojo-muted-fg, #625c53);
+  --line: var(--dodojo-border, rgba(31, 29, 26, .14));
+  --accent: #a4322a;
+  --accent-ink: #ffffff;
+  /* the object's own colours */
+  --folder: #d8c293;
+  --folder-edge: #b99f6a;
+  --folder-ink: #463818;
+  --sheet: #fcf9f1;
+  --flimsy: #f1ede2;
+  --type: #22201c;
+  --type-soft: #5c564c;
+  --rule: rgba(34, 32, 28, .16);
+  --stamp: #5b3f8e;
+  --pen: #1f3a68;
+  --clip: #8b9096;
+  /* drawing colours */
+  --pane: #e7eff2;
+  --frost: #8fb5cc;
+  --clay: #c0714a;
+  --clay-deep: #7a3c20;
+  --root: #efe3c8;
+  --dead: #3b342b;
+  --leaf: #4d6a3b;
+  --copper: #b5652a;
+  --brass: #c9a24f;
+  --brass-deep: #74561b;
+  --dial: #f6eedb;
+  --felt: #8b4a3d;
+  --rubber: #9e3d2c;
+  --shadow: 0 1px 0 rgba(70, 52, 20, .10), 0 10px 24px -14px rgba(70, 52, 20, .45);
+}
+:root[data-dodojo-theme="dark"] {
+  --paper: var(--dodojo-bg, #141311);
+  --panel: var(--dodojo-surface, #1d1b18);
+  --ink: var(--dodojo-fg, #ece7dd);
+  --soft: var(--dodojo-muted-fg, #a59e92);
+  --line: var(--dodojo-border, rgba(236, 231, 221, .14));
+  --accent: #ec8a76;
+  --accent-ink: #1c0f0b;
+  --folder: #54482f;
+  --folder-edge: #6a5b3d;
+  --folder-ink: #eadbb8;
+  --sheet: #2c2924;
+  --flimsy: #35312a;
+  --type: #ece5d7;
+  --type-soft: #b4ac9e;
+  --rule: rgba(236, 229, 215, .16);
+  --stamp: #bba3ec;
+  --pen: #a9c2ec;
+  --clip: #9aa0a6;
+  --pane: #313d44;
+  --frost: #7ea3ba;
+  --clay: #a8603e;
+  --clay-deep: #f0c3a6;
+  --root: #d9ccb0;
+  --dead: #8c8170;
+  --leaf: #8fae73;
+  --copper: #d98b4c;
+  --brass: #b28f45;
+  --brass-deep: #4a3711;
+  --dial: #ece2cb;
+  --felt: #7a3f34;
+  --rubber: #a5503e;
+  --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 12px 26px -14px rgba(0, 0, 0, .8);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dodojo-theme]) {
+    --paper: #141311; --panel: #1d1b18; --ink: #ece7dd; --soft: #a59e92;
+    --line: rgba(236, 231, 221, .14); --accent: #ec8a76; --accent-ink: #1c0f0b;
+    --folder: #54482f; --folder-edge: #6a5b3d; --folder-ink: #eadbb8; --sheet: #2c2924; --flimsy: #35312a;
+    --type: #ece5d7; --type-soft: #b4ac9e; --rule: rgba(236, 229, 215, .16); --stamp: #bba3ec; --pen: #a9c2ec; --clip: #9aa0a6;
+    --pane: #313d44; --frost: #7ea3ba; --clay: #a8603e; --clay-deep: #f0c3a6; --root: #d9ccb0; --dead: #8c8170; --leaf: #8fae73;
+    --copper: #d98b4c; --brass: #b28f45; --brass-deep: #4a3711; --dial: #ece2cb; --felt: #7a3f34; --rubber: #a5503e;
+    --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 12px 26px -14px rgba(0, 0, 0, .8);
+  }
+}
+[hidden] { display: none !important; }
+img { max-width: 100%; height: auto; }
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; padding: 16px; background: var(--paper); color: var(--ink);
+  font-family: "Literata", Georgia, "Times New Roman", serif;
+}
+@media (max-width: 340px) { body { padding: 8px; } }
+.mono { font-family: "Courier Prime", "Courier New", monospace; }
+button, input { font: inherit; color: inherit; }
+
+.file { max-width: 920px; margin: 0 auto; display: grid; gap: 20px; }
+@media (min-width: 760px) { .file { grid-template-columns: minmax(0, 1fr) 270px; align-items: start; } }
+
+/* the folder and its strip */
+.folder { min-width: 0; background: var(--folder); border: 1px solid var(--folder-edge); border-radius: 3px 10px 4px 4px; padding: 0 5px 5px; box-shadow: var(--shadow); }
+.strip {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: 34px; padding: 6px 7px; color: var(--folder-ink);
+  font: 700 12px/1.2 "Courier Prime", "Courier New", monospace; letter-spacing: .08em; text-transform: uppercase;
+}
+.strip .where { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.strip .count { flex: none; font-variant-numeric: tabular-nums; }
+.sheet { position: relative; background: var(--sheet); color: var(--type); padding: 18px 16px 0; border-radius: 2px; box-shadow: 0 1px 2px rgba(0, 0, 0, .12); }
+@media (max-width: 340px) { .sheet { padding: 16px 13px 0; } }
+.clip { position: absolute; top: -8px; right: 22px; width: 16px; height: 40px; fill: none; stroke: var(--clip); stroke-width: 2.2; stroke-linecap: round; }
+
+/* a scene */
+.scene { outline: none; }
+.scene.enter { animation: settle .22s ease-out; }
+@keyframes settle { from { opacity: .35; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.scene h2 {
+  margin: 0 0 14px; padding-bottom: 8px; border-bottom: 1px dashed var(--rule); padding-right: 28px;
+  font: 700 15px/1.3 "Courier Prime", "Courier New", monospace; letter-spacing: .07em; text-transform: uppercase; color: var(--type);
+  text-wrap: balance; outline: none;
+}
+.scene p { margin: 0 0 .8em; font-size: var(--scene-size, 18px); line-height: 1.6; text-wrap: pretty; }
+html.large { --scene-size: 20.5px; --choice-size: 19px; --doc-size: 16px; }
+@media (min-width: 760px) { html:not(.large) { --scene-size: 19.5px; } .scene p { max-width: 34em; } }
+.pic { margin: 0 0 14px; }
+.pic svg { display: block; width: 100%; height: auto; }
+.pic figcaption { margin-top: 4px; font: 12px/1.4 "Courier Prime", "Courier New", monospace; color: var(--type-soft); letter-spacing: .03em; }
+
+/* documents set as documents */
+.doc {
+  margin: 4px 0 16px; padding: 12px 12px 10px; background: var(--flimsy); color: var(--type);
+  border: 1px solid var(--rule); border-radius: 1px; box-shadow: 0 1px 0 var(--rule);
+  font: var(--doc-size, 14.5px)/1.5 "Courier Prime", "Courier New", monospace; overflow-wrap: anywhere;
+}
+.doc p { font-size: inherit; line-height: inherit; margin: 0 0 .5em; }
+.doc p:last-child { margin-bottom: 0; }
+.doc .head { font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.doc .amt { white-space: nowrap; font-weight: 700; }
+.doc .item { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: .2em; }
+.doc .item b { min-width: 0; }
+@media (max-width: 400px) { .doc { font-size: var(--doc-size, 14px); } }
+.stamp-row { text-align: right; margin-top: -2px !important; }
+.stamp {
+  display: inline-block; padding: 3px 7px; transform: rotate(-4deg);
+  border: 2px solid var(--stamp); border-radius: 3px; color: var(--stamp);
+  font: 700 11px/1.15 "Courier Prime", "Courier New", monospace; letter-spacing: .08em; text-align: center; opacity: .9;
+}
+.doc table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.doc th, .doc td { text-align: left; vertical-align: top; padding: 4px 6px 4px 0; border-bottom: 1px solid var(--rule); }
+.doc th { font-weight: 700; font-size: .86em; letter-spacing: .05em; text-transform: uppercase; }
+.doc.hand { font-family: "Literata", Georgia, serif; font-style: italic; color: var(--pen); font-size: calc(var(--doc-size, 14.5px) + 1.5px); background: var(--sheet); }
+.doc.hand .head { font-style: normal; font-family: "Courier Prime", "Courier New", monospace; color: var(--type-soft); font-size: 12px; }
+.doc .entry { display: grid; grid-template-columns: 4.7em minmax(0, 1fr); gap: 8px; margin-bottom: .35em; }
+.doc .entry > span:first-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.doc.card { max-width: 250px; margin-left: auto; margin-right: auto; text-align: center; }
+
+/* choices: the boxes of a form */
+.choices { display: grid; margin: 16px -16px 0; border-top: 1px solid var(--rule); }
+@media (max-width: 340px) { .choices { margin: 16px -13px 0; } }
+.choice {
+  position: relative; display: flex; align-items: flex-start; gap: 12px; width: 100%; min-height: 52px; margin: 0;
+  padding: 13px 16px; background: transparent; border: 0; border-bottom: 1px solid var(--rule);
+  color: var(--type); font: var(--choice-size, 17px)/1.4 "Literata", Georgia, serif; text-align: left; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.choice::before { content: ""; flex: none; width: 18px; height: 18px; margin-top: 2px; border: 1.5px solid currentColor; border-radius: 2px; }
+.choice::after {
+  content: ""; position: absolute; left: 22px; top: 13px; width: 7px; height: 14px;
+  border: solid var(--accent); border-width: 0 3px 3px 0; transform: rotate(40deg); opacity: 0;
+}
+.choice:hover::after, .choice:focus-visible::after, .choice:active::after { opacity: 1; }
+.choice:hover, .choice:focus-visible { background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.choice:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+.choice .t { min-width: 0; }
+.choice .why { display: block; margin-top: 3px; font: 13px/1.4 "Courier Prime", "Courier New", monospace; color: var(--type-soft); }
+.choice:not([disabled]) .why { display: none; }
+.choice[disabled] { color: var(--type-soft); cursor: default; }
+.choice[disabled]::before { border-style: dashed; }
+.choice[disabled]::after { opacity: 0 !important; }
+.choice[disabled]:hover { background: transparent; }
+.choice.minor { font-size: 15px; min-height: 48px; color: var(--type-soft); }
+.choice.minor::before { width: 14px; height: 14px; margin-top: 3px; }
+
+/* a lock: a form line, the answer typed in */
+.lock { display: grid; gap: 10px; margin: 8px 0 4px; }
+.lock label { font: 700 12px/1.3 "Courier Prime", "Courier New", monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--type-soft); }
+.lock input {
+  width: 100%; min-height: 50px; padding: 8px 10px; border: 0; border-bottom: 2px solid var(--type); border-radius: 0;
+  background: var(--flimsy); color: var(--type); font: 700 22px/1.2 "Courier Prime", "Courier New", monospace; letter-spacing: .1em;
+}
+.lock input:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lock .row { display: flex; flex-wrap: wrap; gap: 8px; }
+.lock .row button { flex: 1 1 120px; min-height: 48px; padding: 8px 10px; border-radius: 2px; cursor: pointer; font: 700 14px/1.2 "Courier Prime", "Courier New", monospace; letter-spacing: .02em; }
+.lock .try { background: var(--accent); color: var(--accent-ink); border: 0; }
+.lock .hint { background: transparent; color: var(--type); border: 1.5px solid var(--rule); }
+.lock .hint[disabled] { color: var(--type-soft); cursor: default; }
+.lock button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.scene .say { min-height: 1.5em; margin: 0; font: italic 16px/1.45 "Literata", Georgia, serif; color: var(--type-soft); }
+.scene .say:empty { min-height: 0; margin-top: -10px; }
+.hints { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; counter-reset: rung; }
+.hints li { counter-increment: rung; padding: 6px 8px 6px 34px; position: relative; background: var(--flimsy); border-left: 3px solid var(--accent); font: 15px/1.45 "Literata", Georgia, serif; }
+.hints li::before { content: counter(rung); position: absolute; left: 10px; top: 6px; font: 700 13px "Courier Prime", monospace; color: var(--accent); }
+
+/* drawings */
+.draw text { font-family: "Courier Prime", "Courier New", monospace; }
+.draw .glass { fill: var(--pane); }
+.draw .frostfill { fill: url(#gh-fern); }
+.draw .fern { fill: none; stroke: var(--frost); stroke-width: .9; stroke-linecap: round; }
+.draw .iron { fill: none; stroke: var(--type); stroke-width: 1.4; stroke-linejoin: round; stroke-linecap: round; }
+.draw .iron .thin { stroke-width: .75; }
+.draw .brick { fill: var(--clay); }
+.draw .smoke { fill: none; stroke: var(--type-soft); stroke-width: 1.3; stroke-linecap: round; opacity: .55; }
+.chart .grid { stroke: var(--rule); stroke-width: .8; }
+.chart .grid.major { stroke: var(--type-soft); stroke-width: .8; opacity: .55; }
+.chart .grid.dashed { stroke-dasharray: 3 3; }
+.chart .zoombox { fill: color-mix(in srgb, var(--accent) 10%, transparent); stroke: var(--type-soft); stroke-width: .8; stroke-dasharray: 3 2; }
+.chart .frostline { stroke: var(--frost); stroke-width: 1.4; stroke-dasharray: 4 3; }
+.chart .lbl { fill: var(--type-soft); font-size: 12px; }
+.chart .lbl.frostlbl { fill: var(--frost); font-weight: 700; }
+.chart .trace { fill: none; stroke: var(--stamp); stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
+.chart .ring { fill: none; stroke: var(--accent); stroke-width: 2.4; stroke-dasharray: 140; stroke-dashoffset: 140; transition: stroke-dashoffset .6s ease; }
+.scene.solved .ring { stroke-dashoffset: 0; }
+.pot .clay { fill: var(--clay); stroke: var(--clay-deep); stroke-width: 1.4; }
+.pot .deep { fill: none; stroke: var(--clay-deep); stroke-width: 1; }
+.pot .stamped { fill: var(--clay-deep); font-weight: 700; }
+.pot .hole { fill: var(--type); opacity: .85; }
+.pot .root { fill: none; stroke: var(--root); stroke-width: 1.6; stroke-linecap: round; }
+.pot .dead { fill: none; stroke: var(--dead); stroke-width: 3; stroke-linecap: round; }
+.lockpic .brass { fill: var(--brass); stroke: var(--brass-deep); stroke-width: 1.5; }
+.lockpic .shackle { fill: none; stroke: var(--brass-deep); stroke-width: 11; stroke-linecap: round; }
+.lockpic .shackle-hi { fill: none; stroke: var(--brass); stroke-width: 6; stroke-linecap: round; }
+.lockpic .window { fill: var(--brass-deep); }
+.lockpic .dial { fill: var(--dial); }
+.lockpic .digit { fill: #2a2216; font-size: 17px; font-weight: 700; }
+.lockpic .engrave { fill: none; stroke: var(--brass-deep); stroke-width: 1.2; }
+.lockpic .engrave-t { fill: var(--brass-deep); font-size: 15px; font-weight: 700; }
+.lockpic .tagstring { fill: none; stroke: var(--type-soft); stroke-width: 1.4; }
+#lk-shackle { transition: transform .35s ease; }
+.scene.solved #lk-shackle { transform: translateY(-12px); }
+.box .leaf { fill: none; stroke: var(--leaf); stroke-width: 3.4; stroke-linecap: round; }
+.box .clay { fill: var(--clay); stroke: var(--clay-deep); stroke-width: 1.4; }
+.box .crack { fill: none; stroke: var(--clay-deep); stroke-width: 1.6; stroke-linejoin: round; }
+.box .wire { fill: none; stroke: var(--copper); stroke-width: 2.6; stroke-linecap: round; }
+.box .scratch { fill: var(--clay-deep); font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+.box .card { fill: var(--folder); stroke: var(--folder-edge); stroke-width: 1.4; }
+.box .stripe { fill: none; stroke: var(--folder-edge); stroke-width: 3; }
+.box .felt { fill: var(--felt); }
+.box .rubber { fill: var(--rubber); }
+
+.scene p.tally { font: 13px/1.5 "Courier Prime", "Courier New", monospace; color: var(--type-soft); letter-spacing: .03em; }
+.scene p.missed { font-size: 16px; line-height: 1.5; padding: 8px 10px; border-left: 3px solid var(--accent); background: var(--flimsy); }
+.evidence { margin: 0 0 14px; padding-left: 20px; font-size: 15.5px; line-height: 1.5; }
+.evidence li { margin-bottom: 4px; }
+
+/* the notebook */
+.notebook {
+  min-width: 0; position: relative; padding: 26px 16px 16px; background: var(--panel); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 4px 4px 6px 6px;
+  background-image: radial-gradient(circle, var(--paper) 3px, transparent 3.6px);
+  background-size: 18px 18px; background-repeat: repeat-x; background-position: 4px 2px;
+}
+.notebook h2 { margin: 0 0 12px; font: 700 13px/1.3 "Courier Prime", "Courier New", monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--soft); }
+.nb-part { padding: 12px 0; border-top: 1px solid var(--line); }
+.nb-part h3 { display: flex; justify-content: space-between; gap: 8px; margin: 0 0 8px; font: 600 16px/1.3 "Literata", Georgia, serif; }
+.nb-part h3 .n { font: 400 13px/1.6 "Courier Prime", monospace; color: var(--soft); font-variant-numeric: tabular-nums; }
+.nb-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+.nb-list li { font-size: 14.5px; line-height: 1.45; }
+.nb-list b { display: block; font: 700 11px/1.4 "Courier Prime", monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.nb-empty { font-size: 14px; color: var(--soft); margin: 0; }
+.ends { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.ends li { display: flex; align-items: center; gap: 10px; font-size: 14.5px; }
+.ends li::before { content: ""; flex: none; width: 16px; height: 16px; border: 1.5px dashed var(--soft); border-radius: 2px; }
+.ends li.got::before { border-style: solid; border-color: var(--accent); background: var(--accent); }
+.ends li:not(.got) .t, .ends li.got .no { display: none; }
+.ends .no { color: var(--soft); font-style: italic; }
+.seg { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.seg > span { flex: 0 0 52px; font: 12px "Courier Prime", monospace; letter-spacing: .06em; text-transform: uppercase; color: var(--soft); }
+.seg button, .restart button {
+  min-height: 44px; padding: 6px 12px; background: transparent; border: 1px solid var(--line); border-radius: 3px;
+  cursor: pointer; font: 14px/1.2 "Literata", Georgia, serif; color: var(--ink);
+}
+.seg button { flex: 1 1 0; }
+.seg button[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 -3px 0 var(--accent); font-weight: 600; }
+.seg button:focus-visible, .restart button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.restart { display: grid; gap: 6px; }
+.restart button { text-align: left; }
+.notebook p.small { margin: 0 0 6px; font-size: 14px; line-height: 1.5; color: var(--ink); }
+.notebook p.credit { font-size: 12.5px; color: var(--soft); }
+@media (prefers-reduced-motion: reduce) {
+  .scene.enter { animation: none; }
+  .chart .ring, #lk-shackle { transition: none; }
+}
+</style>
+</head>
+<body>
+<main class="file">
+  <div class="folder">
+    <div class="strip" aria-live="polite"><span class="where" id="where">The gate</span><span class="count">Clues <span data-count="clues">0</span>/<span data-count="clues-total">14</span></span></div>
+    <article class="sheet">
+      <svg class="clip" viewBox="0 0 16 44" aria-hidden="true"><path d="M5 12 V34 a4 4 0 0 0 8 0 V7 a5.5 5.5 0 0 0 -11 0 V33"/></svg>
+
+<section class="scene" id="scene-open" data-place="The gate" data-sets="c_policy">
+  <h2 tabindex="-1">Claim 56/1214</h2>
+  <figure class="pic">
+    <svg class="draw" viewBox="0 6 320 154" role="img" aria-labelledby="gh-t">
+      <title id="gh-t">The Hollin Winter Garden at dawn: a domed palm house of iron and glass between two curved wings, every pane white with frost on the inside, the boiler chimney smoking behind.</title>
+      <defs>
+        <pattern id="gh-fern" width="22" height="20" patternUnits="userSpaceOnUse">
+          <path class="fern" d="M1 19 C5 14 8 11 12 4 M4 15 L1.5 12.5 M6 12.5 L9.5 13.5 M8 10 L5.5 7.5 M10 7.5 L13.5 8 M15 19 C17 16 19 14 21 12 M17 16.5 L15.5 14.5"/>
+        </pattern>
+      </defs>
+      <path class="smoke" d="M257 30 C251 22 263 17 256 10 C250 4 259 0 254 -6"/>
+      <rect class="brick" x="251" y="32" width="12" height="70"/>
+      <g class="glass">
+        <path d="M30 150 V114 Q30 92 100 92 V150 Z"/>
+        <path d="M290 150 V114 Q290 92 220 92 V150 Z"/>
+        <path d="M100 150 V100 C100 58 130 40 160 40 C190 40 220 58 220 100 V150 Z"/>
+        <path d="M151 40 V30 H169 V40 Z"/>
+      </g>
+      <g class="frostfill">
+        <path d="M30 150 V114 Q30 92 100 92 V150 Z"/>
+        <path d="M290 150 V114 Q290 92 220 92 V150 Z"/>
+        <path d="M100 150 V100 C100 58 130 40 160 40 C190 40 220 58 220 100 V150 Z"/>
+      </g>
+      <g class="iron">
+        <path d="M30 150 V114 Q30 92 100 92 M290 150 V114 Q290 92 220 92"/>
+        <path d="M100 150 V100 C100 58 130 40 160 40 C190 40 220 58 220 100 V150"/>
+        <path d="M96 100 H224 M30 126 H100 M220 126 H290 M100 126 H151 M169 126 H220"/>
+        <g class="thin">
+          <path d="M40 150 V100.5 M50 150 V96.8 M60 150 V94.6 M70 150 V93.3 M80 150 V92.5 M90 150 V92.1"/>
+          <path d="M280 150 V100.5 M270 150 V96.8 M260 150 V94.6 M250 150 V93.3 M240 150 V92.5 M230 150 V92.1"/>
+          <path d="M112 150 V100 M124 150 V100 M136 150 V100 M184 150 V100 M196 150 V100 M208 150 V100"/>
+          <path d="M160 40 C135.25 40 115 58 115 100 M160 40 C143.5 40 130 58 130 100 M160 40 C151.75 40 145 58 145 100 M160 40 C168.25 40 175 58 175 100 M160 40 C176.5 40 190 58 190 100 M160 40 C184.75 40 205 58 205 100"/>
+          <path d="M119 54 Q160 59 201 54 M107 68.5 Q160 76 213 68.5 M102 83 Q160 91 218 83"/>
+        </g>
+        <path d="M151 40 V30 H169 V40 M151 30 Q160 22 169 30 M160 24 V17"/>
+        <circle cx="160" cy="15" r="1.8"/>
+        <path d="M151 150 V130 Q160 121 169 130 V150 M160 125.6 V150"/>
+        <path d="M8 150 H312 M151 150 L138 170 M169 150 L182 170"/>
+      </g>
+    </svg>
+  </figure>
+  <p>Thursday, ten to eight. Two nights of frost have whitened every pane of the Hollin Winter Garden from the inside. Nothing has been touched since: Council's orders.</p>
+  <div class="doc form">
+    <p class="head">Calder &amp; Wythe Mutual · Claim 56/1214</p>
+    <p>Hollin Winter Garden (tel. Hollin&nbsp;40 office, 41&nbsp;boiler house). Frost, night of 11th&ndash;12th December.</p>
+    <p class="item"><b>1. The Hollin Ghost</b><span class="amt">£1,000</span></p>
+    <p>White cymbidium, Reg. No.&nbsp;1887, in its original clay pot, cracked and bound with copper wire, number on the rim. Cover raised from £200 on 1&nbsp;Nov at the Curator's request.</p>
+    <p class="item"><b>2. Palms and ferns</b><span class="amt">£240</span></p>
+    <p class="stamp-row"><span class="stamp">Received 12 Dec 1956</span></p>
+  </div>
+  <p>PC Dunmore blows on his fingers. &ldquo;Inspector Hale wants your view by four. Stoker let her go out, if you ask me.&rdquo;</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="palm"><span class="t">Go in through the Palm House</span></button>
+    <button type="button" class="choice" data-go="boiler"><span class="t">Find the stoker first</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-yard" data-place="The yard" hidden>
+  <h2 tabindex="-1">The yard</h2>
+  <p>Smoke rises from the boiler-house chimney. A handcart leans against the potting shed, H.W.G. stencilled on its side. Through the glass the palms hang black, like umbrellas left out in the rain. Down the hill the town's chimneys are lighting one by one. Dunmore stamps his boots on the cinders and waits.</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="palm"><span class="t">Go into the Palm House</span></button>
+    <button type="button" class="choice" data-go="boiler"><span class="t">Go round to the boiler house</span></button>
+    <button type="button" class="choice" data-go="town"><span class="t">Walk down into town</span></button>
+    <button type="button" class="choice" data-go="report" data-needs="clues&gt;=6" data-why><span class="t">Give Dunmore your finding<span class="why">He wants six clues in your notebook first. You have <span data-count="clues">0</span>.</span></span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-palm" data-place="The Palm House" hidden>
+  <h2 tabindex="-1">The Palm House</h2>
+  <p>Inside, the air smells of cold earth. Fronds droop from the iron ribs and frost furs the heating pipes along the floor. At the far end, by the orchid house door, a woman in a tweed coat stands very straight: Miriam Oake, the curator.</p>
+  <p>Dunmore lowers his voice. &ldquo;Marsh waved me down off my beat at half six yesterday. She was here ten minutes after, wanting to go round on her own. I said not till the insurance had seen it. Nobody's touched a thing.&rdquo;</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="oake"><span class="t">Speak to Miss Oake</span></button>
+    <button type="button" class="choice" data-go="orchids"><span class="t">Go through to the orchid house</span></button>
+    <button type="button" class="choice" data-go="office" data-needs="has_key" data-why><span class="t">Unlock the office<span class="why">Locked. Miss Oake has the key.</span></span></button>
+    <button type="button" class="choice" data-go="yard"><span class="t">Back out to the yard</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-oake" data-place="The Palm House" data-sets="c_oake,has_key" hidden>
+  <h2 tabindex="-1">Miss Oake</h2>
+  <p>&ldquo;Nearly seventy years,&rdquo; she says. &ldquo;It came from Burma in a sea captain's cabin, and one old man with a bottle let it freeze in a night.&rdquo;</p>
+  <p>She locked up at six on Tuesday, she tells you, went home to her mother and stayed there until Mr Marsh rang at ten past six the next morning. &ldquo;Ask Mother.&rdquo; She takes a key from her coat. &ldquo;The office. The valuations are on the desk. Leave the drawer; it's personal.&rdquo;</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="oake_cover"><span class="t">Ask why the Ghost's cover went up in November</span></button>
+    <button type="button" class="choice" data-go="palm"><span class="t">Take the key and step away</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-oake_cover" data-place="The Palm House" data-sets="c_offer" hidden>
+  <h2 tabindex="-1">Eight hundred pounds</h2>
+  <p>&ldquo;A London dealer, Mr Daventry, offered eight hundred pounds for it in October. I told him the Ghost belongs to Hollin.&rdquo; A thin smile. &ldquo;The Treasurer said that if it was worth that, we had better insure it for that. I put a little on top.&rdquo;</p>
+  <p>She looks past you at the black palms. &ldquo;He's still in town, at the Station Hotel. I expect he'd enjoy this.&rdquo;</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="palm"><span class="t">Leave her with the palms</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-orchids" data-place="The orchid house" hidden>
+  <h2 tabindex="-1">The orchid house</h2>
+  <p>Smaller and closer, the panes whitewashed. On the centre bench a plant has slumped into black ribbons over the rim of its pot; the card in front reads THE HOLLIN GHOST, No.&nbsp;1887. By the side door a drum turns under a glass lid, its pen scratching a line: the thermograph. Just inside the door a pipe comes through the wall with a red wheel on it.</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="pot"><span class="t">Lift the pot</span></button>
+    <button type="button" class="choice" data-go="thermo" data-needs="!c_thermo"><span class="t">Read the thermograph</span></button>
+    <button type="button" class="choice" data-go="thermo_read" data-needs="c_thermo"><span class="t">Look at the notch on the chart again</span></button>
+    <button type="button" class="choice" data-go="valve"><span class="t">Look at the red wheel</span></button>
+    <button type="button" class="choice" data-go="palm"><span class="t">Back to the Palm House</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-pot" data-place="The orchid house" data-sets="c_pot" hidden>
+  <h2 tabindex="-1">The pot</h2>
+  <figure class="pic">
+    <svg class="draw pot" viewBox="0 0 300 150" role="img" aria-labelledby="pot-t">
+      <title id="pot-t">The underside of the pot, stamped BRANNOCK, HOLLIN MARKET, 7/6 around the drainage hole; beside it the pot upright, its rim smooth and unbroken, the dead plant hanging over it in black strands.</title>
+      <circle class="clay" cx="84" cy="76" r="62"/>
+      <circle class="deep" cx="84" cy="76" r="54"/>
+      <path id="pot-ring" fill="none" d="M84 76 m-41 0 a41 41 0 1 1 82 0 a41 41 0 1 1 -82 0"/>
+      <text class="stamped" font-size="11.5" letter-spacing="1.4"><textPath href="#pot-ring">BRANNOCK · HOLLIN MARKET ·</textPath></text>
+      <circle class="hole" cx="84" cy="76" r="9"/>
+      <path class="root" d="M80 73 q-4 -3 -2 -8 M86 72 q3 -4 1 -9 M84 79 q4 3 2 7"/>
+      <text class="stamped" x="84" y="104" font-size="15" text-anchor="middle">7/6</text>
+      <path class="clay" d="M196 104 H264 L254 146 H206 Z"/>
+      <rect class="clay" x="190" y="92" width="80" height="12" rx="1.5"/>
+      <path class="dead" d="M226 92 C222 68 210 62 198 76 C194 82 193 92 192 104 M232 92 C238 70 254 64 264 80 C268 88 270 98 271 112 M229 92 C227 74 230 60 236 52 M222 92 C214 82 204 86 199 98"/>
+    </svg>
+  </figure>
+  <p>The pot is light and smooth. Its rim is clean all the way round: no number, no crack, no copper wire. You tip it. Pressed into the clay underneath: BRANNOCK &middot; HOLLIN MARKET &middot; 7/6.</p>
+  <p>The roots that show at the drainage hole are short and pale. You think of the schedule clipped to your board, and you set the pot down very carefully.</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="orchids"><span class="t">Put it back on the bench</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-thermo" data-place="The orchid house" hidden>
+  <h2 tabindex="-1">The thermograph</h2>
+  <figure class="pic">
+    <svg class="draw chart" viewBox="0 0 300 210" role="img" aria-labelledby="th-t th-d">
+      <title id="th-t">The thermograph chart, Tuesday 6 p.m. to Wednesday 8 a.m., with a close-up of 11 to 12 p.m.</title>
+      <desc id="th-d">Above: the line is level at 64 degrees until one sharp notch shortly before midnight, then slides down across the frost line at 32 degrees by half past four and stays there. Below, the close-up from 11.00 to 12.00 has faint lines every five minutes, labelled at 11.00, 11.30 and 12.00: the line drops in one sharp notch on the second faint line after 11.30, comes straight back, and begins to fall at the third.</desc>
+      <text class="lbl" x="26" y="11">TUE 11</text><text class="lbl" x="140" y="11" text-anchor="middle">WED 12</text>
+      <path class="grid" d="M45 16 V80 M64 16 V80 M83 16 V80 M102 16 V80 M159 16 V80 M178 16 V80 M197 16 V80 M216 16 V80 M235 16 V80 M254 16 V80 M273 16 V80"/>
+      <path class="grid major" d="M26 16 V80 M292 16 V80 M26 16 H292 M26 80 H292 M26 33.1 H292"/>
+      <rect class="zoombox" x="121" y="16" width="19" height="64"/>
+      <path class="frostline" d="M26 67.2 H292"/>
+      <text class="lbl" x="1" y="37">64°</text>
+      <text class="lbl frostlbl" x="1" y="71">32°</text>
+      <path class="trace" d="M26 33.1 L45 32.8 L64 33.3 L83 32.9 L102 33.2 L121 33 L133.6 33.1 L134.3 43.7 L135.2 33.6 L135.9 33.1 L142 34.7 L149.5 37.3 L159 40.5 L178 48 L197 55.5 L216 61.9 L225.5 67.2 L235 69.3 L254 70.9 L273 71.5 L292 71.8"/>
+      <g class="lbl"><text x="26" y="94" text-anchor="middle">6pm</text><text x="64" y="94" text-anchor="middle">8</text><text x="102" y="94" text-anchor="middle">10</text><text x="140" y="94" text-anchor="middle">12</text><text x="178" y="94" text-anchor="middle">2</text><text x="216" y="94" text-anchor="middle">4</text><text x="254" y="94" text-anchor="middle">6</text><text x="296" y="94" text-anchor="end">8am</text></g>
+      <path class="grid major dashed" d="M121 80 L20 118 M140 80 L280 118"/>
+      <text class="lbl" x="150" y="113" text-anchor="middle">UNDER THE TORCH</text>
+      <path class="grid" d="M41.7 118 V186 M63.3 118 V186 M85 118 V186 M106.7 118 V186 M128.3 118 V186 M171.7 118 V186 M193.3 118 V186 M215 118 V186 M236.7 118 V186 M258.3 118 V186"/>
+      <path class="grid major" d="M20 118 V191 M150 118 V191 M280 118 V191 M20 118 H280 M20 186 H280"/>
+      <path class="trace" d="M20 138.4 L50 138.9 L80 138 L110 138.7 L140 138.1 L170 138.6 L193.3 138.4 L194.5 172.4 L196.2 140 L197.6 138.6 L215 138.5 C232 139 252 141.5 280 146"/>
+      <ellipse class="ring" cx="195.5" cy="156" rx="12" ry="24"/>
+      <g class="lbl"><text x="20" y="205" text-anchor="middle">11.00</text><text x="150" y="205" text-anchor="middle">11.30</text><text x="280" y="205" text-anchor="middle">12.00</text></g>
+    </svg>
+    <figcaption>In the close-up the faint lines are five minutes apart.</figcaption>
+  </figure>
+  <p>The drum takes a week of paper. You find Tuesday evening: sixty-four degrees, steady as a ruled line, then one sharp notch, down and straight back, the way a door lets in a gust. After it, a long slide to frost.</p>
+  <p>Dunmore holds his torch over the notch. &ldquo;What time did that door open?&rdquo;</p>
+  <form class="lock" data-lock="thermo" data-go="thermo_read" data-hash="cye20i|3deo4b|x37m38|3oc6i9|p6kbam|1jid7tx|sta3jd|coegbj|3ne9ta|1sbuoj9|5ccy62|ryd6qd|xd6roi|yfflym|ceeumk|3xdvi9|egq9my|1x5uhlv|hep4vg|1ivid7v|ssbsxv|ecc2hd|1zgnng|f0pyp7|47tesk|on330b|1bgmbrc|vnsxfc|e2cgse|29g9cf|195emdc|5vu6gd|retqua|sko56h|dy6fx|bky0na|2jcpjf|zfi738|18l11b5|rperca|1avopup|72f6fp|buxmc9|29d3ug|e6gtm7|16x09nc|xt963n|1161iog|e0kqls|b0yt9c|33bwxd|ykbf16|131fafn|odd80o|wx1zpz|h1t8u7|bayeyb|2tcb8e|1uo59j9|1a91syy|yx19vl|beqe6m|9jpke2|cowff6|3nb4bb|ehq47s|16dj1d1|ydk1la|1ypq66d|1cf7pe1|cyw145|3dbimc|1s9sspv|14pi9p8|r5xj1z|13ioykk|sesuqc|vrtm94|194jjun|akddlc|1fczf91|fv51qw|xp7e5r|1b0jxha|6otzd4|1hti44w|1ejvyad|1fyntvk|ltbo0o|10s9evk|1ngj5tj" data-hints="Find the notch: the one place where the line drops and comes straight back up.|Use the close-up. The faint lines are five minutes apart; count on from 11.30.|b64:VHdlbnR5IHRvIG1pZG5pZ2h0LiBUeXBlIDIzOjQwLg==" data-wrong="Dunmore squints at the chart. &ldquo;Not by my reckoning. Count the lines on the close-up.&rdquo;" data-right="Dunmore rings the notch in red pencil.">
+    <label for="thermo-time">The door opened at</label>
+    <input id="thermo-time" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="24" placeholder="hh:mm">
+    <div class="row"><button type="submit" class="try">Tell Dunmore</button><button type="button" class="hint" data-action="hint">A hint</button></div>
+    <p class="say" aria-live="polite"></p>
+    <ol class="hints" aria-live="polite"></ol>
+  </form>
+  <div class="choices">
+    <button type="button" class="choice minor" data-go="orchids"><span class="t">Leave the chart for now</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-thermo_read" data-place="The orchid house" data-sets="c_thermo" hidden>
+  <h2 tabindex="-1">Twenty to midnight</h2>
+  <p>&ldquo;Twenty to twelve,&rdquo; Dunmore says, and writes it down. Someone opened a door into this house at twenty to midnight on Tuesday. Five minutes later the line begins to fall, and it has never come back.</p>
+  <p>The stoker's rounds, Dunmore says, are at ten and at two. Whatever stopped the heat stopped at a quarter to twelve, with somebody inside.</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="orchids"><span class="t">Go back to the bench</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-valve" data-place="The orchid house" data-sets="c_valve" hidden>
+  <h2 tabindex="-1">The red wheel</h2>
+  <p>The pipe is as thick as your arm, and FLOW is painted on the iron above the wheel. You try it. It is screwed down hard: shut. On the wall side the pipe is hot from the boiler; beyond the wheel it is like ice.</p>
+  <p>Dunmore whistles. &ldquo;Marsh swears he never touches the house valves. His are in the boiler house, and they're open. I looked.&rdquo;</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="orchids"><span class="t">Leave it as you found it</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-boiler" data-place="The boiler house" hidden>
+  <h2 tabindex="-1">The boiler house</h2>
+  <p>Heat at last, and the smell of coke. Edwin Marsh, sixty-one, sleeves rolled, is feeding the firebox as if someone might take it away from him. A young man in a good scarf barrows coke from the heap: Tobias Venn, the assistant gardener. On the wall hangs a telephone, HOLLIN&nbsp;41. Neither man looks up.</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="marsh"><span class="t">Ask Mr Marsh about Tuesday night</span></button>
+    <button type="button" class="choice" data-go="venn"><span class="t">Ask Tobias Venn where he was</span></button>
+    <button type="button" class="choice" data-go="yard"><span class="t">Go back out to the yard</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-marsh" data-place="The boiler house" data-sets="c_marsh,c_keys" hidden>
+  <h2 tabindex="-1">Mr Marsh</h2>
+  <p>&ldquo;Banked her at ten and went home. Back at two and she was roaring. Safety valve singing, mind; I took it for frost on the pipes. I've kept her going since, for all the good it does.&rdquo; He stokes. &ldquo;I've no key to the houses. Miss Oake has the lot, young Venn the front door since summer, me this one.&rdquo;</p>
+  <p>He wipes his face. &ldquo;Aye, I had a drop at the Anchor. And come spring they put in an oil burner, and I'm finished anyway.&rdquo;</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="boiler"><span class="t">Leave him to his fire</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-venn" data-place="The boiler house" data-sets="c_venn" hidden>
+  <h2 tabindex="-1">Tobias Venn</h2>
+  <p>&ldquo;The Lifeboat Ball, till one. Ask anyone.&rdquo; He rests the barrow. &ldquo;I won the raffle. Twenty to twelve, on the stage, the Mayoress gave me a bottle of port in front of three hundred people.&rdquo;</p>
+  <p>As he pulls out the ticket stub, a card comes with it and drops on the cinders.</p>
+  <div class="doc card"><p class="head">L. Daventry · Orchids · Kew</p><p>A place for a good grower. Write to me.</p></div>
+  <p>Venn snatches it up, red to the ears. &ldquo;He asked me in the summer. I haven't answered.&rdquo;</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="boiler"><span class="t">Leave him to his barrow</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-office" data-place="The office" hidden>
+  <h2 tabindex="-1">The office</h2>
+  <p>A lean-to off the Palm House, warm from the boiler wall. A desk with a blotter; a black telephone with HOLLIN&nbsp;40 on its dial card; a board of hooks under a typed key register. The desk's one deep drawer is held by a brass combination padlock with four dials and a little tag on its shackle.</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="register"><span class="t">Read the key register</span></button>
+    <button type="button" class="choice" data-go="drawer" data-needs="!c_letters"><span class="t">Try the padlock</span></button>
+    <button type="button" class="choice" data-go="letters" data-needs="c_letters"><span class="t">Look in the drawer again</span></button>
+    <button type="button" class="choice" data-go="palm"><span class="t">Back to the Palm House</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-register" data-place="The office" data-sets="c_keys" hidden>
+  <h2 tabindex="-1">Key register</h2>
+  <div class="doc">
+    <p class="head">Hollin Winter Garden · Keys</p>
+    <table>
+      <tr><th scope="col">Door</th><th scope="col">Held by</th></tr>
+      <tr><td>Front door, Palm House</td><td>M. Oake, T. Venn</td></tr>
+      <tr><td>Orchid house, side door</td><td>M. Oake</td></tr>
+      <tr><td>Office</td><td>M. Oake (spare: Town Hall safe)</td></tr>
+      <tr><td>Boiler house</td><td>E. Marsh, M. Oake</td></tr>
+    </table>
+    <p>Checked 1.12.56 &nbsp;M.O.</p>
+  </div>
+  <p>Every hook on the board is full. The keys that are not here are on Miss Oake's own ring.</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="office"><span class="t">Back to the desk</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-drawer" data-place="The office" hidden>
+  <h2 tabindex="-1">The padlock</h2>
+  <figure class="pic">
+    <svg class="draw lockpic" viewBox="0 14 300 138" role="img" aria-labelledby="lk-t">
+      <title id="lk-t">A brass padlock with four number dials. A small brass tag hangs from its shackle, engraved with one orchid flower and the letters No.</title>
+      <g id="lk-shackle"><path class="shackle" d="M122 76 V48 A28 28 0 0 1 178 48 V76"/><path class="shackle-hi" d="M122 76 V48 A28 28 0 0 1 178 48 V76"/></g>
+      <rect class="brass" x="100" y="70" width="100" height="78" rx="9"/>
+      <rect class="window" x="108" y="94" width="84" height="34" rx="3"/>
+      <rect class="dial" x="112" y="98" width="16" height="26" rx="2"/><rect class="dial" x="132" y="98" width="16" height="26" rx="2"/><rect class="dial" x="152" y="98" width="16" height="26" rx="2"/><rect class="dial" x="172" y="98" width="16" height="26" rx="2"/>
+      <text class="digit" id="lk-d0" x="120" y="117" text-anchor="middle">0</text><text class="digit" id="lk-d1" x="140" y="117" text-anchor="middle">0</text><text class="digit" id="lk-d2" x="160" y="117" text-anchor="middle">0</text><text class="digit" id="lk-d3" x="180" y="117" text-anchor="middle">0</text>
+      <circle class="brass" cx="109" cy="79" r="2.2"/><circle class="brass" cx="191" cy="79" r="2.2"/><circle class="brass" cx="109" cy="139" r="2.2"/><circle class="brass" cx="191" cy="139" r="2.2"/>
+      <path class="tagstring" d="M178 58 C186 60 192 64 198 68"/>
+      <g transform="rotate(9 232 70)">
+        <rect class="brass" x="194" y="50" width="80" height="42" rx="5"/>
+        <circle cx="201" cy="71" r="3" fill="var(--sheet)"/>
+        <g class="engrave">
+          <ellipse cx="222" cy="62" rx="3" ry="6.5"/>
+          <ellipse cx="215.5" cy="75" rx="3" ry="6.5" transform="rotate(-55 215.5 75)"/>
+          <ellipse cx="228.5" cy="75" rx="3" ry="6.5" transform="rotate(55 228.5 75)"/>
+          <ellipse cx="215" cy="67" rx="2.4" ry="5.5" transform="rotate(-75 215 67)"/>
+          <ellipse cx="229" cy="67" rx="2.4" ry="5.5" transform="rotate(75 229 67)"/>
+          <path d="M218.5 72 Q222 81 225.5 72"/>
+        </g>
+        <text class="engrave-t" x="238" y="77">No.</text>
+      </g>
+    </svg>
+  </figure>
+  <p>Four brass dials, each from 0 to 9. The tag on the shackle is engraved with a single orchid flower and the letters No.</p>
+  <p>Dunmore shifts his feet. &ldquo;She did say leave the drawer.&rdquo; You remind him that she has also claimed a thousand pounds.</p>
+  <form class="lock" data-lock="drawer" data-go="letters" data-hash="g076hd|17kke3e|1t9vekk|1hthl1v|vbnahy|1y56kq9" data-hints="The tag shows a flower and &lsquo;No.&rsquo; Which flower in this Garden has a number?|Your case file gives the Ghost's register number.|b64:VHlwZSAxODg3LCB0aGUgR2hvc3QncyByZWdpc3RlciBudW1iZXIu" data-wrong="The shackle does not give." data-right="Click. The shackle lifts.">
+    <label for="drawer-code">Set the dials</label>
+    <input id="drawer-code" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" maxlength="16" placeholder="0000">
+    <div class="row"><button type="submit" class="try">Open it</button><button type="button" class="hint" data-action="hint">A hint</button></div>
+    <p class="say" aria-live="polite"></p>
+    <ol class="hints" aria-live="polite"></ol>
+  </form>
+  <div class="choices">
+    <button type="button" class="choice minor" data-go="office"><span class="t">Leave the drawer shut</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-letters" data-place="The office" data-sets="c_letters" hidden>
+  <h2 tabindex="-1">The drawer</h2>
+  <div class="doc hand">
+    <p class="head">Station Hotel, Hollin · Telephone Hollin 9</p>
+    <p>8th December. Dear Miss Oake, my offer of eight hundred pounds, in notes, stands until I leave on Thursday's 4.40. Telephone at any hour. I shall bring a warm box. &mdash; L.&nbsp;D.</p>
+  </div>
+  <div class="doc">
+    <p class="head">Borough Treasurer · 3 December 1956</p>
+    <p>The Winter Garden will close on 31 March unless <span class="amt">£600</span> is found for the boiler and glazing. The new oil-fired plant will not require a stoker.</p>
+  </div>
+  <p>Under them lies the Ghost's old valuation, and nothing else.</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="office"><span class="t">Shut the drawer</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-town" data-place="Harbour Street" data-chapter="town" hidden>
+  <h2 tabindex="-1">Harbour Street</h2>
+  <p>Down the hill the town is awake: milk floats, gulls, a smell of tar from the harbour. The telephone exchange is up the stairs over the post office. The Station Hotel faces the line, its brass plate polished bright: TELEPHONE HOLLIN&nbsp;9. Under the market awnings the stalls are setting out.</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="exchange"><span class="t">Climb to the telephone exchange</span></button>
+    <button type="button" class="choice" data-go="hotel"><span class="t">Ask at the Station Hotel</span></button>
+    <button type="button" class="choice" data-go="market"><span class="t">Walk through the market</span></button>
+    <button type="button" class="choice" data-go="yard"><span class="t">Go back up to the Garden</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-exchange" data-place="The exchange" hidden>
+  <h2 tabindex="-1">The exchange</h2>
+  <p>Six girls in headsets sit at a board of plugs and little lamps. The supervisor, Mrs Pell, keeps the night book under her elbow. &ldquo;I can't read you the whole night, it's private. Give me a time, and I'll look at that page.&rdquo;</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="exchange_log" data-needs="c_thermo|c_porter" data-why><span class="t">Ask about calls just before midnight on Tuesday<span class="why">You have no time to give her yet.</span></span></button>
+    <button type="button" class="choice" data-go="town"><span class="t">Go back down to the street</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-exchange_log" data-place="The exchange" data-sets="c_call" hidden>
+  <h2 tabindex="-1">The night book</h2>
+  <div class="doc">
+    <p class="head">Hollin Exchange · Night 11th/12th · G. Rudd</p>
+    <table>
+      <tr><th scope="col">Time</th><th scope="col">From</th><th scope="col">To</th><th scope="col">Min</th></tr>
+      <tr><td>23.52</td><td>40</td><td>9</td><td>3</td></tr>
+      <tr><td colspan="4">Personal, for a guest.</td></tr>
+      <tr><td>00.04</td><td>22</td><td>31</td><td>1</td></tr>
+    </table>
+  </div>
+  <p>&ldquo;Nothing else till six,&rdquo; says Mrs Pell, and shuts the book on her finger.</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="town"><span class="t">Thank her and go down</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-hotel" data-place="The Station Hotel" data-sets="c_porter" hidden>
+  <h2 tabindex="-1">The Station Hotel</h2>
+  <p>The night porter, Albert Quill, already has his coat on. For a shilling he turns his book round on the desk.</p>
+  <div class="doc hand">
+    <p class="head">Night porter · Tuesday 11th</p>
+    <p class="entry"><span>10.30 pm</span><span>Mr Daventry (No.&nbsp;6) up to bed.</span></p>
+    <p class="entry"><span>11.53 pm</span><span>Telephone for Mr D. A lady. Would not give name.</span></p>
+    <p class="entry"><span>12.20 am</span><span>Mr D. out.</span></p>
+    <p class="entry"><span>12.50 am</span><span>Mr D. in, with a hatbox. Wanted his hot-water bottle filled.</span></p>
+  </div>
+  <p>&ldquo;Hot-water bottle for a hatbox,&rdquo; says Quill. &ldquo;Every night since, too. Takes all sorts.&rdquo;</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="daventry"><span class="t">Ask to see Mr Daventry</span></button>
+    <button type="button" class="choice" data-go="town"><span class="t">Go back to the street</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-daventry" data-place="The Station Hotel" data-sets="c_daventry" hidden>
+  <h2 tabindex="-1">Mr Daventry</h2>
+  <p>He is at breakfast in the lounge: a good grey suit, a kipper, the newspaper folded to the shipping. &ldquo;Yes, I offered for the Ghost, and she refused me very finely. I am a dealer, not a burglar.&rdquo; On Tuesday he was in bed by half past ten, he says, and slept like a stone. &ldquo;My crates go with me on the 4.40.&rdquo;</p>
+  <p>A round hatbox sits on the chair beside him. Dunmore catches your eye: nobody opens a gentleman's luggage on a hunch.</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="town"><span class="t">Leave him to his kipper</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-market" data-place="The market" data-sets="c_market" hidden>
+  <h2 tabindex="-1">Brannock's stall</h2>
+  <p>Hyacinths in bowls, a tin bath of holly, and Mrs Brannock in fingerless gloves. She knows a cymbidium when she sells one. &ldquo;Big unflowered plant, Monday. Seven and six. Nice leaves, nothing special.&rdquo;</p>
+  <p>Who bought it? She shrugs. &ldquo;Scarf up to the eyes, paid in shillings. Wheeled it off up the hill in a handcart with letters on the side. H.W. something.&rdquo;</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="town"><span class="t">Go back to Harbour Street</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-report" data-place="The yard · your finding" data-chapter="report" data-sets="-acc_marsh,-acc_venn,-acc_oake,-acc_daventry,-why_claim,-why_spite,-why_swap" hidden>
+  <h2 tabindex="-1">Your finding</h2>
+  <p>Dunmore opens his notebook on the cold lid of the handcart and licks his pencil. &ldquo;The Inspector will want it short. Who let the Garden freeze?&rdquo;</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="report_why" data-sets="acc_marsh"><span class="t">Edwin Marsh, the stoker</span></button>
+    <button type="button" class="choice" data-go="report_why" data-sets="acc_venn"><span class="t">Tobias Venn, the assistant gardener</span></button>
+    <button type="button" class="choice" data-go="report_why" data-sets="acc_oake"><span class="t">Miriam Oake, the curator</span></button>
+    <button type="button" class="choice" data-go="report_why" data-sets="acc_daventry"><span class="t">Lucien Daventry, the dealer</span></button>
+    <button type="button" class="choice minor" data-go="yard"><span class="t">Not yet. Keep looking</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-report_why" data-place="The yard · your finding" hidden>
+  <h2 tabindex="-1">Why?</h2>
+  <p>Dunmore writes the name and underlines it twice. &ldquo;And why would they? That's the first thing he'll ask me.&rdquo;</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="report_seal" data-sets="why_claim"><span class="t">To claim a thousand pounds on a plant the frost would kill</span></button>
+    <button type="button" class="choice" data-go="report_seal" data-sets="why_spite"><span class="t">To get Mr Marsh sacked and the Garden shut</span></button>
+    <button type="button" class="choice" data-go="report_seal" data-sets="why_swap" data-needs="c_pot|c_market,c_letters|c_porter"><span class="t">To hide a swap: the Ghost was sold, and the frost killed the cheap plant left in its place</span></button>
+    <button type="button" class="choice minor" data-go="report"><span class="t">Change the name</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-report_seal" data-place="The yard · your finding" hidden>
+  <h2 tabindex="-1">Signed</h2>
+  <p>You read it back to him. <span data-needs="acc_marsh">Edwin Marsh</span><span data-needs="acc_venn">Tobias Venn</span><span data-needs="acc_oake">Miriam Oake</span><span data-needs="acc_daventry">Lucien Daventry</span> let the Garden freeze on Tuesday night <span data-needs="why_claim">to claim a thousand pounds on a plant the frost would kill.</span><span data-needs="why_spite">to get Mr Marsh sacked and the Garden shut.</span><span data-needs="why_swap">to hide a swap: the Ghost was sold, and the frost killed the cheap plant left in its place.</span></p>
+  <p>Dunmore buttons the notebook into his tunic. &ldquo;Right. I'll ring the Inspector from the boiler house.&rdquo;</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="end_true" data-needs="acc_oake,why_swap"><span class="t">Let him ring</span></button>
+    <button type="button" class="choice" data-go="end_half" data-needs="acc_oake,!why_swap"><span class="t">Let him ring</span></button>
+    <button type="button" class="choice" data-go="end_wrong" data-needs="!acc_oake"><span class="t">Let him ring</span></button>
+    <button type="button" class="choice minor" data-go="report"><span class="t">Tear out the page and start again</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-end_true" data-place="Platform two · 4.20 pm" data-ending="true" hidden>
+  <h2 tabindex="-1">The 4.40</h2>
+  <figure class="pic">
+    <svg class="draw box" viewBox="20 4 270 168" role="img" aria-labelledby="bx-t">
+      <title id="bx-t">The Ghost lifted out of the hatbox: long pale-green leaves arching from an old clay pot that is cracked from rim to foot and bound with two bands of copper wire, 1887 scratched on its rim. Beside it the open hatbox, lined with red felt, a hot-water bottle inside.</title>
+      <path class="card" d="M232 52 m-50 0 a50 11 0 1 0 100 0 a50 11 0 1 0 -100 0" transform="rotate(-14 232 52)"/>
+      <path class="card" d="M180 100 V158 A52 12 0 0 0 284 158 V100"/>
+      <path class="stripe" d="M196 107 V166 M216 111 V169 M236 112 V170 M256 111 V169 M272 107 V165"/>
+      <ellipse class="felt" cx="232" cy="100" rx="52" ry="12"/>
+      <path class="rubber" d="M218 100 V86 Q218 80 224 80 H238 Q244 80 244 86 V100 Z"/>
+      <path class="leaf" d="M95 96 C88 60 62 42 30 46 M99 96 C106 54 140 34 178 40 M97 96 C96 60 102 30 116 10 M93 96 C80 72 56 70 38 82 M101 96 C114 74 142 70 162 78"/>
+      <path class="clay" d="M54 110 H136 L126 166 H64 Z"/>
+      <rect class="clay" x="50" y="96" width="90" height="14" rx="1.5"/>
+      <path class="crack" d="M104 96 l-4 8 l6 7 l-5 9 l4 8 l-3 10 l5 9 l-3 10 l2 9"/>
+      <path class="wire" d="M55 122 Q95 130 135 122 M59 145 Q95 153 131 145 M88 125 l4 7 l4 -7"/>
+      <text class="scratch" x="62" y="107">1887</text>
+    </svg>
+  </figure>
+  <p>Platform two, twenty past four. Daventry's crates are on the porter's barrow, the hatbox on top. Inspector Hale lifts the lid: felt, a lukewarm hot-water bottle, and the Ghost, leaves pale and whole, in a clay pot cracked across and bound with copper wire. 1887 is scratched on the rim.</p>
+  <p>At the Garden, Miss Oake sits down on the potting bench. &ldquo;Six hundred pounds,&rdquo; she says. &ldquo;That was all it needed.&rdquo; The claim is refused, and the Ghost goes home on the handcart under Dunmore's coat.</p>
+  <p class="tally">You named Miriam Oake and the swap. Clues found: <span data-count="clues">0</span> of <span data-count="clues-total">14</span>. Hints taken: <span data-count="hints">0</span>.</p>
+  <div class="choices">
+    <button type="button" class="choice" data-action="restart"><span class="t">Start the case again</span></button>
+    <button type="button" class="choice minor" data-go="report"><span class="t">Go back to your report and try another finding</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-end_half" data-place="Thursday evening" data-ending="half" hidden>
+  <h2 tabindex="-1">Half a finding</h2>
+  <p>The claim is refused, and before dark Miss Oake is charged with trying to defraud Calder &amp; Wythe. She says nothing at all. At twenty to five the London train pulls out with Mr Daventry in a corner seat and a round hatbox on the rack above his head.</p>
+  <p>Your report said why she let the Garden freeze. It never asked what had frozen.</p>
+  <p class="missed">What was missed: the plant on the bench was not the Ghost.</p>
+  <p class="tally">You named Miriam Oake, for the wrong reason. Clues found: <span data-count="clues">0</span> of <span data-count="clues-total">14</span>. Hints taken: <span data-count="hints">0</span>.</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="report"><span class="t">Go back to your report</span></button>
+    <button type="button" class="choice minor" data-action="restart"><span class="t">Start the case again</span></button>
+  </div>
+</section>
+
+<section class="scene" id="scene-end_wrong" data-place="Thursday evening" data-ending="wrong" hidden>
+  <h2 tabindex="-1">The wrong door</h2>
+  <p data-needs="acc_marsh">Edwin Marsh is given his notice at noon, and Calder &amp; Wythe pay the claim in full. He had no key to the houses, and the heat was shut off inside one.</p>
+  <p data-needs="acc_venn">Tobias Venn is questioned until the Mayoress herself telephones to say where he was at twenty to twelve on Tuesday: on her stage, holding a bottle of port. Calder &amp; Wythe pay the claim in full.</p>
+  <p data-needs="acc_daventry">Mr Daventry's solicitor is in Hollin by three. His client had no key to anything in the Garden, and at 11.53 he was taking a telephone call at the Station Hotel. Calder &amp; Wythe pay the claim in full.</p>
+  <p>On the 4.40, a round hatbox rides south.</p>
+  <p class="missed">What was missed: who could be in the Garden office at 11.52 on Tuesday night, and who holds its key.</p>
+  <p class="tally">Clues found: <span data-count="clues">0</span> of <span data-count="clues-total">14</span>. Hints taken: <span data-count="hints">0</span>.</p>
+  <div class="choices">
+    <button type="button" class="choice" data-go="report"><span class="t">Go back to your report</span></button>
+    <button type="button" class="choice minor" data-action="restart"><span class="t">Start the case again</span></button>
+  </div>
+</section>
+
+    </article>
+  </div>
+
+  <aside class="notebook" aria-labelledby="nb-title">
+    <h2 id="nb-title">Your notebook</h2>
+    <div class="nb-part">
+      <h3>Clues <span class="n"><span data-count="clues">0</span> of <span data-count="clues-total">14</span></span></h3>
+      <ul class="nb-list" id="clues">
+        <li data-needs="c_policy"><b>Case file</b>The Ghost, Register No. 1887: insured for £1,000 since 1 Nov, raised from £200 at the curator's request. Its pot: original clay, cracked, bound with copper wire, number on the rim. Garden telephones: Hollin 40 office, 41 boiler house.</li>
+        <li data-needs="c_oake" hidden><b>Miss Oake</b>Locked up at six on Tuesday; home with her mother all night until Marsh rang at 6.10.</li>
+        <li data-needs="c_offer" hidden><b>Miss Oake</b>Mr Daventry, a London dealer at the Station Hotel, offered £800 in October. She refused.</li>
+        <li data-needs="c_valve" hidden><b>The red wheel</b>The FLOW valve inside the orchid house door is screwed shut. Marsh's valves in the boiler house are open.</li>
+        <li data-needs="c_thermo" hidden><b>Thermograph</b>A door opened at 11.40 pm on Tuesday; from 11.45 the heat fell away, to frost by 4.30.</li>
+        <li data-needs="c_pot" hidden><b>The bench</b>The frozen plant's pot: smooth, no number, no crack, no wire. Stamped BRANNOCK · HOLLIN MARKET · 7/6.</li>
+        <li data-needs="c_marsh" hidden><b>Mr Marsh</b>Banked the fire at ten; at two the boiler was roaring and the safety valve singing. Drinks a little; loses his job to an oil burner in spring.</li>
+        <li data-needs="c_keys" hidden><b>Keys</b>Miss Oake holds every key, the office's included. Venn has the front door; Marsh the boiler house.</li>
+        <li data-needs="c_venn" hidden><b>Tobias Venn</b>At the Lifeboat Ball; on stage for the raffle at 11.40. Carries Daventry's card offering him a place.</li>
+        <li data-needs="c_letters" hidden><b>The drawer</b>Daventry, 8 Dec: £800 in notes until Thursday's 4.40; &ldquo;telephone at any hour&rdquo;; &ldquo;a warm box&rdquo;. The Council, 3 Dec: the Garden closes unless £600 is found.</li>
+        <li data-needs="c_call" hidden><b>Night book</b>Tuesday, 23.52: Hollin 40 called Hollin 9 for three minutes, &ldquo;personal, for a guest&rdquo;.</li>
+        <li data-needs="c_porter" hidden><b>Porter's book</b>Station Hotel, Tuesday: 11.53 pm a lady telephoned Mr Daventry, no name. He went out at 12.20 and came back at 12.50 with a hatbox and a hot-water bottle to fill.</li>
+        <li data-needs="c_daventry" hidden><b>Mr Daventry</b>Says he was in bed by 10.30 on Tuesday and slept through. Leaves on the 4.40 with his crates. A round hatbox on the chair beside him.</li>
+        <li data-needs="c_market" hidden><b>Mrs Brannock</b>Sold a big unflowered cymbidium on Monday for 7s 6d; it went up the hill in a handcart lettered &ldquo;H.W.&rdquo;</li>
+      </ul>
+    </div>
+    <div class="nb-part">
+      <h3>People</h3>
+      <ul class="nb-list">
+        <li><b>PC Dunmore</b>The constable keeping the Garden shut.</li>
+        <li data-needs="c_oake|c_offer" hidden><b>Miriam Oake</b>Curator of the Winter Garden for nineteen years.</li>
+        <li data-needs="c_marsh" hidden><b>Edwin Marsh</b>The stoker, sixty-one.</li>
+        <li data-needs="c_venn" hidden><b>Tobias Venn</b>The assistant gardener.</li>
+        <li data-needs="c_offer|c_porter|c_letters|c_venn" hidden><b>Lucien Daventry</b>Orchid dealer from London, at the Station Hotel.</li>
+      </ul>
+    </div>
+    <div class="nb-part">
+      <h3>Endings <span class="n"><span data-count="endings">0</span> of 3</span></h3>
+      <ul class="ends" id="endings">
+        <li data-end="true"><span class="t">The 4.40</span><span class="no">Not found yet</span></li>
+        <li data-end="half"><span class="t">Half a finding</span><span class="no">Not found yet</span></li>
+        <li data-end="wrong"><span class="t">The wrong door</span><span class="no">Not found yet</span></li>
+      </ul>
+    </div>
+    <div class="nb-part">
+      <h3>How to play</h3>
+      <p class="small">Choose what to do under each scene; every clue goes into this notebook. With six, Dunmore will take your finding: who let the Garden freeze, and why.</p>
+      <p class="small">Stuck on a lock? Ask for a hint, one step at a time.</p>
+    </div>
+    <div class="nb-part">
+      <h3>Settings</h3>
+      <div class="seg" role="group" aria-label="Text size"><span>Text</span><button type="button" data-action="size" data-size="normal" aria-pressed="true">Normal</button><button type="button" data-action="size" data-size="large" aria-pressed="false">Large</button></div>
+      <div class="seg" role="group" aria-label="Sound"><span>Sound</span><button type="button" data-action="sound" data-sound="on" aria-pressed="true">On</button><button type="button" data-action="sound" data-sound="off" aria-pressed="false">Off</button></div>
+    </div>
+    <div class="nb-part">
+      <h3>Start again</h3>
+      <div class="restart">
+        <button type="button" data-action="restart">Start the case again</button>
+        <button type="button" data-action="chapter" data-chapter="town" hidden>Start from Harbour Street</button>
+        <button type="button" data-action="chapter" data-chapter="report" hidden>Start from your finding</button>
+      </div>
+      <p class="small credit">Endings you reach stay ticked when you start again.</p>
+    </div>
+    <div class="nb-part">
+      <p class="small credit">Story and drawings made for this page; no photographs. Hollin, its Winter Garden and everyone in it are invented.</p>
+    </div>
+  </aside>
+</main>
+
+<script>
+(() => {
+  "use strict";
+  const api = window.dodojo || null;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const scenes = new Map($$(".scene").map(s => [s.id.slice(6), s]));
+  const clueTotal = $$("#clues li").length;
+  const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const state = { at: "open", flags: new Set(), path: [], endings: new Set(), hints: {}, ch: {}, size: "normal", sound: "on" };
+
+  // ---- flags: data-sets="a,-b" ; data-needs="a,b|c,!d,clues>=6" (comma = and, | = or, ! = not)
+  const split = s => String(s || "").split(",").map(x => x.trim()).filter(Boolean);
+  function applySets(el) {
+    for (const t of split(el?.dataset?.sets)) t.startsWith("-") ? state.flags.delete(t.slice(1)) : state.flags.add(t);
+  }
+  function count(name) {
+    if (name === "clues") return [...state.flags].filter(f => f.startsWith("c_")).length;
+    if (name === "hints") return Object.values(state.hints).reduce((a, b) => a + b, 0);
+    if (name === "endings") return state.endings.size;
+    if (name === "clues-total") return clueTotal;
+    return 0;
+  }
+  function needs(expr) {
+    return split(expr).every(term => term.split("|").some(raw => {
+      const alt = raw.trim(), m = alt.match(/^([a-z_-]+)>=(\d+)$/);
+      if (m) return count(m[1]) >= Number(m[2]);
+      return alt.startsWith("!") ? !state.flags.has(alt.slice(1)) : state.flags.has(alt);
+    }));
+  }
+
+  // ---- keeping the story (compact strings; each value well under 4000 characters)
+  const packHints = h => Object.entries(h).filter(([, n]) => n > 0).map(([k, n]) => k + ":" + n).join(",");
+  const unpackHints = s => Object.fromEntries(split(s).map(p => p.split(":")).filter(([k, n]) => k && Number(n) > 0).map(([k, n]) => [k, Number(n)]));
+  const snapshot = () => [...state.flags].join(",") + "~" + packHints(state.hints);
+  function save(patch) {
+    try { api?.setState?.(patch)?.catch?.(() => {}); } catch (e) { /* outside dodojo, or not allowed: keep going in memory */ }
+  }
+  function saveStory() {
+    save({
+      at: state.at, flags: [...state.flags].join(","), path: state.path.slice(-150).join(","),
+      endings: [...state.endings].join(","), hints: packHints(state.hints),
+      "ch.town": state.ch.town ?? null, "ch.report": state.ch.report ?? null
+    });
+  }
+  function load(saved) {
+    if (!saved || typeof saved !== "object") return;
+    if (typeof saved.at === "string" && scenes.has(saved.at)) state.at = saved.at;
+    if (typeof saved.flags === "string") state.flags = new Set(split(saved.flags));
+    if (typeof saved.path === "string") state.path = split(saved.path);
+    if (typeof saved.endings === "string") state.endings = new Set(split(saved.endings));
+    if (typeof saved.hints === "string") state.hints = unpackHints(saved.hints);
+    for (const k of ["town", "report"]) if ("ch." + k in saved) state.ch[k] = typeof saved["ch." + k] === "string" ? saved["ch." + k] : undefined;
+    if (saved.size === "normal" || saved.size === "large") state.size = saved.size;
+    if (saved.sound === "on" || saved.sound === "off") state.sound = saved.sound;
+  }
+
+  // ---- answers: forgiving, kept as hashes so the page's text does not give them away
+  const norm = s => String(s).normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9一-鿿぀-ヿ]/g, "");
+  function fnv(s) { let h = 2166136261; for (const ch of s) h = Math.imul(h ^ ch.codePointAt(0), 16777619); return (h >>> 0).toString(36); }
+  const decode = r => r.startsWith("b64:") ? atob(r.slice(4)) : r;
+
+  // ---- sound without files: quiet, made on the first tap, switchable
+  const sfx = (() => {
+    let ac = null;
+    const ctx = () => {
+      if (state.sound !== "on") return null;
+      try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === "suspended") ac.resume(); return ac; } catch (e) { return null; }
+    };
+    function noise(dur, freq, gain) {
+      const a = ctx(); if (!a) return;
+      try {
+        const n = Math.floor(a.sampleRate * dur), buf = a.createBuffer(1, n, a.sampleRate), d = buf.getChannelData(0);
+        for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
+        const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+        src.buffer = buf; f.type = "bandpass"; f.frequency.value = freq; f.Q.value = .8; g.gain.value = gain;
+        src.connect(f).connect(g).connect(a.destination); src.start();
+      } catch (e) {}
+    }
+    function tone(freq, dur, gain, type) {
+      const a = ctx(); if (!a) return;
+      try {
+        const o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
+        o.type = type || "sine"; o.frequency.value = freq;
+        g.gain.setValueAtTime(gain, t); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+        o.connect(g).connect(a.destination); o.start(t); o.stop(t + dur + .02);
+      } catch (e) {}
+    }
+    return {
+      turn: () => noise(.16, 1500, .06),
+      click: () => { tone(1900, .03, .04, "square"); setTimeout(() => tone(1300, .05, .04, "square"), 80); },
+      thud: () => tone(105, .25, .09)
+    };
+  })();
+
+  // ---- drawing the page from the state
+  function showHints(f) {
+    const key = f.dataset.lock, rungs = f.dataset.hints.split("|"), n = Math.min(rungs.length, state.hints[key] || 0);
+    const list = $(".hints", f);
+    list.replaceChildren(...rungs.slice(0, n).map(r => { const li = document.createElement("li"); li.textContent = decode(r); return li; }));
+    const b = $("[data-action=hint]", f);
+    b.disabled = n >= rungs.length;
+    b.textContent = n >= rungs.length ? "No more hints" : `A hint (${n + 1} of ${rungs.length})`;
+  }
+  function render(id, opts) {
+    const scene = scenes.get(id) || scenes.get("open");
+    for (const s of scenes.values()) s.hidden = s !== scene;
+    $$("[data-needs]").forEach(el => {
+      const ok = needs(el.dataset.needs);
+      if (el.hasAttribute("data-why")) { el.disabled = !ok; el.hidden = false; } else el.hidden = !ok;
+    });
+    $$("[data-count]").forEach(el => { el.textContent = String(count(el.dataset.count)); });
+    $("#where").textContent = scene.dataset.place || "";
+    $$(".lock", scene).forEach(showHints);
+    $$("#endings li").forEach(li => li.classList.toggle("got", state.endings.has(li.dataset.end)));
+    $$("[data-action=chapter]").forEach(b => { b.hidden = !state.ch[b.dataset.chapter]; });
+    document.documentElement.classList.toggle("large", state.size === "large");
+    $$("[data-size]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.size === state.size)));
+    $$("[data-sound]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.sound === state.sound)));
+    if (opts && opts.focus) {
+      $("h2", scene)?.focus({ preventScroll: true });
+      scene.classList.remove("enter"); void scene.offsetWidth; scene.classList.add("enter");
+      // In a plain browser, bring the top of the folder back if it scrolled away.
+      // Inside dodojo the Note scrolls instead, and each scene is kept to about one phone screen.
+      const folder = $(".folder");
+      if (folder.getBoundingClientRect().top < 0) folder.scrollIntoView({ block: "start" });
+    }
+  }
+  function go(id, from) {
+    const next = scenes.get(id);
+    if (!next) { console.error("no scene", id); return; }
+    applySets(from);
+    applySets(next);
+    state.at = id; state.path.push(id);
+    if (next.dataset.chapter) state.ch[next.dataset.chapter] = snapshot();
+    if (next.dataset.ending) state.endings.add(next.dataset.ending);
+    saveStory();
+    render(id, { focus: true });
+  }
+  function restart() {
+    state.flags = new Set(); state.path = []; state.hints = {};
+    go("open");
+  }
+  function fromChapter(name) {
+    const snap = state.ch[name]; if (!snap) return;
+    const [flags, hints] = snap.split("~");
+    state.flags = new Set(split(flags)); state.hints = unpackHints(hints); state.path = [];
+    go(name);
+  }
+  function arm(b) {
+    if (b.dataset.armed) { clearTimeout(Number(b.dataset.armed)); delete b.dataset.armed; b.textContent = b.dataset.label; return true; }
+    b.dataset.label = b.textContent; b.textContent = "Tap again to confirm";
+    b.dataset.armed = String(setTimeout(() => { delete b.dataset.armed; b.textContent = b.dataset.label; }, 3500));
+    return false;
+  }
+  const say = (f, text) => { $(".say", f).textContent = text; };
+
+  document.addEventListener("click", e => {
+    const b = e.target.closest("button");
+    if (!b || b.disabled) return;
+    const act = b.dataset.action;
+    if (act === "hint") {
+      const f = b.closest(".lock"), key = f.dataset.lock, max = f.dataset.hints.split("|").length;
+      state.hints[key] = Math.min(max, (state.hints[key] || 0) + 1);
+      save({ hints: packHints(state.hints) });
+      render(state.at);
+      return;
+    }
+    if (act === "size") { state.size = b.dataset.size; save({ size: state.size }); render(state.at); return; }
+    if (act === "sound") { state.sound = b.dataset.sound; save({ sound: state.sound }); render(state.at); sfx.turn(); return; }
+    if (act === "restart" || act === "chapter") {
+      if (b.closest(".notebook") && !arm(b)) return;
+      sfx.turn();
+      if (act === "restart") restart(); else fromChapter(b.dataset.chapter);
+      return;
+    }
+    if (b.dataset.go && b.type !== "submit") { sfx.turn(); go(b.dataset.go, b); }
+  });
+
+  document.addEventListener("submit", e => {
+    const f = e.target.closest(".lock"); if (!f) return;
+    e.preventDefault();
+    if (f.dataset.busy) return;
+    const input = $("input", f), tried = norm(input.value);
+    if (!tried) { say(f, "Write your answer in the box first."); input.focus(); return; }
+    if (f.dataset.hash.split("|").includes(fnv(tried))) {
+      f.dataset.busy = "1"; sfx.click(); say(f, f.dataset.right || "");
+      const scene = f.closest(".scene"); scene.classList.add("solved");
+      setTimeout(() => {
+        delete f.dataset.busy; scene.classList.remove("solved"); input.value = ""; say(f, "");
+        go(f.dataset.go, f);
+      }, reduced ? 250 : 900);
+    } else {
+      sfx.thud(); say(f, f.dataset.wrong || "Not that. Look again at what you have."); input.select();
+    }
+  });
+
+  document.addEventListener("input", e => {
+    if (e.target.id !== "drawer-code") return;
+    const d = e.target.value.replace(/\D/g, "").slice(0, 4).padEnd(4, "0");
+    [...d].forEach((c, i) => { const t = document.getElementById("lk-d" + i); if (t) t.textContent = c; });
+  });
+
+  // ---- start: the saved scene, or the opening
+  load(api?.getState?.());
+  if (!state.path.length) { state.at = "open"; applySets(scenes.get("open")); state.path.push("open"); }
+  render(state.at);
+  window.addEventListener("dodojo-state-change", e => { load(e.detail); render(state.at); });
+})();
+</script>
+<script>
+// Outside dodojo, show the attached photos from the folder beside the page.
+if (!window.dodojo) document.querySelectorAll('[src^="attachment:"]').forEach(el => { el.src = el.getAttribute('src').slice(11); });
+</script>
+</body>
+</html>

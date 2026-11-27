@@ -8,7 +8,7 @@ detecting them.
 
 ```html
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">           <!-- the page's language -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -83,7 +83,8 @@ body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink);
   cdnjs.cloudflare.com, cdn.jsdelivr.net, unpkg.com, esm.sh,
   cdn.tailwindcss.com or code.jquery.com, pinned to an exact version at least
   two weeks old, loaded before the script that uses them. Stylesheets only from
-  those and Google Fonts. Any other host is blocked. Use a library only when it
+  those and Google Fonts (fonts.googleapis.com, with its font files from
+  fonts.gstatic.com). Any other host is blocked. Use a library only when it
   does substantial work (a chart, a date library).
 - **Pictures are attachments.** Images, video and audio from other websites do
   not load. Download what the page shows, keep it in the folder beside the
@@ -110,6 +111,85 @@ body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink);
     say). Read `getState()` at start and listen for the event as well.
   Outside dodojo `window.dodojo` is undefined and the values last for the
   visit only, so guard every call with `?.`.
+  The page's own `setState` does not send `dodojo-state-change` back to
+  it: the event comes only for a change from outside (another device, a
+  team member, a conditional write that lost). So render from your own
+  variables after you save, and let the listener only redraw, never save.
+  `data-dodojo-key` fields are filled once the page has loaded, just before
+  `window` receives `dodojo-ready`; script that depends on them reads
+  `getState()` at start and draws again on that event.
+- **Whose state.** Only the owner's values are kept: on a page shared with
+  someone else, their changes last for the visit. In a dodojo **team space**
+  the values are the team's: everyone who can edit the Note changes the same
+  values and sees each change live. `window.dodojo.viewer` is `{ id, name }`
+  for whoever is looking, or null (the id is the same for one person on every
+  device and differs on every Note); `dodojo.writable` is false for someone
+  who may only watch. `setState(patch, { expect: { name: value } })` writes
+  only while each named value is still that (null = absent) and resolves
+  false otherwise, the page already holding the current values.
+- **Several players on their own devices.** A game for several people uses
+  `window.dodojo.game`; never keep seats, turns, rounds or restarts in the
+  page's own keys.
+  ```js
+  const game = window.dodojo?.game?.({ seats: ["A", "B"], fresh: round => ({ board: "" }) });
+  ```
+  `game.state` holds `seats`; `players` (`{ id, name }` or null per seat);
+  `mine`; `status` (`"seating"`, `"playing"` or `"over"`); `round`; `first`
+  (the seat that starts this round, which moves on every round); `turn`;
+  `myTurn`; `winner` (a seat or `"draw"`); `restartBy`; `spectator`; and
+  `alone` (true when one device plays every seat). The calls are `sit(seat)`,
+  `leave(seat)` (between rounds only), `move(patch, { next, winner })`,
+  `update(patch, { turn })` (an undo the rules allow), `resign(patch)`,
+  `restart()` (at once when the round is over or nobody else plays; mid-round
+  it asks the others) and `answerRestart(yes)`. Each resolves true, or false
+  when someone acted first (the page then already holds the current state: say
+  so and redraw); `onChange(listener)` follows every change. Write the game's
+  own values only through these calls, draw from `game.state`, and say on the
+  page whose turn it is, who is waiting for a seat and who asked to restart.
+  In a team space each player plays from their own device, the last seat
+  taken starts the first round, and closing the app does not leave the game;
+  elsewhere one device plays every seat. When `dodojo.game` is missing (an
+  older app, or outside dodojo), the game is played on one device.
+  In detail, as the runtime does it:
+  ```js
+  game.state === {
+    seats: ["A", "B"],
+    players: { A: { id: "k3f…", name: "Mia" }, B: null },  // keyed by seat
+    me: { id: "k3f…", name: "Mia" },                        // dodojo.viewer, or null
+    mine: ["A"],               // the seats this person holds
+    shared: true,              // a team space
+    status: "seating",         // "seating" | "playing" | "over"
+    round: 0, first: null, turn: null, myTurn: false,      // turn: a seat
+    winner: null,              // a seat, "draw" or null
+    restartBy: null,           // the seat that asked for a restart
+    spectator: false, alone: false,
+  };
+  ```
+  - The game's own values (the board, the moves) are ordinary page keys:
+    `fresh(round)` returns them, they are written when a round starts, and
+    the page reads them with `getState()`. `move(patch, …)` and
+    `update(patch, …)` write the page keys in `patch` together with the
+    turn, so a result or a record can go in the same `move` as the winning
+    move.
+  - In a team space `status` is `"seating"` until every seat is taken
+    (nobody can move); the last `sit` deals round 1 with `fresh(1)`, and the
+    first seat (`seats[0]`, or what `first(round)` returns) moves first. The
+    first seat moves on by one every round. Outside a team space round 1 is
+    playing at once and `myTurn` is always true: the page moves for every
+    seat.
+  - A computer opponent is a seat the page moves for: outside a team space
+    call `move` for it after the person's move; in a team space the person
+    sits in both seats (then `alone` is true) and their device plays the
+    computer's.
+  - `update` works only while a round is playing: once `move` ends it with
+    a winner, the round stays over, so offer review and play again rather
+    than undo.
+  - `onChange` listeners run after each of the page's own calls (and again
+    if one is refused) and on every change from another device.
+- **Asking twice without `confirm()`.** A control that throws work away
+  (restart, a new game mid-round) changes its label on the first tap ("Tap
+  again to restart") and acts on a second tap within about three seconds,
+  or acts at once and offers undo.
 - **No device features.** Camera, microphone, location, clipboard, screen
   wake lock and vibration are not available inside dodojo. Do not build on
   them; guard any optional use with `try`.
@@ -132,3 +212,30 @@ body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink);
   but every step, row and sentence is written in the HTML.
 - **Size.** Keep the file well under a few megabytes; photos are separate
   files.
+
+## Testing with a stand-in
+
+Outside dodojo, test the page with a stand-in for `window.dodojo` installed
+before the page's script runs (Playwright's `addInitScript`). Set the theme
+attribute once `<html>` exists, not in the init script itself, where
+`document.documentElement` may still be null.
+
+```js
+await page.addInitScript(({ saved, theme }) => {
+  const state = { ...saved };
+  window.__saved = [];
+  window.dodojo = {
+    getState: () => ({ ...state }),
+    setState(patch, options) {
+      if (options?.expect && Object.entries(options.expect).some(([k, v]) => (state[k] ?? null) !== v)) return Promise.resolve(false);
+      Object.assign(state, patch); window.__saved.push(patch); return Promise.resolve(true);
+    },
+    viewer: null, writable: true,
+  };
+  if (theme) document.addEventListener("readystatechange", () => document.documentElement.setAttribute("data-dodojo-theme", theme), { once: true });
+}, { saved: { /* a position to start from */ }, theme: "dark" });
+```
+
+`scripts/shoot.mjs` installs the same stand-in: `--state '<json>'` opens the
+page on a saved position, and `--dodojo-theme` sets `data-dodojo-theme` as
+dodojo does instead of relying on `prefers-color-scheme`.

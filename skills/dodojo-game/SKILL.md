@@ -1,6 +1,6 @@
 ---
 name: dodojo-game
-description: Make a game people play on a phone or a computer as one webpage - a board or card game, a puzzle, an arcade or reflex game, a word game, a party game passed around one phone - with the game first and the rules after it, input that answers at once, sound made in the page, a computer opponent with real levels, a game kept move by move, and a look taken from the game's own world - saved into dodojo as a webpage Note, or as a standalone .html file. Use for 小游戏, 棋类, 益智, 两人同屏 and any request to make a game.
+description: Make a board, card or tabletop game as one webpage - a classic such as gomoku, chess, go, mancala, dots and boxes or a card game, or an original one - played against a computer opponent with real levels or by two people on one phone, or from their own devices in a dodojo team space, with the game first and the rules after it, input that answers at once, sound made in the page, every move kept and a look taken from the game's own materials - saved into dodojo as a webpage Note, or as a standalone .html file. Use for 棋类, 牌类, 桌游, 两人同屏, 人机对战 and any game no more specific dodojo game skill covers; for a party game, a puzzle, an arcade game or a story game, use dodojo-party-game, dodojo-puzzle-game, dodojo-arcade-game or dodojo-story-game when installed.
 license: MIT
 ---
 
@@ -9,6 +9,12 @@ license: MIT
 A game page is played, not read. It opens on the game, answers every touch
 at once, and makes people want one more round. Its look comes from the
 game's own world. Nothing here is a layout to copy.
+
+Its siblings go deeper on other kinds of game, and share this frame:
+`dodojo-party-game` (a group around one phone), `dodojo-puzzle-game` (logic
+and level packs, checked by a solver), `dodojo-arcade-game` (one verb, a
+fixed-step loop, one more run) and `dodojo-story-game` (branching stories,
+mysteries and escape rooms). Use the one that fits when it is installed.
 
 It is one self-contained `.html` file. In [dodojo](https://www.dodojo.ai) it is
 shown inside a Note, full height, the top of the page becomes the Note's cover
@@ -42,7 +48,8 @@ of their devices; outside dodojo the same file opens in any browser.
 - A game for two also gets a computer opponent, so one person can play alone:
   two or three levels that really differ. The easiest makes mistakes a
   beginner can punish; the strongest never misses a win in one move and always
-  blocks one. Let it think in a worker (a worker from a Blob URL is allowed in
+  blocks one (in a game won on points, such as mancala, a move that settles
+  the result, like taking more than half the seeds). Let it think in a worker (a worker from a Blob URL is allowed in
   dodojo) or in short slices, so the page never freezes; answer within about a
   second, and show that it is thinking. Before saving, pit the levels against
   each other in Node to check their order and speed
@@ -114,11 +121,14 @@ Follow [references/build.md](references/build.md) for the details. In short:
 
 - Answer on the same frame: the piece lands, the cell lights and the sound
   plays the moment the finger lifts. Animation confirms a move in 100-250ms;
-  it never makes the person wait to make the next one.
-- Pointer Events for mouse, touch and pen alike. When targets are small (a
-  15x15 board on a phone gives cells of about 22px), keep a slip cheap: a first
-  tap shows a ghost piece, a second tap on it places it, a tap elsewhere moves
-  the ghost; say so in one line under the board. `touch-action: manipulation`
+  it never makes the person wait to make the next one. A move that is a
+  sequence (sowing seeds pit by pit, a cascade of captures) may run longer,
+  as long as any tap finishes it at once.
+- Pointer Events for mouse, touch and pen alike. When targets are small,
+  under about 32px (a 15x15 board on a phone gives cells of about 22px), keep
+  a slip cheap: a first tap shows a ghost piece, a second tap on it places it,
+  a tap elsewhere moves the ghost; say so in one line under the board. Larger
+  targets act on one tap, cancelled if the finger slides off before lifting. `touch-action: manipulation`
   on a board that only takes taps, so the Note still scrolls; `touch-action:
   none` only on a playfield that takes swipes or drags, with room around it to
   scroll.
@@ -175,14 +185,16 @@ Follow [references/build.md](references/build.md) for the details. In short:
   call, so reopening a finished game never counts it twice.
 - Outside a team space only the owner's state is kept: on a shared page each
   visitor starts a fresh game, which needs no explanation. In a team space the
-  state is the team's: keep the seats with the game (who plays which side, by
-  `window.dodojo.viewer`, `{ id, name }` or null), let only the seated player
+  state is the team's, and each player can play from their own device: keep
+  seats, turns, rounds and restarts with `window.dodojo.game`
+  ([references/frame.md](references/frame.md)), let only the seated player
   whose turn it is move, show the game without its controls to someone
-  watching (`dodojo.writable` is false), and while nobody else has taken a
-  seat let one device play every seat.
+  watching, and while nobody else has taken a seat let one device play every
+  seat. Without `dodojo.game` (an older app, or outside dodojo), two people
+  share one device.
 
 The page's frame (one file, no network requests, what is blocked, the state
-API, sizing) is in [references/frame.md](references/frame.md); theme, phone
+API, `dodojo.game`, sizing) is in [references/frame.md](references/frame.md); theme, phone
 layout, type, spacing and copy are in
 [references/fundamentals.md](references/fundamentals.md).
 
@@ -191,7 +203,8 @@ layout, type, spacing and copy are in
 - Play whole games to the end in every mode (each computer level, two people
   on one device), with a mouse, with touch and with the keyboard. Try the
   edges: a win along the edge of the board, a draw, undo right after a move
-  and right after a win, a new game in the middle of one, reopening mid-game,
+  (and after a win, where the rules allow it), a new game in the middle of
+  one, reopening mid-game, reopening during the computer's turn,
   a narrower window. [references/build.md](references/build.md) has a
   Playwright pattern that does this with a stand-in for `window.dodojo`.
 - The computer opponent never makes an illegal move and answers within about

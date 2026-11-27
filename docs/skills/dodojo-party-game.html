@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Party game · dodojo skills</title>
+<meta name="description" content="Make a party game for a group of two to ten people in one room, as one webpage - a guessing, drawing, bluffing, push-your-luck, reflex, voting or truth-or-dare game, with one phone passed around, laid in the middle of the table or held up, or each player on their own phone in a dodojo team space - readable from across the table, with secrets that stay hidden when the phone changes hands, a clock people hear, a tally across the evening and prompts written natively for each language - saved into dodojo as a webpage Note, or as a standalone .html file. Use for 聚会游戏, 派对游戏, 团建, 酒桌游戏, 家庭游戏, 你画我猜, 比划猜词, 真心话大冒险, 谁是卧底 and any game for a group.">
+<link rel="icon" href="../assets/icon.png">
+<link rel="stylesheet" href="../assets/site.css">
+<script>try{var l=localStorage.getItem("dodojo-skills-lang")}catch(e){}document.documentElement.dataset.lang=l==="zh"?"zh":"en"</script>
+</head>
+<body>
+<div class="wrap">
+<header class="bar">
+  <a class="brand" href="../index.html"><img src="../assets/icon.png" alt="" width="28" height="28" style="border-radius:7px">dodojo <span>/ skills</span></a>
+  <nav>
+    <span class="seg" role="group" aria-label="Language"><button type="button" data-set-lang="zh">中文</button><button type="button" data-set-lang="en">EN</button></span>
+    <a class="pill-button" href="https://github.com/dodojo-AI/dodojo-skills">GitHub ↗</a>
+  </nav>
+</header>
+
+<a class="crumb" href="../index.html">← <span data-l="zh">全部技能</span><span data-l="en">All skills</span></a>
+<section class="skill-head">
+  <h1><span class="mono">dodojo-party-game</span><span data-l="zh">聚会游戏</span><span data-l="en">Party game</span></h1>
+  <p><span data-l="zh">2 到 10 个人围着一部手机：你画我猜、比划猜词、数字炸弹、拍桌抢答、抽签、谁是卧底。隔着桌子也看得清，手机交接时秘密不露馅，倒计时听得见，一晚上的比分都记着，题库每种语言各写各的。</span><span data-l="en">Two to ten people around one phone: drawing, charades, a number bomb, a slap race, drawing lots, the odd word out. Readable across the table, secrets that stay hidden when the phone changes hands, a clock you hear, scores across the evening, prompts written for each language.</span></p>
+  <div class="install"><code>npx skills add dodojo-AI/dodojo-skills --skill dodojo-party-game</code><button type="button" data-copy="npx skills add dodojo-AI/dodojo-skills --skill dodojo-party-game"><span data-l="zh">复制</span><span data-l="en">Copy</span></button></div>
+</section>
+<div data-examples>
+<div class="example" data-example="number-bomb">
+<section class="flow" aria-label="Number Bomb">
+  <div class="stage">
+    <div class="stage-label"><b>1</b><span data-l="zh">喂给它</span><span data-l="en">Give it</span></div>
+    <div class="ask"><q lang="en">给我设计几款聚会小游戏，2 到 10 个人围着一部手机玩，英文、中文、日文都要支持。</q><small data-l="en">Design a party game for two to ten people around one phone, in English, Chinese and Japanese.</small></div>
+    <dl class="facts">
+      <div><dt><span data-l="zh">输入</span><span data-l="en">Input</span></dt><dd><span data-l="zh">几个人、什么场合、手机怎么放；连上 dodojo 时，还有大家的名字和共同的回忆</span><span data-l="en">How many, the occasion, where the phone sits; plus the group's names and shared memories in dodojo when connected</span></dd></div>
+      <div><dt><span data-l="zh">产出</span><span data-l="en">Output</span></dt><dd><span data-l="zh">一页拿起来就能玩的聚会游戏：游戏区、一个大按钮、轮到谁，玩法、名单、设置和战绩放在下面</span><span data-l="en">A party game you pick up and play: the play area, one big button and whose turn it is, with how to play, players, settings and the tally below</span></dd></div>
+      
+    </dl>
+  </div>
+  <div class="stage">
+    <div class="stage-label"><b>2</b><span data-l="zh">它怎么做</span><span data-l="en">How it works</span></div>
+    <ol class="steps">
+<li class=""><span class="n">1</span><div><b><span data-l="zh">先想清楚这一桌</span><span data-l="en">Picture the table</span></b><span class="detail"><span data-l="zh">谁来玩、几个人、玩的时候手机放哪儿、一轮和一晚各多久、桌上说哪几种语言</span><span data-l="en">who plays, how many, where the phone sits during play, how long a round and an evening last, and the languages at the table.</span></span></div></li>
+<li class=""><span class="n">2</span><div><b><span data-l="zh">找到核心玩法</span><span data-l="en">Find the engine</span></b><span class="detail"><span data-l="zh">一个简单动作加上人和人之间的紧张感：猜、骗、赌运气、抢、投票、抽签</span><span data-l="en">one simple action with social tension around it: guess, bluff, push your luck, race, vote or draw lots.</span></span></div></li>
+<li class=""><span class="n">3</span><div><b><span data-l="zh">写规则和题库</span><span data-l="en">Write the rules and the content</span></b><span class="detail"><span data-l="zh">一分钟内开局，轮次、计分、一晚怎么收尾；题目几百条，每种语言按自己的文化写</span><span data-l="en">setup in under a minute, turns, scoring, how the evening ends, and hundreds of prompts written natively for each language.</span></span></div></li>
+<li class=""><span class="n">4</span><div><b><span data-l="zh">为一桌人排版</span><span data-l="en">Lay it out for the table</span></b><span class="detail"><span data-l="zh">最要紧的那个词最大，一个大按钮，看秘密前先盖住，桌子中间每人一块拍区</span><span data-l="en">the word that matters is the biggest thing on the page, one big button, a cover screen before every secret, a pad for each player at their edge.</span></span></div></li>
+<li class=""><span class="n">5</span><div><b><span data-l="zh">把场子带起来</span><span data-l="en">Run the room</span></b><span class="detail"><span data-l="zh">听得见的倒计时，每轮在高潮处收，一晚的总分，轮流公平，等着的人也有事做</span><span data-l="en">a clock people hear, rounds that end on a moment, a tally across the evening, turns that rotate fairly and something to do while waiting.</span></span></div></li>
+<li class="dodojo"><span class="n">6</span><div><b><span data-l="zh">把这一晚存住</span><span data-l="en">Keep the evening</span> <span class="tag">dodojo</span></b><span class="detail"><span data-l="zh">名字、比分、用过的题和进行中的一轮都存在页面里；团队空间里用 dodojo.game 管座位</span><span data-l="en">names, the tally, prompts already used and the round in progress kept with the page; seats through dodojo.game in a team space.</span></span></div></li>
+<li class="dodojo"><span class="n">7</span><div><b><span data-l="zh">假装一桌人试玩再存</span><span data-l="en">Play it with a pretend table, then save</span> <span class="tag">dodojo</span></b><span class="detail"><span data-l="zh">最少和最多人数各玩完整一晚，每次交接、计时、语言都过一遍，手机宽度截图后存成 dodojo 笔记</span><span data-l="en">whole evenings at the smallest and largest group, every hand-off, timer and language, screenshots at phone width, then a dodojo Note.</span></span></div></li>
+    </ol>
+    <p class="from-skill"><span data-l="zh">步骤取自 SKILL.md 的 Workflow 一节，skill 改了，这里跟着变。金色步骤是和 dodojo 打交道的地方。</span><span data-l="en">Steps are read from the Workflow section of SKILL.md, so this page changes with the skill. Gold steps are where dodojo comes in.</span></p>
+  </div>
+  <div class="stage phone" data-phone>
+    <div class="toggles">
+      <div class="stage-label"><b>3</b><span data-l="zh">做出来</span><span data-l="en">What comes out</span></div>
+      <span class="seg" role="group" aria-label="Theme"><button type="button" data-scheme="light"><span data-l="zh">浅色</span><span data-l="en">Light</span></button><button type="button" data-scheme="dark"><span data-l="zh">深色</span><span data-l="en">Dark</span></button></span>
+    </div>
+    <div class="device"><div class="screen"><iframe data-src="../examples/dodojo-party-game/number-bomb/index.html?theme=light" title="Number Bomb"></iframe></div></div>
+    <a class="open-link" href="../examples/dodojo-party-game/number-bomb/index.html?theme=light" target="_blank" rel="noopener"><span data-l="zh">单独打开这页 ↗</span><span data-l="en">Open the page on its own ↗</span></a>
+  </div>
+</section>
+<section class="section">
+  <h2><span data-l="zh">存进 dodojo 之后</span><span data-l="en">Once it is in dodojo</span></h2>
+  <p class="sub"><span data-l="zh">左边是它在首页里的卡片（封面就是页面顶部那一块），右边是 Agent 一起写进笔记正文的要点，方便搜索和不打开页面时看。</span><span data-l="en">Left, its card in the library (the cover is the top of the page); right, the key facts the agent writes into the Note's body, so search finds them and they read without the page.</span></p>
+  <div class="indodojo">
+    <a class="tile" href="../examples/dodojo-party-game/number-bomb/index.html?theme=light">
+  <div class="cover"><iframe data-src="../examples/dodojo-party-game/number-bomb/index.html?theme=light" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe></div>
+  <h3>Number Bomb</h3>
+  <div class="meta"><span>Claude</span>·<span><span data-l="zh">11月26日</span><span data-l="en">Nov 26</span></span></div>
+  
+</a>
+    <article class="note" lang="en"><h4>Number Bomb</h4><p>A party game for 2–10 people around one phone: the box hides a bomb number between 1 and 100, everyone takes turns calling a number, and each miss shrinks the range toward the bomb. <strong>Whoever hits the bomb loses</strong> and starts the next round.</p>
+<p>It opens ready to play: set the number of players under the game; names, the range (1–50 / 1–1000) and forfeits are in the settings below. Supports English / 中文 / 日本語, follows your device's language, and can be switched on the page.</p><div class="attach"><span class="chip">📎 index.html</span></div></article>
+  </div>
+</section>
+
+</div>
+</div>
+<section class="section">
+  <h2><span data-l="zh">Skill 里有什么</span><span data-l="en">What is in the skill</span></h2>
+  <p class="sub"><span data-l="zh">整个文件夹就是 skill：Agent 先读 SKILL.md，需要时再读 references。</span><span data-l="en">The folder is the skill: the agent reads SKILL.md first and the references when it needs them.</span></p>
+  <ul class="files">
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-party-game/SKILL.md">SKILL.md</a><span><span data-l="zh">238 行</span><span data-l="en">238 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-party-game/references/build.md">references/build.md</a><span><span data-l="zh">192 行</span><span data-l="en">192 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-party-game/references/design.md">references/design.md</a><span><span data-l="zh">76 行</span><span data-l="en">76 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-party-game/references/frame.md">references/frame.md</a><span><span data-l="zh">242 行</span><span data-l="en">242 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-party-game/references/fundamentals.md">references/fundamentals.md</a><span><span data-l="zh">59 行</span><span data-l="en">59 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-party-game/references/save-to-dodojo.md">references/save-to-dodojo.md</a><span><span data-l="zh">63 行</span><span data-l="en">63 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-party-game/scripts/shoot.mjs">scripts/shoot.mjs</a><span><span data-l="zh">128 行</span><span data-l="en">128 lines</span></span></li>
+  </ul>
+</section>
+<section class="section">
+  <h2><span data-l="zh">其他技能</span><span data-l="en">Other skills</span></h2>
+  <div class="next"><a href="dodojo-travel.html"><b><span data-l="zh">旅行页</span><span data-l="en">Trip page</span></b><small class="mono">dodojo-travel</small></a><a href="dodojo-game.html"><b><span data-l="zh">棋牌对战</span><span data-l="en">Board game</span></b><small class="mono">dodojo-game</small></a><a href="dodojo-puzzle-game.html"><b><span data-l="zh">益智解谜</span><span data-l="en">Puzzle</span></b><small class="mono">dodojo-puzzle-game</small></a><a href="dodojo-arcade-game.html"><b><span data-l="zh">街机反应</span><span data-l="en">Arcade</span></b><small class="mono">dodojo-arcade-game</small></a><a href="dodojo-story-game.html"><b><span data-l="zh">互动故事</span><span data-l="en">Story game</span></b><small class="mono">dodojo-story-game</small></a></div>
+</section>
+<footer class="foot">
+  <div><span data-l="zh">MIT 开源 · 页面由 skill 生成，可视化由 <code>scripts/build-site.mjs</code> 从 skill 文件自动生成</span><span data-l="en">MIT licensed · Pages made by the skills; this gallery is generated from the skill files by <code>scripts/build-site.mjs</code></span></div>
+  <div><a href="https://github.com/dodojo-AI/dodojo-skills">dodojo-AI/dodojo-skills</a> · <a href="https://www.dodojo.ai">dodojo.ai</a> · <a href="https://github.com/dodojo-AI/dodojo-plugin">dodojo plugin</a></div>
+</footer>
+</div>
+<script src="../assets/site.js"></script>
+</body>
+</html>

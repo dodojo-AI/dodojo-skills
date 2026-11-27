@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Arcade · dodojo skills</title>
+<meta name="description" content="Make an arcade, action or reflex game for one person as one webpage - a one-button jumper or flyer, a dodger, a catcher, a breakout or brick game, a rhythm or timing game, an aim-and-release game, an endless runner or a short score attack - with one verb learned in seconds, controls that feel right on a phone and a keyboard, a fixed-step loop that runs smoothly at 60 fps, deaths that feel fair, juice in proportion, a run of a minute or two and a best score kept - saved into dodojo as a webpage Note, or as a standalone .html file. Use for 街机, 小游戏, 休闲游戏, 反应游戏, 跑酷, 打砖块, 接东西, 节奏游戏 and any quick action game.">
+<link rel="icon" href="../assets/icon.png">
+<link rel="stylesheet" href="../assets/site.css">
+<script>try{var l=localStorage.getItem("dodojo-skills-lang")}catch(e){}document.documentElement.dataset.lang=l==="zh"?"zh":"en"</script>
+</head>
+<body>
+<div class="wrap">
+<header class="bar">
+  <a class="brand" href="../index.html"><img src="../assets/icon.png" alt="" width="28" height="28" style="border-radius:7px">dodojo <span>/ skills</span></a>
+  <nav>
+    <span class="seg" role="group" aria-label="Language"><button type="button" data-set-lang="zh">中文</button><button type="button" data-set-lang="en">EN</button></span>
+    <a class="pill-button" href="https://github.com/dodojo-AI/dodojo-skills">GitHub ↗</a>
+  </nav>
+</header>
+
+<a class="crumb" href="../index.html">← <span data-l="zh">全部技能</span><span data-l="en">All skills</span></a>
+<section class="skill-head">
+  <h1><span class="mono">dodojo-arcade-game</span><span data-l="zh">街机反应</span><span data-l="en">Arcade</span></h1>
+  <p><span data-l="zh">一根手指就能玩的跳跃、飞行、躲避、接东西、打砖块、节奏和跑酷：三秒学会一个动作，固定步长的循环 60 帧不卡，死得服气，重开不到一秒，最高分跟着你走。</span><span data-l="en">One-thumb jumpers, flyers, dodgers, catchers, brick breakers, rhythm games and runners: one verb learned in three seconds, a fixed-step loop at 60 fps, deaths that feel fair, restart in under a second, and a best score that follows you.</span></p>
+  <div class="install"><code>npx skills add dodojo-AI/dodojo-skills --skill dodojo-arcade-game</code><button type="button" data-copy="npx skills add dodojo-AI/dodojo-skills --skill dodojo-arcade-game"><span data-l="zh">复制</span><span data-l="en">Copy</span></button></div>
+</section>
+<div data-examples>
+<div class="example" data-example="lamplight-spider">
+<section class="flow" aria-label="Lamplight Spider">
+  <div class="stage">
+    <div class="stage-label"><b>1</b><span data-l="zh">喂给它</span><span data-l="en">Give it</span></div>
+    <div class="ask"><q lang="en">Make me a quick one-thumb arcade game for my commute: short runs, gets harder, and keeps my best score.</q></div>
+    <dl class="facts">
+      <div><dt><span data-l="zh">输入</span><span data-l="en">Input</span></dt><dd><span data-l="zh">想要什么样的动作和场景、一局多长；连上 dodojo 时，还有你生活里的城市、宠物</span><span data-l="en">The action and the setting, how long a run lasts; plus a city or a pet from your own life in dodojo when connected</span></dd></div>
+      <div><dt><span data-l="zh">产出</span><span data-l="en">Output</span></dt><dd><span data-l="zh">一页随时来一局的小游戏：场景在最上面，分数在角落，一排按钮，玩法和纪录放在下面</span><span data-l="en">A game for one more run: the scene on top with the score in a corner and a row of controls, with how to play and records below</span></dd></div>
+      
+    </dl>
+  </div>
+  <div class="stage">
+    <div class="stage-label"><b>2</b><span data-l="zh">它怎么做</span><span data-l="en">How it works</span></div>
+    <ol class="steps">
+<li class=""><span class="n">1</span><div><b><span data-l="zh">找到那一个动作</span><span data-l="en">Find the verb</span></b><span class="detail"><span data-l="zh">一个动作（跳、转向、接、瞄准、踩点），高手和新手差在哪，再配一个给它理由的场景</span><span data-l="en">one action (jump, steer, catch, aim, tap on the beat), what the person masters over many runs, and a setting that gives it a reason.</span></span></div></li>
+<li class=""><span class="n">2</span><div><b><span data-l="zh">场景放在最上面</span><span data-l="en">Lay it out with the playfield first</span></b><span class="detail"><span data-l="zh">场景带着分数在上面，下面一细排按钮，再往下是玩法、纪录和这个世界的来历</span><span data-l="en">the scene on top with the score in it, a slim row of controls under it, then how to play, records and a note on the world.</span></span></div></li>
+<li class=""><span class="n">3</span><div><b><span data-l="zh">从游戏的世界来设计</span><span data-l="en">Design from the game's world</span></b><span class="detail"><span data-l="zh">一个画面构想，几种在高速下一眼分得清的颜色和形状，先写成方案再写代码</span><span data-l="en">one graphic idea, a small palette that reads at speed, shapes a glance can tell apart, written as a plan before any code.</span></span></div></li>
+<li class=""><span class="n">4</span><div><b><span data-l="zh">做循环和操作</span><span data-l="en">Build the loop and the controls</span></b><span class="detail"><span data-l="zh">requestAnimationFrame 上的固定步长模拟，输入缓冲到下一步，拇指、鼠标、键盘都顺手</span><span data-l="en">a fixed-step simulation on requestAnimationFrame, input buffered to the next step, controls made for a thumb, a mouse and a keyboard.</span></span></div></li>
+<li class=""><span class="n">5</span><div><b><span data-l="zh">手感好、死得服气</span><span data-l="en">Make it feel good and fair</span></b><span class="detail"><span data-l="zh">反馈和事情大小相称，判定比画面宽容，前一分钟慢慢加难，死因看得见，一秒内重开</span><span data-l="en">juice in proportion, hitboxes kinder than sprites, a ramp over the first minute, deaths that show their cause, restart in under a second.</span></span></div></li>
+<li class=""><span class="n">6</span><div><b><span data-l="zh">把最高分存住</span><span data-l="en">Keep the best</span></b><span class="detail"><span data-l="zh">最高分、玩了几局和设置都存在页面里；页面切走就暂停</span><span data-l="en">the best score, the runs played and the settings kept with the page; a run paused when the page is hidden.</span></span></div></li>
+<li class="dodojo"><span class="n">7</span><div><b><span data-l="zh">跑完再存</span><span data-l="en">Play it, then save</span> <span class="tag">dodojo</span></b><span class="detail"><span data-l="zh">机器人在 Node 里跑几百个种子，人用触屏、鼠标、键盘玩，降速测帧时间，手机宽度截图后存成 dodojo 笔记</span><span data-l="en">a bot and a person playing many runs, frame times measured, every control tried, screenshots at phone width, then a dodojo Note.</span></span></div></li>
+    </ol>
+    <p class="from-skill"><span data-l="zh">步骤取自 SKILL.md 的 Workflow 一节，skill 改了，这里跟着变。金色步骤是和 dodojo 打交道的地方。</span><span data-l="en">Steps are read from the Workflow section of SKILL.md, so this page changes with the skill. Gold steps are where dodojo comes in.</span></p>
+  </div>
+  <div class="stage phone" data-phone>
+    <div class="toggles">
+      <div class="stage-label"><b>3</b><span data-l="zh">做出来</span><span data-l="en">What comes out</span></div>
+      <span class="seg" role="group" aria-label="Theme"><button type="button" data-scheme="light"><span data-l="zh">浅色</span><span data-l="en">Light</span></button><button type="button" data-scheme="dark"><span data-l="zh">深色</span><span data-l="en">Dark</span></button></span>
+    </div>
+    <div class="device"><div class="screen"><iframe data-src="../examples/dodojo-arcade-game/lamplight-spider/index.html?theme=light" title="Lamplight Spider"></iframe></div></div>
+    <a class="open-link" href="../examples/dodojo-arcade-game/lamplight-spider/index.html?theme=light" target="_blank" rel="noopener"><span data-l="zh">单独打开这页 ↗</span><span data-l="en">Open the page on its own ↗</span></a>
+  </div>
+</section>
+<section class="section">
+  <h2><span data-l="zh">存进 dodojo 之后</span><span data-l="en">Once it is in dodojo</span></h2>
+  <p class="sub"><span data-l="zh">左边是它在首页里的卡片（封面就是页面顶部那一块），右边是 Agent 一起写进笔记正文的要点，方便搜索和不打开页面时看。</span><span data-l="en">Left, its card in the library (the cover is the top of the page); right, the key facts the agent writes into the Note's body, so search finds them and they read without the page.</span></p>
+  <div class="indodojo">
+    <a class="tile" href="../examples/dodojo-arcade-game/lamplight-spider/index.html?theme=light">
+  <div class="cover"><iframe data-src="../examples/dodojo-arcade-game/lamplight-spider/index.html?theme=light" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe></div>
+  <h3>Lamplight Spider</h3>
+  <div class="meta"><span>Claude</span>·<span><span data-l="zh">11月26日</span><span data-l="en">Nov 26</span></span></div>
+  
+</a>
+    <article class="note" lang="en"><h4>Lamplight Spider</h4><p>A one-thumb arcade game: a spider hangs from a bus stop roof under a sodium streetlamp, catching moths and dodging bats. <strong>Hold to drop, let go to climb.</strong></p>
+<p>A run starts gentle, speeds up over about a minute and ends when a bat touches you; your best score is kept.</p><div class="attach"><span class="chip">📎 index.html</span></div></article>
+  </div>
+</section>
+
+</div>
+</div>
+<section class="section">
+  <h2><span data-l="zh">Skill 里有什么</span><span data-l="en">What is in the skill</span></h2>
+  <p class="sub"><span data-l="zh">整个文件夹就是 skill：Agent 先读 SKILL.md，需要时再读 references。</span><span data-l="en">The folder is the skill: the agent reads SKILL.md first and the references when it needs them.</span></p>
+  <ul class="files">
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-arcade-game/SKILL.md">SKILL.md</a><span><span data-l="zh">197 行</span><span data-l="en">197 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-arcade-game/references/build.md">references/build.md</a><span><span data-l="zh">175 行</span><span data-l="en">175 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-arcade-game/references/design.md">references/design.md</a><span><span data-l="zh">74 行</span><span data-l="en">74 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-arcade-game/references/frame.md">references/frame.md</a><span><span data-l="zh">242 行</span><span data-l="en">242 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-arcade-game/references/fundamentals.md">references/fundamentals.md</a><span><span data-l="zh">59 行</span><span data-l="en">59 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-arcade-game/references/save-to-dodojo.md">references/save-to-dodojo.md</a><span><span data-l="zh">63 行</span><span data-l="en">63 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-arcade-game/scripts/shoot.mjs">scripts/shoot.mjs</a><span><span data-l="zh">128 行</span><span data-l="en">128 lines</span></span></li>
+  </ul>
+</section>
+<section class="section">
+  <h2><span data-l="zh">其他技能</span><span data-l="en">Other skills</span></h2>
+  <div class="next"><a href="dodojo-travel.html"><b><span data-l="zh">旅行页</span><span data-l="en">Trip page</span></b><small class="mono">dodojo-travel</small></a><a href="dodojo-game.html"><b><span data-l="zh">棋牌对战</span><span data-l="en">Board game</span></b><small class="mono">dodojo-game</small></a><a href="dodojo-party-game.html"><b><span data-l="zh">聚会游戏</span><span data-l="en">Party game</span></b><small class="mono">dodojo-party-game</small></a><a href="dodojo-puzzle-game.html"><b><span data-l="zh">益智解谜</span><span data-l="en">Puzzle</span></b><small class="mono">dodojo-puzzle-game</small></a><a href="dodojo-story-game.html"><b><span data-l="zh">互动故事</span><span data-l="en">Story game</span></b><small class="mono">dodojo-story-game</small></a></div>
+</section>
+<footer class="foot">
+  <div><span data-l="zh">MIT 开源 · 页面由 skill 生成，可视化由 <code>scripts/build-site.mjs</code> 从 skill 文件自动生成</span><span data-l="en">MIT licensed · Pages made by the skills; this gallery is generated from the skill files by <code>scripts/build-site.mjs</code></span></div>
+  <div><a href="https://github.com/dodojo-AI/dodojo-skills">dodojo-AI/dodojo-skills</a> · <a href="https://www.dodojo.ai">dodojo.ai</a> · <a href="https://github.com/dodojo-AI/dodojo-plugin">dodojo plugin</a></div>
+</footer>
+</div>
+<script src="../assets/site.js"></script>
+</body>
+</html>

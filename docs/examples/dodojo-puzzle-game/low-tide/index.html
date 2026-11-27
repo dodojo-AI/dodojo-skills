@@ -1,0 +1,1224 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<script src="../../../assets/dodojo-runtime.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="dodojo-page-id" content="low-tide-picture-logic">
+<title>Low Tide · picture logic</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
+<script>
+// Pick the language before anything paints: saved choice, else the device's.
+(function () {
+  var saved = null;
+  try { saved = window.dodojo && window.dodojo.getState && (window.dodojo.getState() || {}).lang; } catch (e) {}
+  var list = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"]).map(function (l) { return String(l).toLowerCase(); });
+  var lang = saved === "en" || saved === "zh" || saved === "ja" ? saved : /^zh/.test(list[0]) ? "zh" : /^ja/.test(list[0]) ? "ja" : "en";
+  document.documentElement.setAttribute("data-lang", lang);
+  document.documentElement.setAttribute("lang", lang === "zh" ? "zh-CN" : lang);
+})();
+</script>
+<style>
+/* layout: a slim strip (puzzle number or date, the clock, Levels/Today) · the picture-logic grid on its booklet sheet, clues outside · one row of six tools · EN/中文/日本語 · then the rule, the pack as a shelf of finds, today's tide and earlier days, settings, records, full rules. At 760px and wider the puzzle column sits left and the reading column right. */
+/* material: a tide-table booklet. Warm sand sheet; ruled grid in sea ink with heavier rules every five cells and round the edge; clues set in condensed tabular figures (ink, weight 600); the person's fills solid sea-ink squares (the pen); crosses thin pencil-grey (the pencil); cursor a coral ring; a hinted line a coral wash with dashed cells; a mistake a coral-red slash or a heavy red cross; a finished line dims its clue and gets a tick. Dark: the sheet turns night-sea, fills turn pale sand, figures stay brighter than in light. */
+:root {
+  --paper: var(--dodojo-bg, #efe9dc);
+  --panel: var(--dodojo-surface, #f8f4ea);
+  --ink: var(--dodojo-fg, #1b2733);
+  --soft: var(--dodojo-muted-fg, #5e6872);
+  --line: var(--dodojo-border, rgba(27, 39, 51, .14));
+  --sheet: #fbf7ee;
+  --rule: rgba(30, 52, 72, .22);
+  --rule-heavy: rgba(30, 52, 72, .78);
+  --clue: #15212c;
+  --fill: #1f3a52;
+  --pencil: #8a929a;
+  --accent: #b94a27;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(185, 74, 39, .13);
+  --bad: #c0281c;
+  --num: "IBM Plex Sans Condensed", "Roboto Condensed", "Arial Narrow", system-ui, sans-serif;
+  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --sans: var(--dodojo-font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
+}
+:root[data-dodojo-theme="dark"] {
+  --paper: var(--dodojo-bg, #10161c);
+  --panel: var(--dodojo-surface, #18212a);
+  --ink: var(--dodojo-fg, #e9e4d7);
+  --soft: var(--dodojo-muted-fg, #a0a9b1);
+  --line: var(--dodojo-border, rgba(233, 228, 215, .14));
+  --sheet: #16202a; --rule: rgba(214, 226, 236, .17); --rule-heavy: rgba(214, 226, 236, .62);
+  --clue: #f1ecdf; --fill: #e6dbbf; --pencil: #7b8792;
+  --accent: #f08a62; --accent-ink: #1a0e08; --accent-soft: rgba(240, 138, 98, .17); --bad: #ff7a68;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dodojo-theme]) {
+    --paper: #10161c; --panel: #18212a; --ink: #e9e4d7; --soft: #a0a9b1; --line: rgba(233, 228, 215, .14);
+    --sheet: #16202a; --rule: rgba(214, 226, 236, .17); --rule-heavy: rgba(214, 226, 236, .62);
+    --clue: #f1ecdf; --fill: #e6dbbf; --pencil: #7b8792;
+    --accent: #f08a62; --accent-ink: #1a0e08; --accent-soft: rgba(240, 138, 98, .17); --bad: #ff7a68;
+  }
+}
+[hidden] { display: none !important; }
+img { max-width: 100%; height: auto; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.55; -webkit-text-size-adjust: 100%; }
+:lang(zh-CN) { font-family: var(--dodojo-font-sans, system-ui, -apple-system, "PingFang SC", "Noto Sans SC", sans-serif); line-break: strict; letter-spacing: 0; }
+:lang(ja) { font-family: var(--dodojo-font-sans, system-ui, -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif); line-break: strict; letter-spacing: 0; }
+html[data-lang="en"] [data-l]:not([data-l="en"]),
+html[data-lang="zh"] [data-l]:not([data-l="zh"]),
+html[data-lang="ja"] [data-l]:not([data-l="ja"]) { display: none; }
+button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+button:focus-visible, .grid:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.page { max-width: 920px; margin: 0 auto; display: grid; gap: 32px; }
+@media (min-width: 760px) { .page { grid-template-columns: minmax(0, 460px) minmax(0, 1fr); gap: 40px; align-items: start; } }
+.play { min-width: 0; }
+
+/* strip */
+.strip { height: 48px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); }
+.where { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; font: 600 15px/1 var(--num); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.where-text { overflow: hidden; text-overflow: ellipsis; }
+:lang(zh-CN) .where, :lang(ja) .where { font-family: var(--num), var(--sans); }
+.seal { flex: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; }
+.clock { font: 500 14px/1 var(--num); font-variant-numeric: tabular-nums; color: var(--soft); min-width: 2.6em; text-align: right; }
+.switch { flex: none; display: flex; padding: 2px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); }
+.switch button { min-height: 38px; padding: 0 11px; border: 0; border-radius: 999px; background: none; font-size: 14px; color: var(--soft); white-space: nowrap; }
+.switch button[aria-pressed="true"] { background: var(--ink); color: var(--paper); font-weight: 600; }
+
+/* the sheet */
+.sheet { position: relative; margin-top: 12px; padding: 6px; background: var(--sheet); border-radius: 3px; box-shadow: 0 0 0 1px var(--line), 0 1px 0 var(--line); }
+.board { display: grid; grid-template-columns: var(--rcw, 40px) var(--gw, 200px); grid-template-rows: var(--cch, 56px) var(--gh, 200px); justify-content: center; }
+.cc { grid-column: 2; display: grid; grid-template-columns: repeat(var(--w, 5), var(--cell, 40px)); }
+.rc { grid-row: 2; display: grid; grid-template-rows: repeat(var(--h, 5), var(--cell, 40px)); }
+.ccol, .rrow { font: 600 var(--fs, 15px)/1.12 var(--num); font-variant-numeric: tabular-nums; color: var(--clue); transition: opacity .2s; }
+.ccol { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 5px; gap: 1px; }
+.rrow { display: flex; justify-content: flex-end; align-items: center; gap: .42em; padding-right: 6px; }
+.ccol.alt, .rrow.alt { background: linear-gradient(var(--accent-soft), var(--accent-soft)); }
+.ccol.done > span, .rrow.done > span { opacity: .34; }
+.rrow.done::before { content: "✓"; margin-right: auto; padding-left: 2px; color: var(--accent); font-size: .8em; }
+.ccol.done::before { content: "✓"; margin-bottom: auto; color: var(--accent); font-size: .8em; line-height: 1.3; }
+.ccol.hl, .rrow.hl { color: var(--accent); }
+.ccol.hl > span, .rrow.hl > span { opacity: 1; }
+.grid { grid-row: 2; grid-column: 2; display: grid; grid-template-columns: repeat(var(--w, 5), var(--cell, 40px)); grid-template-rows: repeat(var(--h, 5), var(--cell, 40px)); touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; outline-offset: 4px; }
+.c { position: relative; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.c.L { border-left: 2px solid var(--rule-heavy); }
+.c.T { border-top: 2px solid var(--rule-heavy); }
+.c.R { border-right: 2px solid var(--rule-heavy); }
+.c.B { border-bottom: 2px solid var(--rule-heavy); }
+.c.f::before { content: ""; position: absolute; inset: 1px; background: var(--fill); border-radius: 1px; }
+.c.x::before, .c.x::after { content: ""; position: absolute; left: 50%; top: 50%; width: 46%; height: 1.5px; background: var(--pencil); border-radius: 1px; }
+.c.x::before { transform: translate(-50%, -50%) rotate(45deg); }
+.c.x::after { transform: translate(-50%, -50%) rotate(-45deg); }
+.c.hl { background: var(--accent-soft); }
+.c.hc { outline: 2px dashed var(--accent); outline-offset: -4px; z-index: 1; }
+.grid.kbd:focus .c.cur { outline: 2.5px solid var(--accent); outline-offset: -2px; z-index: 2; }
+.c.bad.f::before { background: linear-gradient(135deg, transparent 43%, var(--bad) 43% 57%, transparent 57%), var(--fill); }
+.c.bad.x::before, .c.bad.x::after { background: var(--bad); height: 3px; width: 62%; }
+.grid.won .c.x::before, .grid.won .c.x::after { display: none; }
+.grid.sweep .c.f::before { animation: sweep .55s cubic-bezier(.2, .7, .3, 1) both; animation-delay: calc(var(--d, 0) * 32ms); }
+@keyframes sweep { 0% { transform: scale(.55); opacity: .25; } 60% { transform: scale(1.08); opacity: 1; } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .grid.sweep .c.f::before { animation: none; } }
+
+.head { height: 24px; margin: 0 2px 2px; display: flex; justify-content: space-between; align-items: center; gap: 8px; border-bottom: 1px solid var(--rule); font: 600 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--soft); white-space: nowrap; }
+.head :lang(zh-CN), .head :lang(ja), :lang(zh-CN) .head-grade, :lang(ja) .head-grade { letter-spacing: 0; text-transform: none; font-size: 12px; }
+.head-name { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.head-grade b { color: var(--accent); font-size: 9px; letter-spacing: 1px; margin-right: 5px; font-weight: 400; }
+.banner { position: absolute; left: 0; right: 0; top: 0; height: calc(var(--cch, 56px) + 6px + 26px); z-index: 3; display: flex; align-items: center; gap: 10px; padding: 0 10px; background: var(--sheet); border-radius: 3px 3px 0 0; }
+.banner .seal { width: 28px; height: 28px; }
+.banner-text { flex: 1; min-width: 0; line-height: 1.25; }
+.banner-title { display: block; font: 600 17px/1.2 var(--serif); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+:lang(zh-CN) .banner-title, :lang(ja) .banner-title { font-family: inherit; }
+.banner-sub { display: block; font-size: 13px; color: var(--soft); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.next { flex: none; min-height: 44px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--accent); color: var(--accent-ink); font-weight: 600; font-size: 15px; white-space: nowrap; }
+
+.say { height: 4.35em; margin: 10px 2px 6px; font-size: 14px; line-height: 1.45; color: var(--soft); overflow: hidden; }
+.say b { color: var(--ink); font-weight: 600; }
+.tools { display: flex; justify-content: space-between; gap: 6px; max-width: 360px; margin: 0 auto; }
+.tool { flex: none; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--ink); }
+.tool svg { width: 22px; height: 22px; }
+.tool[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.tool:disabled { opacity: .38; cursor: default; }
+.tool.hint { color: var(--accent); }
+.tool.armed { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.langs { display: flex; justify-content: center; align-items: center; margin-top: 6px; font-size: 13px; color: var(--soft); }
+.langs button { min-height: 44px; padding: 0 9px; border: 0; background: none; color: var(--soft); }
+.langs button[aria-pressed="true"] { color: var(--ink); font-weight: 600; text-decoration: underline 2px var(--accent); text-underline-offset: 5px; }
+
+/* reading column */
+.read { min-width: 0; display: grid; gap: 30px; }
+.read section { display: grid; gap: 10px; }
+h2 { margin: 0; font: 600 21px/1.25 var(--serif); text-wrap: balance; }
+:lang(zh-CN) h2, :lang(ja) h2, h2 :lang(zh-CN), h2 :lang(ja) { font-family: inherit; font-size: 19px; }
+h3 { margin: 0; font-size: 15px; font-weight: 600; }
+p { margin: 0; max-width: 62ch; }
+:lang(zh-CN) p, :lang(ja) p, p :lang(zh-CN), p :lang(ja) { line-height: 1.75; }
+.muted { color: var(--soft); font-size: 14px; }
+.shelf { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.lv { width: 100%; display: grid; gap: 3px; justify-items: center; padding: 6px 4px 7px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); text-align: center; }
+.lv-face { width: 100%; aspect-ratio: 1; display: grid; place-items: center; border-radius: 4px; background: var(--sheet); position: relative; }
+.lv-no { font: 600 22px/1 var(--num); color: var(--soft); }
+.lv-face svg { width: 74%; height: 74%; }
+.lv-face svg rect { fill: var(--fill); }
+.lv-size { font: 600 12px/1.2 var(--num); }
+.lv-dots { font-size: 9px; letter-spacing: 1px; color: var(--accent); line-height: 1; }
+.lv-time { font-size: 11px; color: var(--soft); line-height: 1.2; white-space: nowrap; }
+.lv[aria-current="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.lv .state { position: absolute; right: 3px; top: 3px; width: 8px; height: 8px; border-radius: 50%; }
+.lv.going .state { border: 2px solid var(--accent); }
+.lv.solved .state { background: var(--accent); }
+.done-note { padding: 12px 14px; border-left: 3px solid var(--accent); background: var(--panel); border-radius: 0 6px 6px 0; }
+.today { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.today-face { flex: none; width: 52px; height: 52px; border-radius: 4px; background: var(--sheet); display: grid; place-items: center; font: 600 20px/1 var(--num); color: var(--soft); }
+.today-face svg { width: 80%; height: 80%; }
+.today-face svg rect, .day-face svg rect { fill: var(--fill); }
+.today-text { flex: 1; min-width: 0; line-height: 1.35; }
+.today-text b { display: block; font-variant-numeric: tabular-nums; }
+.today-text span { display: block; font-size: 13px; color: var(--soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.go { flex: none; min-height: 44px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--ink); color: var(--paper); font-weight: 600; font-size: 14px; }
+.days { list-style: none; margin: 0; padding: 0; display: grid; }
+.day { width: 100%; min-height: 48px; display: flex; align-items: center; gap: 10px; padding: 4px 2px; border: 0; border-bottom: 1px solid var(--line); background: none; text-align: left; font-variant-numeric: tabular-nums; }
+.day-face { flex: none; width: 34px; height: 34px; border-radius: 3px; background: var(--sheet); display: grid; place-items: center; font: 600 12px/1 var(--num); color: var(--soft); box-shadow: 0 0 0 1px var(--line); }
+.day-face svg { width: 82%; height: 82%; }
+.day-date { flex: 1; min-width: 0; }
+.day-state { font-size: 13px; color: var(--soft); white-space: nowrap; }
+.day-state.ok { color: var(--accent); font-weight: 600; }
+.more { justify-self: start; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); font-size: 14px; }
+.opts { display: grid; gap: 0; }
+.opt { display: flex; align-items: center; gap: 12px; min-height: 48px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.opt input { width: 20px; height: 20px; accent-color: var(--accent); margin: 0; flex: none; }
+.records { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.records div { padding: 10px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+.records dt { font-size: 12px; color: var(--soft); line-height: 1.3; }
+.records dd { margin: 2px 0 0; font: 600 20px/1.2 var(--num); font-variant-numeric: tabular-nums; }
+ol.rules { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; max-width: 62ch; }
+.example { display: grid; gap: 8px; padding: 12px; background: var(--sheet); border-radius: 4px; box-shadow: 0 0 0 1px var(--line); }
+.example svg { width: 100%; height: auto; max-width: 340px; }
+.example .ex-cell { fill: none; stroke: var(--rule); stroke-width: 1; }
+.example .ex-edge { fill: none; stroke: var(--rule-heavy); stroke-width: 2; }
+.example .ex-fill { fill: var(--fill); }
+.example .ex-run { fill: none; stroke: var(--accent); stroke-width: 2; }
+.example .ex-text { fill: var(--clue); font: 600 13px var(--num); }
+.example .ex-soft { fill: var(--soft); font: 500 11px var(--num); }
+.fine { font-size: 13px; color: var(--soft); }
+</style>
+</head>
+<body>
+<main class="page">
+  <section class="play" id="play" aria-label="Puzzle">
+    <div class="strip">
+      <div class="where"><span class="where-text" id="where">Level 1</span><span class="seal" id="seal" hidden aria-label="solved"><svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <span class="clock" id="clock" hidden>0:00</span>
+      <div class="switch" role="group" id="switch">
+        <button type="button" id="tabPack" aria-pressed="true"><span data-l="en">Levels</span><span data-l="zh" lang="zh-CN">关卡</span><span data-l="ja" lang="ja">ステージ</span></button>
+        <button type="button" id="tabDaily" aria-pressed="false"><span data-l="en">Today</span><span data-l="zh" lang="zh-CN">今日</span><span data-l="ja" lang="ja">今日</span></button>
+      </div>
+    </div>
+    <div class="sheet" id="sheet">
+      <div class="head"><span class="head-name"><span data-l="en">Low Tide</span><span data-l="zh" lang="zh-CN">退潮 · 数织</span><span data-l="ja" lang="ja">引き潮</span> · <span id="headSize">5 × 5</span></span><span class="head-grade" id="headGrade"></span></div>
+      <div class="board" id="board">
+        <div class="cc" id="colClues"></div>
+        <div class="rc" id="rowClues"></div>
+        <div class="grid" id="grid" tabindex="0" role="group" aria-roledescription="puzzle grid" aria-describedby="say"></div>
+      </div>
+      <div class="banner" id="banner" hidden>
+        <span class="seal" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="banner-text"><span class="banner-title" id="bannerTitle"></span><span class="banner-sub" id="bannerSub"></span></span>
+        <button type="button" class="next" id="next"></button>
+      </div>
+    </div>
+    <p class="say" id="say"><span data-l="en">Fill cells to match the numbers, and a picture appears.</span><span data-l="zh" lang="zh-CN">照着数字涂格子，画就会出现。</span><span data-l="ja" lang="ja">数字どおりに塗ると、絵が現れます。</span></p>
+    <p class="sr" id="live" aria-live="polite"></p>
+    <div class="tools" role="toolbar" id="tools">
+      <button type="button" class="tool" id="undo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7L4 12l5 5M4.5 12H14a6 6 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 -4)"/></svg></button>
+      <button type="button" class="tool" id="redo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 7l5 5-5 5M19.5 12H10a6 6 0 0 0 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 -4)"/></svg></button>
+      <button type="button" class="tool" id="modeFill" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="1.5" fill="currentColor"/></svg></button>
+      <button type="button" class="tool" id="modeCross" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+      <button type="button" class="tool hint" id="hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="tool" id="restart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <div class="langs" role="group" aria-label="Language · 语言 · 言語">
+      <button type="button" data-set-lang="en" lang="en">EN</button><span aria-hidden="true">·</span><button type="button" data-set-lang="zh" lang="zh-CN">中文</button><span aria-hidden="true">·</span><button type="button" data-set-lang="ja" lang="ja">日本語</button>
+    </div>
+  </section>
+
+  <div class="read">
+    <section aria-labelledby="h-how">
+      <h2 id="h-how"><span data-l="en">How to play</span><span data-l="zh" lang="zh-CN">玩法</span><span data-l="ja" lang="ja">遊び方</span></h2>
+      <p data-l="en">The numbers beside each row and above each column are the runs of filled cells in that line, in order, with at least one empty cell between runs. Fill the runs, cross out cells that must stay empty, and something from the shore appears.</p>
+      <p data-l="zh" lang="zh-CN">每行左边、每列上方的数字，按顺序表示这一行（列）里连续涂黑的格数，两段之间至少隔一个空格。把该涂的涂上，确定空着的打个叉，海边的一样东西就会显现。</p>
+      <p data-l="ja" lang="ja">各行の左と各列の上の数字は、その行（列）で続けて塗るマスの数を順に示します。数字と数字の間には空白が1マス以上あります。塗るマスを塗り、空白と分かったマスに×を付けると、海辺のなにかが姿を現します。</p>
+      <p class="muted" data-l="en">■ fills a cell, × marks one you know is empty, the bulb explains the next step (tap it again to have it marked), and undo goes back as far as you like.</p>
+      <p class="muted" data-l="zh" lang="zh-CN">■ 涂黑，× 标出确定是空的格子，灯泡讲解下一步（再点一次替你标上），撤销可以一直往回退。</p>
+      <p class="muted" data-l="ja" lang="ja">■ で塗り、× で空白の印。電球は次の一手を説明し、もう一度押すと書き込みます。元に戻すは何手でもさかのぼれます。</p>
+    </section>
+
+    <section aria-labelledby="h-pack">
+      <h2 id="h-pack"><span data-l="en">The pack: 12 finds from the shore</span><span data-l="zh" lang="zh-CN">关卡：海边的 12 样东西</span><span data-l="ja" lang="ja">ステージ：海辺の12のもの</span></h2>
+      <p class="muted" data-l="en">From a 5 × 5 warm-up to 10 × 10 grids that need whole-line logic, with easier ones in between. Every puzzle has exactly one solution and can be solved without guessing.</p>
+      <p class="muted" data-l="zh" lang="zh-CN">从 5 × 5 的热身，到需要整行推理的 10 × 10，中间穿插轻松的几关。每一题都只有一个答案，不用猜就能解开。</p>
+      <p class="muted" data-l="ja" lang="ja">5 × 5 の小手調べから、一列まるごと推理する 10 × 10 まで。間にひと息つける問題もあります。どれも答えはひとつで、当て推量なしで解けます。</p>
+      <ol class="shelf" id="shelf">
+        <li><button type="button" class="lv" data-level="1"><span class="lv-face"><span class="lv-no">1</span><span class="state"></span></span><span class="lv-size">5×5</span><span class="lv-dots" aria-hidden="true">●○○○○</span><span class="lv-time"><span data-l="en">~2 min</span><span data-l="zh" lang="zh-CN">约 2 分钟</span><span data-l="ja" lang="ja">約2分</span></span></button></li>
+        <li><button type="button" class="lv" data-level="2"><span class="lv-face"><span class="lv-no">2</span><span class="state"></span></span><span class="lv-size">5×5</span><span class="lv-dots" aria-hidden="true">●○○○○</span><span class="lv-time"><span data-l="en">~2 min</span><span data-l="zh" lang="zh-CN">约 2 分钟</span><span data-l="ja" lang="ja">約2分</span></span></button></li>
+        <li><button type="button" class="lv" data-level="3"><span class="lv-face"><span class="lv-no">3</span><span class="state"></span></span><span class="lv-size">6×6</span><span class="lv-dots" aria-hidden="true">●●○○○</span><span class="lv-time"><span data-l="en">~2 min</span><span data-l="zh" lang="zh-CN">约 2 分钟</span><span data-l="ja" lang="ja">約2分</span></span></button></li>
+        <li><button type="button" class="lv" data-level="4"><span class="lv-face"><span class="lv-no">4</span><span class="state"></span></span><span class="lv-size">7×7</span><span class="lv-dots" aria-hidden="true">●●●○○</span><span class="lv-time"><span data-l="en">~4 min</span><span data-l="zh" lang="zh-CN">约 4 分钟</span><span data-l="ja" lang="ja">約4分</span></span></button></li>
+        <li><button type="button" class="lv" data-level="5"><span class="lv-face"><span class="lv-no">5</span><span class="state"></span></span><span class="lv-size">8×8</span><span class="lv-dots" aria-hidden="true">●○○○○</span><span class="lv-time"><span data-l="en">~3 min</span><span data-l="zh" lang="zh-CN">约 3 分钟</span><span data-l="ja" lang="ja">約3分</span></span></button></li>
+        <li><button type="button" class="lv" data-level="6"><span class="lv-face"><span class="lv-no">6</span><span class="state"></span></span><span class="lv-size">8×8</span><span class="lv-dots" aria-hidden="true">●●○○○</span><span class="lv-time"><span data-l="en">~4 min</span><span data-l="zh" lang="zh-CN">约 4 分钟</span><span data-l="ja" lang="ja">約4分</span></span></button></li>
+        <li><button type="button" class="lv" data-level="7"><span class="lv-face"><span class="lv-no">7</span><span class="state"></span></span><span class="lv-size">8×8</span><span class="lv-dots" aria-hidden="true">●●●○○</span><span class="lv-time"><span data-l="en">~4 min</span><span data-l="zh" lang="zh-CN">约 4 分钟</span><span data-l="ja" lang="ja">約4分</span></span></button></li>
+        <li><button type="button" class="lv" data-level="8"><span class="lv-face"><span class="lv-no">8</span><span class="state"></span></span><span class="lv-size">9×9</span><span class="lv-dots" aria-hidden="true">●●●●○</span><span class="lv-time"><span data-l="en">~7 min</span><span data-l="zh" lang="zh-CN">约 7 分钟</span><span data-l="ja" lang="ja">約7分</span></span></button></li>
+        <li><button type="button" class="lv" data-level="9"><span class="lv-face"><span class="lv-no">9</span><span class="state"></span></span><span class="lv-size">10×10</span><span class="lv-dots" aria-hidden="true">●●●○○</span><span class="lv-time"><span data-l="en">~5 min</span><span data-l="zh" lang="zh-CN">约 5 分钟</span><span data-l="ja" lang="ja">約5分</span></span></button></li>
+        <li><button type="button" class="lv" data-level="10"><span class="lv-face"><span class="lv-no">10</span><span class="state"></span></span><span class="lv-size">10×10</span><span class="lv-dots" aria-hidden="true">●●●●○</span><span class="lv-time"><span data-l="en">~8 min</span><span data-l="zh" lang="zh-CN">约 8 分钟</span><span data-l="ja" lang="ja">約8分</span></span></button></li>
+        <li><button type="button" class="lv" data-level="11"><span class="lv-face"><span class="lv-no">11</span><span class="state"></span></span><span class="lv-size">10×10</span><span class="lv-dots" aria-hidden="true">●●●○○</span><span class="lv-time"><span data-l="en">~5 min</span><span data-l="zh" lang="zh-CN">约 5 分钟</span><span data-l="ja" lang="ja">約5分</span></span></button></li>
+        <li><button type="button" class="lv" data-level="12"><span class="lv-face"><span class="lv-no">12</span><span class="state"></span></span><span class="lv-size">10×10</span><span class="lv-dots" aria-hidden="true">●●●●●</span><span class="lv-time"><span data-l="en">~10 min</span><span data-l="zh" lang="zh-CN">约 10 分钟</span><span data-l="ja" lang="ja">約10分</span></span></button></li>
+      </ol>
+      <div class="done-note" id="packDone" hidden>
+        <p data-l="en">All twelve found. You can now count runs, spot overlaps, push runs against your marks and read a whole line at once. A new puzzle washes up every day under Today.</p>
+        <p data-l="zh" lang="zh-CN">十二样全找到了。数段、找重叠、借标记推挤、整行推理，你都会了。每天在“今日”里还有一道新题。</p>
+        <p data-l="ja" lang="ja">12個すべて見つけました。数えて塗る、重なりを見る、印で押し出す、一列まるごと読む。どれも身につきました。毎日「今日」に新しい一問が届きます。</p>
+        <p class="muted" id="packTotals"></p>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-today">
+      <h2 id="h-today"><span data-l="en">Today's tide</span><span data-l="zh" lang="zh-CN">今日一题</span><span data-l="ja" lang="ja">今日の一問</span></h2>
+      <p class="muted" data-l="en">A new picture every day, the same on all your devices. Monday is 7 × 7, Tuesday and Wednesday 8 × 8, Thursday and Friday 9 × 9, the weekend 10 × 10.</p>
+      <p class="muted" data-l="zh" lang="zh-CN">每天一幅新图，你所有设备上都一样。周一 7 × 7，周二周三 8 × 8，周四周五 9 × 9，周末 10 × 10。</p>
+      <p class="muted" data-l="ja" lang="ja">毎日新しい一枚で、どの端末でも同じ問題です。月曜は 7 × 7、火・水は 8 × 8、木・金は 9 × 9、週末は 10 × 10。</p>
+      <div class="today" id="todayCard">
+        <div class="today-face" id="todayFace" aria-hidden="true">?</div>
+        <div class="today-text"><b id="todayDate"></b><span id="todayMeta"></span><span id="todayState"></span></div>
+        <button type="button" class="go" id="todayGo"><span data-l="en">Play</span><span data-l="zh" lang="zh-CN">开始</span><span data-l="ja" lang="ja">解く</span></button>
+      </div>
+      <h3><span data-l="en">Earlier days</span><span data-l="zh" lang="zh-CN">往日的题</span><span data-l="ja" lang="ja">これまでの問題</span></h3>
+      <ul class="days" id="days"></ul>
+      <button type="button" class="more" id="moreDays"><span data-l="en">Show 14 more days</span><span data-l="zh" lang="zh-CN">再往前 14 天</span><span data-l="ja" lang="ja">さらに前の14日分</span></button>
+    </section>
+
+    <section aria-labelledby="h-set">
+      <h2 id="h-set"><span data-l="en">Settings</span><span data-l="zh" lang="zh-CN">设置</span><span data-l="ja" lang="ja">設定</span></h2>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" id="optMistakes"><span><span data-l="en">Show mistakes as I go</span><span data-l="zh" lang="zh-CN">随时标出错误</span><span data-l="ja" lang="ja">まちがいをその場で表示</span></span></label>
+        <label class="opt"><input type="checkbox" id="optClock"><span><span data-l="en">Show the clock</span><span data-l="zh" lang="zh-CN">显示计时</span><span data-l="ja" lang="ja">時間を表示</span></span></label>
+        <label class="opt"><input type="checkbox" id="optSound" checked><span><span data-l="en">Sounds</span><span data-l="zh" lang="zh-CN">声音</span><span data-l="ja" lang="ja">効果音</span></span></label>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-rec">
+      <h2 id="h-rec"><span data-l="en">Records</span><span data-l="zh" lang="zh-CN">记录</span><span data-l="ja" lang="ja">記録</span></h2>
+      <dl class="records">
+        <div><dt><span data-l="en">Levels solved</span><span data-l="zh" lang="zh-CN">已解关卡</span><span data-l="ja" lang="ja">クリアしたステージ</span></dt><dd id="recLevels">0 / 12</dd></div>
+        <div><dt><span data-l="en">Time on the pack</span><span data-l="zh" lang="zh-CN">关卡总用时</span><span data-l="ja" lang="ja">ステージの合計時間</span></dt><dd id="recTime">0:00</dd></div>
+        <div><dt><span data-l="en">Daily puzzles solved</span><span data-l="zh" lang="zh-CN">已解每日题</span><span data-l="ja" lang="ja">解いた今日の一問</span></dt><dd id="recDaily">0</dd></div>
+        <div><dt><span data-l="en">Daily streak</span><span data-l="zh" lang="zh-CN">连续天数</span><span data-l="ja" lang="ja">連続日数</span></dt><dd id="recStreak">0</dd></div>
+        <div><dt><span data-l="en">Hints used</span><span data-l="zh" lang="zh-CN">用过的提示</span><span data-l="ja" lang="ja">使ったヒント</span></dt><dd id="recHints">0</dd></div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="h-rules">
+      <h2 id="h-rules"><span data-l="en">Full rules and a worked example</span><span data-l="zh" lang="zh-CN">完整规则与示例</span><span data-l="ja" lang="ja">くわしいルールと例</span></h2>
+      <ol class="rules" data-l="en">
+        <li>Each clue lists the runs of filled cells in its row or column, in order: “3 1” is a run of three, then, further on, a run of one.</li>
+        <li>Runs are separated by at least one empty cell. A clue of 0 means the whole line is empty.</li>
+        <li>The puzzle is solved when every row and column matches its clue. Crosses are notes for you and never count against you.</li>
+      </ol>
+      <ol class="rules" data-l="zh" lang="zh-CN">
+        <li>每个数字表示这一行（列）里连续涂黑的格数，按顺序排列：“3 1”就是先连涂 3 格，后面再涂 1 格。</li>
+        <li>两段之间至少隔一个空格。数字 0 表示整条都是空格。</li>
+        <li>每行每列都和数字对上，就解开了。叉只是给自己的记号，不算对错。</li>
+      </ol>
+      <ol class="rules" data-l="ja" lang="ja">
+        <li>数字は、その行（列）で続けて塗るマスの数を順に並べたものです。「3 1」なら、3マス続けて塗り、その先に1マス塗ります。</li>
+        <li>かたまりの間には空白が1マス以上あります。0 はその列がすべて空白という意味です。</li>
+        <li>すべての行と列が数字どおりになれば完成です。×は自分用のメモで、正誤には数えません。</li>
+      </ol>
+      <div class="example">
+        <svg viewBox="0 0 340 92" role="img" aria-labelledby="exCap">
+          <text class="ex-text" x="10" y="31">7</text>
+          <g transform="translate(26 12)">
+            <rect class="ex-fill" x="91" y="1" width="118" height="28"/>
+            <rect class="ex-cell" x="0" y="0" width="30" height="30"/><rect class="ex-cell" x="30" y="0" width="30" height="30"/><rect class="ex-cell" x="60" y="0" width="30" height="30"/><rect class="ex-cell" x="90" y="0" width="30" height="30"/><rect class="ex-cell" x="120" y="0" width="30" height="30"/><rect class="ex-cell" x="150" y="0" width="30" height="30"/><rect class="ex-cell" x="180" y="0" width="30" height="30"/><rect class="ex-cell" x="210" y="0" width="30" height="30"/><rect class="ex-cell" x="240" y="0" width="30" height="30"/><rect class="ex-cell" x="270" y="0" width="30" height="30"/>
+            <rect class="ex-edge" x="0" y="0" width="300" height="30"/>
+            <rect class="ex-run" x="2" y="38" width="206" height="10" rx="5"/>
+            <rect class="ex-run" x="92" y="56" width="206" height="10" rx="5"/>
+            <text class="ex-soft" x="0" y="80">1</text><text class="ex-soft" x="90" y="80">4</text><text class="ex-soft" x="180" y="80">7</text><text class="ex-soft" x="290" y="80">10</text>
+          </g>
+        </svg>
+        <p id="exCap" data-l="en">A row of 10 cells with the clue 7. The run starts at cell 1 at the earliest and at cell 4 at the latest. Wherever it starts, cells 4 to 7 are covered, so fill them now. That is the overlap.</p>
+        <p data-l="zh" lang="zh-CN">一行 10 格，数字是 7。这一段最早从第 1 格开始，最晚从第 4 格开始。不管从哪开始，第 4 到第 7 格都会被涂，所以现在就能涂上。这就是“重叠”。</p>
+        <p data-l="ja" lang="ja">10マスの行に 7。かたまりは早ければ1マス目、遅くとも4マス目から始まります。どちらでも4〜7マス目は必ず塗られるので、もう塗れます。これが「重なり」です。</p>
+      </div>
+      <p data-l="en">Once a line has marks in it, push each run as far left and as far right as the marks allow and fill what both positions share; cells no run can reach are empty. When even that stalls, picture every way the runs could fit: a cell they all agree on is decided. The later levels need that last step.</p>
+      <p data-l="zh" lang="zh-CN">一条线上有了标记后，把每一段在标记允许的范围内推到最左、再推到最右，两次都盖住的格子就该涂；哪一段都够不着的格子是空格。还推不动时，就想想所有可能的摆法：所有摆法都一致的格子就定下来了。后面几关需要这一步。</p>
+      <p data-l="ja" lang="ja">印が入った列では、各かたまりを印の許すかぎり左端と右端に寄せ、両方で重なるマスを塗ります。どのかたまりも届かないマスは空白です。それでも進まないときは、ありうる置き方をすべて思い浮かべ、どれでも同じになるマスを確定させます。後半のステージではこの一手が必要です。</p>
+      <p class="muted" data-l="en">Keyboard: arrows move, Space or F fills, X crosses, Backspace clears, Ctrl/⌘ Z undoes, Shift Ctrl/⌘ Z redoes, H asks for a hint. With a mouse, the right button crosses. Drag along a row or column to mark a run in one stroke.</p>
+      <p class="muted" data-l="zh" lang="zh-CN">键盘：方向键移动，空格或 F 涂黑，X 打叉，退格清除，Ctrl/⌘ Z 撤销，Shift Ctrl/⌘ Z 重做，H 要提示。鼠标右键打叉。沿一行或一列拖动，一笔标出一段。</p>
+      <p class="muted" data-l="ja" lang="ja">キーボード：矢印で移動、スペースか F で塗り、X で×、Backspace で消去、Ctrl/⌘ Z で元に戻す、Shift Ctrl/⌘ Z でやり直し、H でヒント。マウスは右ボタンで×。行や列に沿ってドラッグすると一筆でまとめて書けます。</p>
+      <p class="fine" data-l="en">Pictures and puzzles made for this page. Every level and every daily seed was checked by the solver inside it: one solution, reachable without guessing.</p>
+      <p class="fine" data-l="zh" lang="zh-CN">图案和题目为本页原创。每一关和每一天的题都用页面里的求解器检查过：只有一个答案，不用猜就能解出。</p>
+      <p class="fine" data-l="ja" lang="ja">絵と問題はこのページのための描き下ろしです。すべてのステージと毎日の問題を、ページ内のソルバーで確認済み：答えはひとつ、当て推量なしで解けます。</p>
+    </section>
+  </div>
+</main>
+
+<script type="application/json" id="levels">
+[
+{"id":"1","name":{"en":"Fish","zh":"小鱼","ja":"さかな"},"pic":".#...|###.#|#####|###.#|.#...","grade":1,"minutes":2},
+{"id":"2","name":{"en":"Sailboat","zh":"帆船","ja":"ヨット"},"pic":"##...|.##..|.###.|#####|####.","grade":1,"minutes":2},
+{"id":"3","name":{"en":"Shell","zh":"贝壳","ja":"貝がら"},"pic":"..##..|.####.|#.##.#|######|.####.|.#..#.","grade":2,"minutes":2},
+{"id":"4","name":{"en":"Starfish","zh":"海星","ja":"ヒトデ"},"pic":"...#...|...#...|#######|.#####.|..###..|.##.##.|##...##","grade":3,"minutes":4},
+{"id":"5","name":{"en":"Lighthouse","zh":"灯塔","ja":"灯台"},"pic":"...##...|..####..|..#..#..|..####..|...##...|...##...|..####..|.######.","grade":1,"minutes":3},
+{"id":"6","name":{"en":"Anchor","zh":"船锚","ja":"いかり"},"pic":"...##...|..#..#..|..#..#..|...##...|.######.|...##...|##.##.##|.######.","grade":2,"minutes":4},
+{"id":"7","name":{"en":"Coral","zh":"珊瑚","ja":"サンゴ"},"pic":"#..#..#.|#.##.##.|##.#.#..|.#.###.#|.##.#.##|..####..|...##...|..####..","grade":3,"minutes":4},
+{"id":"8","name":{"en":"Crab","zh":"螃蟹","ja":"カニ"},"pic":"..#...#..|#.#...#.#|.#.....#.|..#####..|.#######.|#.#####.#|.#######.|#..#.#..#|.#.....#.","grade":4,"minutes":7},
+{"id":"9","name":{"en":"Whale","zh":"鲸鱼","ja":"クジラ"},"pic":"...#.#....|....#.....|..######..|.########.|##.#######|##########|#########.|.#######.#|..#####.##|......####","grade":3,"minutes":5},
+{"id":"10","name":{"en":"Jellyfish","zh":"水母","ja":"クラゲ"},"pic":".########.|.#......#.|#..#..#..#|#........#|.########.|..#.#.#.#.|.#.#.#.#..|..#.#.#.#.|.#.#.#.#..|..#...#...","grade":4,"minutes":8},
+{"id":"11","name":{"en":"Turtle","zh":"海龟","ja":"ウミガメ"},"pic":"....##....|...####...|.#.####.#.|##.#..#.##|..######..|..#.##.#..|..######..|.##.##.##.|##..##..##|....##....","grade":3,"minutes":5},
+{"id":"12","name":{"en":"Octopus","zh":"章鱼","ja":"タコ"},"pic":"...####...|#.#....#.#|.#.#..#.#.|.#......#.|.##.##.##.|#.######.#|.#.#..#.#.|#..#..#..#|#.#....#.#|.#......#.","grade":5,"minutes":10}
+]
+</script>
+
+<script>
+function makePuzzle() {
+  // Picture logic. A puzzle is { w, h, rows, cols }: each clue lists the runs
+  // of filled cells in that line, in order. A picture is a string of '#' and
+  // '.', row by row. Knowledge is an array of 1 (filled), 0 (empty), -1 (open).
+  // No DOM, no globals: the page and the Node check run this same code.
+  function runs(line) {
+    const out = []; let n = 0;
+    for (const v of line) { if (v === 1) n++; else if (n) { out.push(n); n = 0; } }
+    if (n) out.push(n);
+    return out;
+  }
+  function fromPicture(pic, w, h) {
+    const g = [...pic].map(ch => ch === "#" ? 1 : 0), rows = [], cols = [];
+    for (let r = 0; r < h; r++) rows.push(runs(g.slice(r * w, r * w + w)));
+    for (let c = 0; c < w; c++) { const col = []; for (let r = 0; r < h; r++) col.push(g[r * w + c]); cols.push(runs(col)); }
+    return { w, h, rows, cols };
+  }
+  // Line index: 0..h-1 are rows, h..h+w-1 are columns.
+  function lineCells(p, li) {
+    const out = [];
+    if (li < p.h) for (let c = 0; c < p.w; c++) out.push(li * p.w + c);
+    else for (let r = 0; r < p.h; r++) out.push(r * p.w + (li - p.h));
+    return out;
+  }
+  const clueOf = (p, li) => li < p.h ? p.rows[li] : p.cols[li - p.h];
+
+  // Every arrangement of the clue that agrees with the line: which cells can
+  // be filled, which can be empty, and each run's earliest and latest start.
+  function analyse(clue, line) {
+    const n = line.length, m = clue.length;
+    const zeros = [0]; for (let i = 0; i < n; i++) zeros.push(zeros[i] + (line[i] === 0 ? 1 : 0));
+    const fits = (k, i) => { const e = i + clue[k]; return e <= n && zeros[e] === zeros[i] && (e === n || line[e] !== 1); };
+    const after = (k, i) => i + clue[k] < n ? i + clue[k] + 1 : n;
+    const can = []; for (let k = 0; k <= m; k++) can.push(new Uint8Array(n + 1));
+    for (let k = m; k >= 0; k--) {
+      can[k][n] = k === m ? 1 : 0;
+      for (let i = n - 1; i >= 0; i--) {
+        can[k][i] = (line[i] !== 1 && can[k][i + 1]) || (k < m && fits(k, i) && can[k + 1][after(k, i)]) ? 1 : 0;
+      }
+    }
+    const res = { ok: !!can[0][0], fill: new Uint8Array(n), empty: new Uint8Array(n), first: new Array(m).fill(n), last: new Array(m).fill(-1) };
+    if (!res.ok) return res;
+    const reach = []; for (let k = 0; k <= m; k++) reach.push(new Uint8Array(n + 1));
+    reach[0][0] = 1;
+    for (let i = 0; i < n; i++) for (let k = 0; k <= m; k++) {
+      if (!reach[k][i]) continue;
+      if (line[i] !== 1 && can[k][i + 1]) { reach[k][i + 1] = 1; res.empty[i] = 1; }
+      if (k < m && fits(k, i) && can[k + 1][after(k, i)]) {
+        reach[k + 1][after(k, i)] = 1;
+        for (let j = i; j < i + clue[k]; j++) res.fill[j] = 1;
+        if (i + clue[k] < n) res.empty[i + clue[k]] = 1;
+        if (i < res.first[k]) res.first[k] = i;
+        if (i > res.last[k]) res.last[k] = i;
+      }
+    }
+    return res;
+  }
+
+  // Techniques, simplest first. Each looks at one line and returns the cells
+  // it decides: [[position in line, value], ...].
+  const TECH = ["zero", "fits", "done", "rest", "overlap", "edge", "line"];
+  const TIER = { zero: 1, fits: 1, done: 1, rest: 1, overlap: 2, edge: 3, line: 4 };
+  function technique(name, clue, line) {
+    const n = line.length, open = [], sum = clue.reduce((a, b) => a + b, 0);
+    let filled = 0;
+    line.forEach((v, i) => { if (v === -1) open.push(i); else if (v === 1) filled++; });
+    if (!open.length) return [];
+    if (name === "zero") return clue.length ? [] : open.map(i => [i, 0]);
+    if (name === "fits") return clue.length && sum + clue.length - 1 === n ? lineFrom(clue, n).flatMap((v, i) => line[i] === -1 ? [[i, v]] : []) : [];
+    if (name === "done") return clue.length && filled === sum ? open.map(i => [i, 0]) : [];
+    if (name === "rest") return clue.length && filled + open.length === sum ? open.map(i => [i, 1]) : [];
+    if (name === "overlap") {
+      // From the clue alone: pack the runs left, then right; what both cover is filled.
+      const out = []; let left = 0;
+      clue.forEach((len, k) => {
+        const right = n - clue.slice(k).reduce((a, b) => a + b, 0) - (clue.length - 1 - k);
+        for (let j = right; j < left + len; j++) if (line[j] === -1) out.push([j, 1]);
+        left += len + 1;
+      });
+      return out;
+    }
+    const a = analyse(clue, line);
+    if (!a.ok) return null;
+    if (name === "edge") {
+      const out = new Map();
+      clue.forEach((len, k) => { for (let j = a.last[k]; j < a.first[k] + len; j++) if (line[j] === -1) out.set(j, 1); });
+      const reach = new Uint8Array(n);
+      clue.forEach((len, k) => { for (let j = a.first[k]; j < a.last[k] + len; j++) reach[j] = 1; });
+      for (const i of open) if (!reach[i]) out.set(i, 0);
+      return [...out.entries()];
+    }
+    return open.flatMap(i => a.fill[i] && !a.empty[i] ? [[i, 1]] : !a.fill[i] && a.empty[i] ? [[i, 0]] : []);
+  }
+  function lineFrom(clue, n) { const out = []; clue.forEach((len, k) => { if (k) out.push(0); for (let j = 0; j < len; j++) out.push(1); }); while (out.length < n) out.push(0); return out; }
+
+  // The hint: the simplest deduction anywhere on the board, preferring the
+  // line where it decides the most cells. { line, kind, cells: [[cell, value]] }
+  function nextStep(p, know) {
+    for (const kind of TECH) {
+      let best = null;
+      for (let li = 0; li < p.h + p.w; li++) {
+        const cells = lineCells(p, li), got = technique(kind, clueOf(p, li), cells.map(c => know[c]));
+        if (got && got.length && (!best || got.length > best.cells.length)) best = { line: li, kind, tier: TIER[kind], cells: got.map(([i, v]) => [cells[i], v]) };
+      }
+      if (best) return best;
+    }
+    return null;
+  }
+  function grade(p, start) {
+    const know = start ? start.slice() : new Array(p.w * p.h).fill(-1), counts = {};
+    let hardest = 0, steps = 0, step;
+    while ((step = nextStep(p, know))) {
+      for (const [c, v] of step.cells) know[c] = v;
+      counts[step.kind] = (counts[step.kind] || 0) + 1;
+      hardest = Math.max(hardest, step.tier); steps++;
+    }
+    const solved = know.every(v => v !== -1);
+    // Difficulty from the reasoning: overlaps count a little, pushing runs
+    // against marks more, whole-line logic most. 1 gentle .. 5 expert.
+    const score = (counts.overlap || 0) * 0.5 + (counts.edge || 0) + (counts.line || 0) * 6;
+    const level = !solved ? 0 : score < 2 ? 1 : score < 8 ? 2 : score < 15 ? 3 : score < 45 ? 4 : 5;
+    return { solved, hardest, level, score, counts, steps, know };
+  }
+
+  // Line propagation to a fixpoint; false on a contradiction.
+  function propagate(p, know) {
+    const queue = [], queued = new Uint8Array(p.h + p.w);
+    for (let li = 0; li < p.h + p.w; li++) { queue.push(li); queued[li] = 1; }
+    while (queue.length) {
+      const li = queue.shift(); queued[li] = 0;
+      const cells = lineCells(p, li), line = cells.map(c => know[c]);
+      if (!line.includes(-1)) { if (runs(line).join() !== clueOf(p, li).join()) return false; continue; }
+      const a = analyse(clueOf(p, li), line);
+      if (!a.ok) return false;
+      cells.forEach((c, i) => {
+        if (line[i] !== -1) return;
+        const v = a.fill[i] && !a.empty[i] ? 1 : !a.fill[i] && a.empty[i] ? 0 : -1;
+        if (v === -1) return;
+        know[c] = v;
+        const other = li < p.h ? p.h + (c % p.w) : Math.floor(c / p.w);
+        if (!queued[other]) { queue.push(other); queued[other] = 1; }
+      });
+    }
+    return true;
+  }
+  // Every solution, by propagation and branching; stops at `limit`.
+  function solve(p, limit = 2, know = new Array(p.w * p.h).fill(-1), out = []) {
+    know = know.slice();
+    if (!propagate(p, know)) return out;
+    const open = know.indexOf(-1);
+    if (open < 0) { out.push(know.map(v => v ? "#" : ".").join("")); return out; }
+    for (const v of [1, 0]) { if (out.length >= limit) break; const next = know.slice(); next[open] = v; solve(p, limit, next, out); }
+    return out;
+  }
+
+  // Seeded daily pictures: a mirrored, smoothed pattern that line logic alone
+  // solves (so it has exactly one solution).
+  function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6d2b79f5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  function seedOf(text) { let h = 2166136261; for (const ch of text) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return h >>> 0; }
+  function pattern(rand, w, h) {
+    const half = Math.ceil(w / 2), g = new Array(w * h).fill(0);
+    for (let r = 0; r < h; r++) for (let c = 0; c < half; c++) { const v = rand() < 0.56 ? 1 : 0; g[r * w + c] = v; g[r * w + (w - 1 - c)] = v; }
+    for (let pass = 0; pass < 1; pass++) {
+      const next = g.slice();
+      for (let r = 0; r < h; r++) for (let c = 0; c < w; c++) {
+        let n = 0;
+        for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { const rr = r + dr, cc = c + dc; if (rr >= 0 && rr < h && cc >= 0 && cc < w) n += g[rr * w + cc]; }
+        next[r * w + c] = n >= 5 ? 1 : n <= 3 ? 0 : g[r * w + c];
+      }
+      for (let i = 0; i < g.length; i++) g[i] = next[i];
+    }
+    return g;
+  }
+  const DAILY_SIZE = [10, 7, 8, 8, 9, 9, 10]; // Sunday .. Saturday
+  function dailySize(date) { const [y, m, d] = date.split("-").map(Number); return DAILY_SIZE[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]; }
+  function daily(date) {
+    const size = dailySize(date);
+    const rand = rng(seedOf("low-tide:" + date));
+    for (let attempt = 1; attempt <= 400; attempt++) {
+      const g = pattern(rand, size, size), filled = g.reduce((a, b) => a + b, 0);
+      if (filled < size * size * 0.42 || filled > size * size * 0.68) continue;
+      const pic = g.map(v => v ? "#" : ".").join(""), p = fromPicture(pic, size, size);
+      if (p.rows.some(r => !r.length) || p.cols.some(c => !c.length)) continue;
+      const know = new Array(size * size).fill(-1);
+      if (!propagate(p, know) || know.includes(-1)) continue;
+      const level = grade(p).level;
+      if (level >= (size < 9 ? 2 : 3) && level <= 4) return { date, w: size, h: size, pic, attempt, level };
+    }
+    return null;
+  }
+
+  return { runs, fromPicture, lineCells, clueOf, analyse, nextStep, grade, propagate, solve, daily, dailySize, seedOf };
+}
+/* end puzzle */
+
+(function () {
+  "use strict";
+  const P = makePuzzle();
+  const $ = id => document.getElementById(id);
+  const LEVELS = JSON.parse($("levels").textContent).map(L => {
+    const rows = L.pic.split("|");
+    return { ...L, w: rows[0].length, h: rows.length, sol: rows.join("") };
+  });
+  const LAUNCH = "2026-11-01";
+
+  // ---------- words ----------
+  const T = {
+    en: {
+      level: n => `Level ${n}`, size: (w, h) => `${w} × ${h}`,
+      row: n => `Row ${n}`, col: n => `Column ${n}`,
+      grades: ["", "Gentle", "Easy", "Medium", "Hard", "Expert"],
+      minutes: m => `~${m} min`,
+      states: { ".": "empty", "#": "filled", x: "crossed" },
+      cell: (r, c, s) => `Row ${r}, column ${c}, ${s}`,
+      tools: { undo: "Undo", redo: "Redo", modeFill: "Fill cells", modeCross: "Cross out cells", hint: "Hint", restart: "Restart", again: "Play again" },
+      switchLabel: "Puzzle", gridLabel: (w, h) => `Puzzle grid, ${w} by ${h}`,
+      goal: "Fill cells to match the numbers, and a picture appears.",
+      zero: (L) => `${L} has the clue 0: every cell in it is empty.`,
+      fits: (L, k, n) => `${L}: ${k} with one gap between runs fills all ${n} cells exactly.`,
+      done: (L, s) => `${L} already has its ${s} filled ${s === 1 ? "cell" : "cells"}, so the rest are empty.`,
+      rest: (L, s) => `${L} needs ${s} filled cells and only that many are open: fill them all.`,
+      overlap: (L, k, n) => `${L}: however ${k} sits in ${n} cells, the marked cells are covered.`,
+      edgeF: (L, k) => `${L}: your marks pin the runs ${k}, so the marked cells must be filled.`,
+      edgeE: (L, k) => `${L}: no run of ${k} can reach the marked cells, so they are empty.`,
+      line: (L, k) => `${L}: every way to fit ${k} around your marks agrees on the marked cells.`,
+      again: " Tap the bulb again to mark them.",
+      mistake: "This mark does not fit the picture. Tap the bulb again to clear it.",
+      applied: (n, L) => `Marked ${n} ${n === 1 ? "cell" : "cells"} in ${L.toLowerCase()}.`,
+      cleared: "Mistake cleared.",
+      nothing: "Every cell is decided: compare your fills with the clues.",
+      confirm: "Tap restart again to clear this grid.",
+      restarted: "Cleared. Undo brings your marks back.",
+      solved: "Solved: every row and column matches its clue.",
+      tide: n => `Tide No. ${n}`,
+      sub: (t, h) => `Solved in ${t} · ${h === 0 ? "no hints" : h === 1 ? "1 hint" : h + " hints"}`,
+      first: t => ` · first ${t}`,
+      next: "Next", nextDaily: "Today", toPack: "Levels",
+      todayState: { none: "Not started", going: "In progress", done: (t) => `Solved in ${t}` },
+      play: "Play", resume: "Resume", view: "View",
+      totals: (t, h) => `Time on the pack ${t} · ${h === 1 ? "1 hint" : h + " hints"}`,
+      cardLabel: (n, w, h, g, st) => `Level ${n}, ${w} by ${h}, ${g}${st ? ", " + st : ""}`,
+      cardState: { going: "in progress", solved: "solved" },
+      dayLabel: (d, st) => `${d}${st ? ", " + st : ""}`,
+      langNames: "Language"
+    },
+    zh: {
+      level: n => `第 ${n} 关`, size: (w, h) => `${w} × ${h}`,
+      row: n => `第 ${n} 行`, col: n => `第 ${n} 列`,
+      grades: ["", "入门", "简单", "中等", "困难", "高手"],
+      minutes: m => `约 ${m} 分钟`,
+      states: { ".": "空", "#": "已涂", x: "打叉" },
+      cell: (r, c, s) => `第 ${r} 行第 ${c} 列，${s}`,
+      tools: { undo: "撤销", redo: "重做", modeFill: "涂黑", modeCross: "打叉", hint: "提示", restart: "重来", again: "再玩一次" },
+      switchLabel: "题目", gridLabel: (w, h) => `${w} × ${h} 的题目网格`,
+      goal: "照着数字涂格子，画就会出现。",
+      zero: (L) => `${L}的数字是 0，这一条全是空格。`,
+      fits: (L, k, n) => `${L}：${k} 加上中间的空格，正好占满 ${n} 格。`,
+      done: (L, s) => `${L}已经涂够 ${s} 格，其余都是空格。`,
+      rest: (L, s) => `${L}要涂 ${s} 格，没定的格子正好这么多，全部涂上。`,
+      overlap: (L, k, n) => `${L}：${k} 在 ${n} 格里不管怎么放，标出的格子都会被涂。`,
+      edgeF: (L, k) => `${L}：已有标记把 ${k} 卡住了，标出的格子必须涂。`,
+      edgeE: (L, k) => `${L}：${k} 哪一段都够不着标出的格子，它们是空格。`,
+      line: (L, k) => `${L}：按现有标记，${k} 的每种摆法在标出的格子上都一样。`,
+      again: "再点灯泡替你标上。",
+      mistake: "这一格标得不对。再点一次灯泡，把它清掉。",
+      applied: (n, L) => `已在${L}标好 ${n} 格。`,
+      cleared: "已清掉标错的格子。",
+      nothing: "每一格都定了：对照数字看看涂的格子。",
+      confirm: "再点一次重来，清空这一题。",
+      restarted: "已清空。撤销可以找回刚才的标记。",
+      solved: "解开了：每行每列都和数字对上了。",
+      tide: n => `每日第 ${n} 号`,
+      sub: (t, h) => `用时 ${t} · ${h === 0 ? "没用提示" : "提示 " + h + " 次"}`,
+      first: t => ` · 首次 ${t}`,
+      next: "下一关", nextDaily: "今日一题", toPack: "关卡",
+      todayState: { none: "还没开始", going: "做到一半", done: (t) => `已解开，用时 ${t}` },
+      play: "开始", resume: "继续", view: "查看",
+      totals: (t, h) => `关卡总用时 ${t} · 提示 ${h} 次`,
+      cardLabel: (n, w, h, g, st) => `第 ${n} 关，${w} × ${h}，${g}${st ? "，" + st : ""}`,
+      cardState: { going: "做到一半", solved: "已解开" },
+      dayLabel: (d, st) => `${d}${st ? "，" + st : ""}`,
+      langNames: "语言"
+    },
+    ja: {
+      level: n => `第${n}問`, size: (w, h) => `${w} × ${h}`,
+      row: n => `${n}行目`, col: n => `${n}列目`,
+      grades: ["", "入門", "やさしい", "ふつう", "むずかしい", "達人"],
+      minutes: m => `約${m}分`,
+      states: { ".": "空白", "#": "塗り", x: "×" },
+      cell: (r, c, s) => `${r}行${c}列、${s}`,
+      tools: { undo: "元に戻す", redo: "やり直し", modeFill: "塗る", modeCross: "×を付ける", hint: "ヒント", restart: "最初から", again: "もう一度" },
+      switchLabel: "問題", gridLabel: (w, h) => `${w} × ${h} の盤面`,
+      goal: "数字どおりに塗ると、絵が現れます。",
+      zero: (L) => `${L}は 0。すべて空白です。`,
+      fits: (L, k, n) => `${L}：${k} と間の空白で${n}マスぴったり。`,
+      done: (L, s) => `${L}は${s}マス塗り終わり。残りは空白。`,
+      rest: (L, s) => `${L}：未定のマスを全部塗ってちょうど${s}マス。`,
+      overlap: (L, k, n) => `${L}：${k} をどこに置いても、印のマスは塗られます。`,
+      edgeF: (L, k) => `${L}：印で ${k} の位置がしぼれ、印のマスは塗り。`,
+      edgeE: (L, k) => `${L}：${k} のどれも届かないので、印のマスは空白。`,
+      line: (L, k) => `${L}：印に合う ${k} の置き方は、どれも印のマスで一致。`,
+      again: "もう一度押すと記入します。",
+      mistake: "この印は絵と合いません。もう一度押すと消します。",
+      applied: (n, L) => `${L}に${n}マス書き込みました。`,
+      cleared: "まちがいを消しました。",
+      nothing: "全マス決まっています。数字と見比べてみてください。",
+      confirm: "もう一度押すと、この盤面を消します。",
+      restarted: "消しました。元に戻すで印が戻ります。",
+      solved: "完成：すべての行と列が数字どおりです。",
+      tide: n => `今日の一問 第${n}号`,
+      sub: (t, h) => `${t}で完成 · ${h === 0 ? "ヒントなし" : "ヒント" + h + "回"}`,
+      first: t => ` · 初回 ${t}`,
+      next: "次へ", nextDaily: "今日の一問", toPack: "ステージ",
+      todayState: { none: "未着手", going: "途中", done: (t) => `${t}で完成` },
+      play: "解く", resume: "続き", view: "見る",
+      totals: (t, h) => `ステージ合計 ${t} · ヒント${h}回`,
+      cardLabel: (n, w, h, g, st) => `第${n}問、${w} × ${h}、${g}${st ? "、" + st : ""}`,
+      cardState: { going: "途中", solved: "完成" },
+      dayLabel: (d, st) => `${d}${st ? "、" + st : ""}`,
+      langNames: "言語"
+    }
+  };
+  const LOCALE = { en: "en-GB", zh: "zh-CN", ja: "ja-JP" };
+
+  // ---------- saved state ----------
+  // Keys: "lang"; "cur" (open puzzle key); "L<n>" and "d:<date>" boards as
+  // "cells|seconds|hints|undo|redo"; "rec" pack results "n.seconds.hints,…";
+  // "dr:<yyyy-mm>" daily results "dd.seconds.hints,…"; "mist", "clock", "sound".
+  const api = window.dodojo || null;
+  let S = {};
+  try { S = { ...(api && api.getState ? api.getState() || {} : {}) }; } catch (e) { S = {}; }
+  const wrote = {};
+  function save(patch) {
+    for (const k in patch) { if (patch[k] === null) delete S[k]; else S[k] = patch[k]; wrote[k] = patch[k]; }
+    try { const r = api && api.setState ? api.setState(patch) : null; if (r && r.catch) r.catch(() => {}); } catch (e) {}
+  }
+
+  let lang = document.documentElement.getAttribute("data-lang") || "en";
+  const t = () => T[lang];
+
+  // ---------- helpers ----------
+  const pad2 = n => String(n).padStart(2, "0");
+  const dateKey = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  const today = () => dateKey(new Date());
+  const parseDate = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d, 12); };
+  const addDays = (s, n) => { const d = parseDate(s); d.setDate(d.getDate() + n); return dateKey(d); };
+  const dayNo = s => Math.round((parseDate(s) - parseDate(LAUNCH)) / 864e5) + 1;
+  const fmt = secs => { secs = Math.max(0, Math.round(secs)); const h = Math.floor(secs / 3600), m = Math.floor(secs / 60) % 60, s = secs % 60; return h ? `${h}:${pad2(m)}:${pad2(s)}` : `${m}:${pad2(s)}`; };
+  const dateLabel = (s, long, short) => { try { return new Intl.DateTimeFormat(LOCALE[lang], long ? { weekday: "short", month: "short", day: "numeric", year: "numeric" } : { weekday: "short", month: short && lang !== "en" ? "numeric" : "short", day: "numeric" }).format(parseDate(s)); } catch (e) { return s; } };
+  const clueText = k => k.length ? k.join(" ") : "0";
+  const lineName = (p, li) => li < p.h ? t().row(li + 1) : t().col(li - p.h + 1);
+
+  function parseRecs(str) { const out = {}; (str || "").split(",").filter(Boolean).forEach(e => { const [k, s, h] = e.split("."); out[k] = { secs: +s || 0, hints: +h || 0 }; }); return out; }
+  function writeRecs(obj) { return Object.entries(obj).map(([k, v]) => `${k}.${v.secs}.${v.hints}`).join(","); }
+  const packRecs = () => parseRecs(S.rec);
+  const dailyRecs = month => parseRecs(S["dr:" + month]);
+  function dailyRec(date) { return dailyRecs(date.slice(0, 7))[date.slice(8)] || null; }
+  function recordOf(key) { return key[0] === "L" ? packRecs()[key.slice(1)] || null : dailyRec(key.slice(2)); }
+
+  // ---------- the open puzzle ----------
+  let cur = null;
+  const dailyCache = new Map();
+  function dailyOf(date) { if (!dailyCache.has(date)) dailyCache.set(date, P.daily(date)); return dailyCache.get(date); }
+  function puzzleFor(key) {
+    if (key[0] === "L") { const L = LEVELS.find(l => l.id === key.slice(1)); if (!L) return null; return { key, kind: "L", id: L.id, w: L.w, h: L.h, sol: L.sol, name: L.name, grade: L.grade }; }
+    const date = key.slice(2), d = dailyOf(date);
+    return d && { key, kind: "d", date, w: d.w, h: d.h, sol: d.pic, grade: d.level };
+  }
+  function decodeHist(str) { return (str || "").split(";").filter(Boolean).map(s => { const out = []; for (let i = 0; i + 3 < s.length; i += 4) out.push([parseInt(s.slice(i, i + 2), 36), s[i + 2], s[i + 3]]); return out; }); }
+  const encodeStroke = st => st.map(([i, b, a]) => i.toString(36).padStart(2, "0") + b + a).join("");
+  function serialize(withHistory) {
+    let past = "", future = "";
+    if (withHistory) {
+      const room = 3800 - cur.cells.length;
+      const enc = cur.past.map(encodeStroke), fut = cur.future.map(encodeStroke);
+      let used = 0, from = enc.length;
+      while (from > 0 && used + enc[from - 1].length + 1 <= room * 0.75) { used += enc[from - 1].length + 1; from--; }
+      past = enc.slice(from).join(";");
+      let f = fut.length, fused = 0;
+      while (f > 0 && fused + fut[f - 1].length + 1 <= room - used) { fused += fut[f - 1].length + 1; f--; }
+      future = fut.slice(f).join(";");
+    }
+    return `${cur.cells.join("")}|${Math.round(cur.secs)}|${cur.hints}|${past}|${future}`;
+  }
+  function persist(extra) {
+    if (!cur) return;
+    const where = S.cur !== cur.key ? { cur: cur.key, ...(cur.kind === "L" ? { lastL: cur.key } : {}) } : {};
+    save({ [cur.key]: serialize(true), ...where, ...(extra || {}) });
+  }
+
+  function open(key, opts) {
+    const pz = puzzleFor(key);
+    if (!pz) return;
+    if (cur && cur.key !== key && cur.touched) save({ [cur.key]: serialize(false) });
+    const raw = S[key] || "", parts = raw.split("|"), n = pz.w * pz.h;
+    let cells = parts[0] && parts[0].length === n && /^[.#x]+$/.test(parts[0]) ? parts[0].split("") : new Array(n).fill(".");
+    const rec = recordOf(key);
+    if (!parts[0] && rec) cells = pz.sol.split("").map(ch => ch === "#" ? "#" : "."); // an old solve shows solved
+    cur = { ...pz, p: P.fromPicture(pz.sol, pz.w, pz.h), cells, secs: +parts[1] || 0, hints: +parts[2] || 0, past: decodeHist(parts[3]), future: decodeHist(parts[4]), touched: !!raw, cursor: 0, hintStep: null, confirm: false };
+    cur.wasSolved = isSolved();
+    cur.running = !cur.wasSolved && cells.some(v => v !== ".");
+    cur.doneLines = lineStates();
+    if (!opts || !opts.quiet) save({ cur: key, ...(key[0] === "L" ? { lastL: key } : {}) });
+    build();
+    render();
+    if (cur.wasSolved) say(t().solved); else sayGoal();
+    renderSide();
+    if (opts && opts.scroll) { try { $("play").scrollIntoView({ block: "start", behavior: "smooth" }); } catch (e) {} }
+  }
+
+  // ---------- layout ----------
+  function build() {
+    const { w, h, p } = cur;
+    const maxCell = 44;
+    const avail = Math.max(200, $("sheet").clientWidth - 12);
+    // Measure the widest row clue (with room for its tick) at 100px, then scale.
+    const meas = document.createElement("div");
+    meas.style.cssText = "position:absolute;left:-9999px;top:0;visibility:hidden";
+    meas.innerHTML = p.rows.map(k => `<div class="rrow done" style="--fs:100px;display:flex;width:max-content">${(k.length ? k : [0]).map(x => `<span>${x}</span>`).join("")}</div>`).join("");
+    document.body.appendChild(meas);
+    const w100 = Math.max(...[...meas.children].map(e => e.getBoundingClientRect().width));
+    meas.remove();
+    let cell = maxCell, fs = 15, rcw = 40;
+    for (cell = maxCell; cell >= 14; cell--) {
+      fs = Math.max(11, Math.min(16, Math.round(cell * 0.56)));
+      rcw = Math.ceil((w100 - 8) * fs / 100 + 8 + 3);
+      if (rcw + cell * w <= avail) break;
+    }
+    const maxC = Math.max(...p.cols.map(c => Math.max(1, c.length)));
+    const cch = Math.max(30, Math.ceil((maxC + 1) * fs * 1.12 + maxC + 8));
+    const board = $("board");
+    board.style.setProperty("--cell", cell + "px");
+    board.style.setProperty("--w", w); board.style.setProperty("--h", h);
+    board.style.setProperty("--fs", fs + "px");
+    board.style.setProperty("--rcw", rcw + "px");
+    board.style.setProperty("--gw", cell * w + "px"); board.style.setProperty("--gh", cell * h + "px");
+    board.style.setProperty("--cch", cch + "px");
+    $("sheet").style.setProperty("--cch", cch + "px");
+    cur.cell = cell;
+    $("colClues").innerHTML = p.cols.map((k, c) => `<div class="ccol" data-line="${h + c}">${(k.length ? k : [0]).map(x => `<span>${x}</span>`).join("")}</div>`).join("");
+    $("rowClues").innerHTML = p.rows.map((k, r) => `<div class="rrow" data-line="${r}">${(k.length ? k : [0]).map(x => `<span>${x}</span>`).join("")}</div>`).join("");
+    let html = "";
+    for (let r = 0; r < h; r++) for (let c = 0; c < w; c++) {
+      const cls = ["c"]; if (c === 0) cls.push("L"); if (r === 0) cls.push("T"); if (c === w - 1 || (c + 1) % 5 === 0) cls.push("R"); if (r === h - 1 || (r + 1) % 5 === 0) cls.push("B");
+      html += `<div class="${cls.join(" ")}" style="--d:${r + c}"></div>`;
+    }
+    const grid = $("grid");
+    grid.innerHTML = html;
+    grid.setAttribute("aria-label", t().gridLabel(w, h));
+    cur.els = [...grid.children];
+    cur.rowEls = [...$("rowClues").children]; cur.colEls = [...$("colClues").children];
+  }
+
+  // ---------- rules on the person's marks ----------
+  function lineRuns(li) { return P.runs(P.lineCells(cur.p, li).map(c => cur.cells[c] === "#" ? 1 : 0)); }
+  function lineStates() { const out = []; for (let li = 0; li < cur.w + cur.h; li++) out.push(lineRuns(li).join() === P.clueOf(cur.p, li).join()); return out; }
+  function isSolved() { return lineStates().every(Boolean); }
+
+  // ---------- drawing ----------
+  function render() {
+    const solved = isSolved(), showBad = !!S.mist, hs = cur.hintStep;
+    const hlLine = hs && hs.line != null ? hs.line : -1, hlCells = new Set(hs ? hs.cells.map(x => x[0]) : []);
+    const hlSet = new Set(hlLine >= 0 ? P.lineCells(cur.p, hlLine) : []);
+    const curR = Math.floor(cur.cursor / cur.w), curC = cur.cursor % cur.w;
+    cur.els.forEach((el, i) => {
+      const v = cur.cells[i], bad = showBad && !solved && ((v === "#" && cur.sol[i] !== "#") || (v === "x" && cur.sol[i] === "#"));
+      el.classList.toggle("f", v === "#");
+      el.classList.toggle("x", v === "x");
+      el.classList.toggle("bad", bad);
+      el.classList.toggle("hl", hlSet.has(i));
+      el.classList.toggle("hc", hlCells.has(i));
+      el.classList.toggle("cur", i === cur.cursor);
+    });
+    const states = lineStates();
+    cur.rowEls.forEach((el, r) => { el.classList.toggle("done", states[r]); el.classList.toggle("hl", hlLine === r); el.classList.toggle("alt", kbd && r === curR && !solved); });
+    cur.colEls.forEach((el, c) => { el.classList.toggle("done", states[cur.h + c]); el.classList.toggle("hl", hlLine === cur.h + c); el.classList.toggle("alt", kbd && c === curC && !solved); });
+    $("grid").classList.toggle("won", solved);
+    $("grid").classList.toggle("kbd", kbd);
+    // strip
+    $("headGrade").innerHTML = `<b aria-hidden="true">${"●".repeat(cur.grade)}${"○".repeat(5 - cur.grade)}</b>${t().grades[cur.grade]}`;
+    $("where").textContent = cur.kind === "L" ? t().level(cur.id) : dateLabel(cur.date, false, true);
+    $("headSize").textContent = t().size(cur.w, cur.h);
+    $("seal").hidden = !recordOf(cur.key);
+    $("clock").hidden = !S.clock;
+    $("clock").textContent = fmt(cur.secs);
+    $("tabPack").setAttribute("aria-pressed", String(cur.kind === "L"));
+    $("tabDaily").setAttribute("aria-pressed", String(cur.kind === "d"));
+    // tools
+    $("undo").disabled = !cur.past.length;
+    $("redo").disabled = !cur.future.length;
+    $("modeFill").setAttribute("aria-pressed", String(mode === "fill"));
+    $("modeCross").setAttribute("aria-pressed", String(mode === "cross"));
+    $("hint").disabled = solved;
+    const rs = $("restart"); rs.classList.toggle("armed", cur.confirm);
+    const rl = solved ? t().tools.again : t().tools.restart; rs.setAttribute("aria-label", rl); rs.title = rl;
+    // banner
+    $("banner").hidden = !solved;
+    if (solved) {
+      const rec = recordOf(cur.key);
+      $("bannerTitle").textContent = cur.kind === "L" ? cur.name[lang] : t().tide(dayNo(cur.date));
+      const secs = cur.solveSecs != null ? cur.solveSecs : rec ? rec.secs : cur.secs, hints = cur.solveSecs != null ? cur.hints : rec ? rec.hints : cur.hints;
+      $("bannerSub").textContent = t().sub(fmt(secs), hints) + (rec && cur.solveSecs != null && rec.secs !== cur.solveSecs ? t().first(fmt(rec.secs)) : "");
+      const nextL = cur.kind === "L" ? nextLevel(cur.id) : null;
+      $("next").textContent = cur.kind === "L" ? (nextL ? t().next : t().nextDaily) : t().toPack;
+    }
+  }
+  function say(text) { $("say").textContent = text; }
+  function sayGoal() { $("say").textContent = t().goal; }
+
+  // ---------- marks, undo, redo ----------
+  let mode = "fill", kbd = false;
+  function apply(stroke, which) { for (const [i, b, a] of stroke) cur.cells[i] = which === "after" ? a : b; }
+  function commit(stroke) {
+    stroke = stroke.filter(([, b, a]) => b !== a);
+    if (!stroke.length) return;
+    cur.past.push(stroke); cur.future.length = 0;
+    apply(stroke, "after");
+    after();
+  }
+  function undo() { const s = cur.past.pop(); if (!s) return; cur.future.push(s); apply(s, "before"); after(true); }
+  function redo() { const s = cur.future.pop(); if (!s) return; cur.past.push(s); apply(s, "after"); after(true); }
+  function after(quietly) {
+    cur.touched = true; cur.hintStep = null; cur.confirm = false;
+    startClock();
+    const states = lineStates(), solved = states.every(Boolean);
+    const newly = states.some((d, i) => d && !cur.doneLines[i]);
+    cur.doneLines = states;
+    let extra = null;
+    if (solved && !cur.wasSolved) {
+      cur.solveSecs = Math.round(cur.secs);
+      const rec = recordOf(cur.key);
+      if (!rec) extra = cur.kind === "L" ? { rec: writeRecs({ ...packRecs(), [cur.id]: { secs: cur.solveSecs, hints: cur.hints } }) } : (() => { const m = cur.date.slice(0, 7); return { ["dr:" + m]: writeRecs({ ...dailyRecs(m), [cur.date.slice(8)]: { secs: cur.solveSecs, hints: cur.hints } }) }; })();
+      celebrate();
+      say(t().solved);
+    } else if (!solved) {
+      cur.solveSecs = null;
+      if (!quietly) { if (newly) tone("line"); else tone("tick"); }
+      if (cur.wasSolved) sayGoal();
+    }
+    cur.wasSolved = solved;
+    persist(extra);
+    if (cur.kind === "d") pruneDaily();
+    render();
+    if (extra || solved !== cur.lastSide) { renderSide(); cur.lastSide = solved; }
+  }
+
+  // ---------- pointer: tap, drag along a line ----------
+  let stroke = null;
+  function cellAt(e) {
+    const r = $("grid").getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    if (x < 0 || y < 0 || x >= r.width || y >= r.height) return -1;
+    return Math.min(cur.h - 1, Math.floor(y / (r.height / cur.h))) * cur.w + Math.min(cur.w - 1, Math.floor(x / (r.width / cur.w)));
+  }
+  function targetFor(v, m) { return m === "fill" ? (v === "." ? "#" : ".") : (v === "." ? "x" : "."); }
+  const grid = $("grid");
+  grid.addEventListener("contextmenu", e => e.preventDefault());
+  grid.addEventListener("pointerdown", e => {
+    if (!cur || isSolved() && false) return;
+    const c = cellAt(e); if (c < 0) return;
+    e.preventDefault();
+    kbd = false; startAudio();
+    try { grid.focus({ preventScroll: true }); } catch (err) {}
+    const m = e.button === 2 ? "cross" : mode;
+    const from = cur.cells[c];
+    stroke = { start: c, from, to: targetFor(from, m), axis: null, touched: new Map(), id: e.pointerId };
+    cur.cursor = c;
+    paintTo(c);
+    try { grid.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  grid.addEventListener("pointermove", e => {
+    if (!stroke || e.pointerId !== stroke.id) return;
+    const c = cellAt(e); if (c < 0) return;
+    paintTo(c);
+  });
+  function endStroke(e) {
+    if (!stroke || (e && e.pointerId !== stroke.id)) return;
+    const changes = [...stroke.touched.entries()].map(([i, b]) => [i, b, cur.cells[i]]);
+    apply(changes, "before");
+    stroke = null;
+    commit(changes);
+    render();
+  }
+  grid.addEventListener("pointerup", endStroke);
+  grid.addEventListener("pointercancel", endStroke);
+  function paintTo(c) {
+    const s = stroke, w = cur.w;
+    const r0 = Math.floor(s.start / w), c0 = s.start % w, r1 = Math.floor(c / w), c1 = c % w;
+    if (!s.axis && c !== s.start) s.axis = Math.abs(r1 - r0) > Math.abs(c1 - c0) ? "col" : "row";
+    const want = new Set([s.start]);
+    if (s.axis === "row") for (let x = Math.min(c0, c1); x <= Math.max(c0, c1); x++) want.add(r0 * w + x);
+    if (s.axis === "col") for (let y = Math.min(r0, r1); y <= Math.max(r0, r1); y++) want.add(y * w + c0);
+    for (const [i, b] of s.touched) if (!want.has(i)) { cur.cells[i] = b; s.touched.delete(i); }
+    for (const i of want) {
+      if (s.touched.has(i)) continue;
+      const v = cur.cells[i];
+      if (v !== s.from) continue;
+      s.touched.set(i, v); cur.cells[i] = s.to;
+    }
+    cur.cursor = c;
+    render();
+  }
+
+  // ---------- keyboard ----------
+  grid.addEventListener("keydown", e => {
+    if (!cur) return;
+    const w = cur.w, h = cur.h, r = Math.floor(cur.cursor / w), c = cur.cursor % w;
+    const k = e.key, mod = e.metaKey || e.ctrlKey;
+    const move = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] }[k];
+    if (mod && k.toLowerCase() === "z") { e.preventDefault(); e.shiftKey ? redo() : undo(); return; }
+    if (mod && k.toLowerCase() === "y") { e.preventDefault(); redo(); return; }
+    if (mod || e.altKey) return;
+    kbd = true; startAudio();
+    if (move) { e.preventDefault(); cur.cursor = Math.max(0, Math.min(h - 1, r + move[0])) * w + Math.max(0, Math.min(w - 1, c + move[1])); render(); announce(); return; }
+    let to = null;
+    const v = cur.cells[cur.cursor];
+    if (k === " " || k === "Enter") to = targetFor(v, mode);
+    else if (k === "f" || k === "F" || k === "1") to = targetFor(v === "#" ? "#" : ".", "fill");
+    else if (k === "x" || k === "X" || k === "2") to = targetFor(v === "x" ? "x" : ".", "cross");
+    else if (k === "Backspace" || k === "Delete" || k === "0") to = ".";
+    else if (k === "h" || k === "H") { e.preventDefault(); hint(); return; }
+    if (to === null) return;
+    e.preventDefault();
+    commit([[cur.cursor, v, to]]);
+    announce();
+  });
+  grid.addEventListener("focus", () => render());
+  grid.addEventListener("blur", () => { if (cur) render(); });
+  function announce() { const i = cur.cursor; $("live").textContent = t().cell(Math.floor(i / cur.w) + 1, i % cur.w + 1, t().states[cur.cells[i]]); }
+
+  // ---------- hint: explain first, mark on the second tap ----------
+  function boardSig() { return cur.cells.join(""); }
+  function hint() {
+    if (!cur || isSolved()) return;
+    startAudio();
+    const hs = cur.hintStep;
+    if (hs && hs.sig === boardSig()) {
+      const changes = hs.cells.map(([i, v]) => [i, cur.cells[i], v === 1 ? "#" : v === 0 ? "x" : "."]);
+      const L = hs.line != null ? lineName(cur.p, hs.line) : "";
+      commit(changes);
+      say(hs.kind === "mistake" ? t().cleared : t().applied(changes.length, L));
+      return;
+    }
+    const wrong = cur.cells.findIndex((v, i) => (v === "#" && cur.sol[i] !== "#") || (v === "x" && cur.sol[i] === "#"));
+    let step;
+    if (wrong >= 0) step = { kind: "mistake", line: null, cells: [[wrong, -1]] };
+    else {
+      const know = cur.cells.map(v => v === "#" ? 1 : v === "x" ? 0 : -1);
+      step = P.nextStep(cur.p, know);
+      if (!step) { say(t().nothing); return; }
+    }
+    cur.hints++;
+    cur.touched = true;
+    step.sig = boardSig();
+    cur.hintStep = step;
+    persist();
+    if (step.kind === "mistake") say(t().mistake);
+    else {
+      const k = P.clueOf(cur.p, step.line), L = lineName(cur.p, step.line), n = step.line < cur.h ? cur.w : cur.h;
+      const sum = k.reduce((a, b) => a + b, 0), kt = clueText(k);
+      const fills = step.cells.some(x => x[1] === 1);
+      const text = { zero: t().zero(L), fits: t().fits(L, kt, n), done: t().done(L, sum), rest: t().rest(L, sum), overlap: t().overlap(L, kt, n), edge: fills ? t().edgeF(L, kt) : t().edgeE(L, kt), line: t().line(L, kt) }[step.kind];
+      say(text + t().again);
+    }
+    render();
+  }
+
+  // ---------- restart, which asks once ----------
+  let confirmTimer = 0;
+  function restart() {
+    if (!cur) return;
+    const solved = isSolved();
+    if (!cur.confirm && !solved) { cur.confirm = true; say(t().confirm); render(); clearTimeout(confirmTimer); confirmTimer = setTimeout(() => { if (cur.confirm) { cur.confirm = false; sayGoal(); render(); } }, 4000); return; }
+    cur.confirm = false;
+    const changes = cur.cells.map((v, i) => [i, v, "."]);
+    commit(changes);
+    cur.secs = 0; cur.hints = 0; cur.solveSecs = null;
+    persist();
+    say(solved ? t().goal : t().restarted);
+    render();
+  }
+
+  // ---------- clock ----------
+  function startClock() { if (cur) cur.running = true; }
+  setInterval(() => {
+    if (!cur || !cur.running || document.visibilityState !== "visible" || isSolved()) return;
+    cur.secs += 1;
+    if (S.clock) $("clock").textContent = fmt(cur.secs);
+    if (Math.round(cur.secs) % 20 === 0) persist();
+  }, 1000);
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden" && cur && cur.touched) persist(); });
+
+  // ---------- sound ----------
+  let ac = null;
+  function startAudio() { if (ac || S.sound === false) return; try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ac = null; } }
+  function note(freq, at, len, vol) {
+    if (!ac || S.sound === false) return;
+    try {
+      const o = ac.createOscillator(), g = ac.createGain(), t0 = ac.currentTime + at;
+      o.type = "sine"; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t0 + len);
+      o.connect(g); g.connect(ac.destination); o.start(t0); o.stop(t0 + len + 0.02);
+    } catch (e) {}
+  }
+  function tone(kind) {
+    if (kind === "tick") note(1320, 0, 0.05, 0.025);
+    if (kind === "line") { note(784, 0, 0.18, 0.04); note(1175, 0.07, 0.24, 0.035); }
+    if (kind === "solve") [523, 659, 784, 1047].forEach((f, i) => note(f, i * 0.11, 0.45, 0.05));
+  }
+  function celebrate() {
+    tone("solve");
+    const g = $("grid"); g.classList.remove("sweep"); void g.offsetWidth; g.classList.add("sweep");
+    setTimeout(() => g.classList.remove("sweep"), 1400);
+  }
+
+  // ---------- the shelf, today, records ----------
+  function thumb(pic, w, h) {
+    let rects = "";
+    for (let i = 0; i < pic.length; i++) if (pic[i] === "#") rects += `<rect x="${i % w}" y="${Math.floor(i / w)}" width="1.02" height="1.02"/>`;
+    return `<svg viewBox="0 0 ${w} ${h}" aria-hidden="true" shape-rendering="crispEdges">${rects}</svg>`;
+  }
+  function nextLevel(id) {
+    const recs = packRecs(), n = +id;
+    const after = LEVELS.filter(L => +L.id > n && !recs[L.id]);
+    const before = LEVELS.filter(L => +L.id < n && !recs[L.id]);
+    return (after[0] || before[0] || null);
+  }
+  function boardState(key) { const v = S[key]; if (!v) return recordOf(key) ? "solved" : "none"; const cells = v.split("|")[0]; return recordOf(key) ? "solved" : /[#x]/.test(cells) ? "going" : "none"; }
+  function renderSide() {
+    const recs = packRecs();
+    document.querySelectorAll(".lv").forEach(btn => {
+      const id = btn.dataset.level, L = LEVELS.find(l => l.id === id), st = boardState("L" + id);
+      btn.classList.toggle("solved", st === "solved"); btn.classList.toggle("going", st === "going");
+      btn.setAttribute("aria-current", String(!!cur && cur.key === "L" + id));
+      const face = btn.querySelector(".lv-face");
+      face.innerHTML = (st === "solved" ? thumb(L.sol, L.w, L.h) : `<span class="lv-no">${id}</span>`) + `<span class="state"></span>`;
+      btn.setAttribute("aria-label", t().cardLabel(id, L.w, L.h, t().grades[L.grade], st === "none" ? "" : t().cardState[st]));
+    });
+    const solvedN = Object.keys(recs).length;
+    const total = Object.values(recs).reduce((a, r) => a + r.secs, 0), hints = Object.values(recs).reduce((a, r) => a + r.hints, 0);
+    $("packDone").hidden = solvedN < LEVELS.length;
+    $("packTotals").textContent = t().totals(fmt(total), hints);
+    // today
+    const td = today(), dz = dailyOf(td), tst = boardState("d:" + td), trec = dailyRec(td);
+    $("todayDate").textContent = dateLabel(td);
+    $("todayMeta").textContent = `${t().size(dz.w, dz.h)} · ${t().grades[dz.level]}`;
+    $("todayState").textContent = tst === "solved" ? t().todayState.done(fmt(trec.secs)) : tst === "going" ? t().todayState.going : t().todayState.none;
+    $("todayFace").innerHTML = tst === "solved" ? thumb(dz.pic, dz.w, dz.h) : "?";
+    const go = $("todayGo"); go.querySelectorAll("[data-l]").forEach(s => { s.textContent = T[s.dataset.l][tst === "solved" ? "view" : tst === "going" ? "resume" : "play"]; });
+    // earlier days
+    let html = "";
+    for (let i = 1; i <= shownDays; i++) {
+      const d = addDays(td, -i); if (d < LAUNCH) break;
+      const st = boardState("d:" + d), rec = dailyRec(d), dzz = st === "solved" ? dailyOf(d) : null;
+      const sz = t().size(P.dailySize(d), P.dailySize(d));
+      const label = `${dateLabel(d)}`, stText = st === "solved" ? fmt(rec.secs) : st === "going" ? `${sz} · ${t().todayState.going}` : sz;
+      html += `<li><button type="button" class="day" data-day="${d}" aria-label="${t().dayLabel(dateLabel(d, true), st === "solved" ? t().todayState.done(fmt(rec.secs)) : stText)}"><span class="day-face">${dzz ? thumb(dzz.pic, dzz.w, dzz.h) : dayNo(d)}</span><span class="day-date">${label}</span><span class="day-state${st === "solved" ? " ok" : ""}">${st === "solved" ? "✓ " + stText : stText}</span></button></li>`;
+    }
+    $("days").innerHTML = html;
+    $("moreDays").hidden = addDays(td, -shownDays - 1) < LAUNCH;
+    // records
+    let dailySolved = 0;
+    for (const k in S) if (k.startsWith("dr:")) dailySolved += Object.keys(parseRecs(S[k])).length;
+    let streak = 0, d = dailyRec(td) ? td : addDays(td, -1);
+    while (d >= LAUNCH && dailyRec(d)) { streak++; d = addDays(d, -1); }
+    let dHints = 0; for (const k in S) if (k.startsWith("dr:")) Object.values(parseRecs(S[k])).forEach(r => { dHints += r.hints; });
+    $("recLevels").textContent = `${solvedN} / ${LEVELS.length}`;
+    $("recTime").textContent = fmt(total);
+    $("recDaily").textContent = String(dailySolved);
+    $("recStreak").textContent = String(streak);
+    $("recHints").textContent = String(hints + dHints);
+  }
+  let shownDays = 7;
+  function pruneDaily() {
+    const keys = Object.keys(S).filter(k => k.startsWith("d:")).sort();
+    const patch = {};
+    while (keys.length > 30) { const k = keys.shift(); if (k !== cur.key) patch[k] = null; }
+    if (Object.keys(patch).length) save(patch);
+  }
+
+  // ---------- language ----------
+  function setLang(l, store) {
+    lang = l;
+    document.documentElement.setAttribute("data-lang", l);
+    document.documentElement.setAttribute("lang", l === "zh" ? "zh-CN" : l);
+    document.querySelectorAll("[data-set-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.setLang === l)));
+    for (const id of ["undo", "redo", "modeFill", "modeCross", "hint", "restart"]) { const b = $(id); b.setAttribute("aria-label", t().tools[id]); b.title = t().tools[id]; }
+    $("switch").setAttribute("aria-label", t().switchLabel);
+    document.querySelector(".langs").setAttribute("aria-label", t().langNames);
+    if (store) save({ lang: l });
+    if (cur) { $("grid").setAttribute("aria-label", t().gridLabel(cur.w, cur.h)); if (!cur.hintStep && !cur.confirm) { isSolved() ? say(t().solved) : sayGoal(); } else { cur.hintStep = null; cur.confirm = false; sayGoal(); } render(); }
+    renderSide();
+  }
+
+  // ---------- wiring ----------
+  $("undo").addEventListener("click", () => { undo(); });
+  $("redo").addEventListener("click", () => { redo(); });
+  $("modeFill").addEventListener("click", () => { mode = "fill"; render(); });
+  $("modeCross").addEventListener("click", () => { mode = "cross"; render(); });
+  $("hint").addEventListener("click", hint);
+  $("restart").addEventListener("click", restart);
+  $("next").addEventListener("click", () => {
+    if (cur.kind === "L") { const n = nextLevel(cur.id); open(n ? "L" + n.id : "d:" + today()); }
+    else open(S.lastL || "L1");
+  });
+  $("tabPack").addEventListener("click", () => { if (cur.kind !== "L") open(S.lastL || firstOpenLevel()); });
+  $("tabDaily").addEventListener("click", () => { if (cur.kind !== "d" || cur.date !== today()) open("d:" + today()); });
+  $("todayGo").addEventListener("click", () => open("d:" + today(), { scroll: true }));
+  $("shelf").addEventListener("click", e => { const b = e.target.closest(".lv"); if (b) open("L" + b.dataset.level, { scroll: true }); });
+  $("days").addEventListener("click", e => { const b = e.target.closest(".day"); if (b) open("d:" + b.dataset.day, { scroll: true }); });
+  $("moreDays").addEventListener("click", () => { shownDays += 14; renderSide(); });
+  document.querySelectorAll("[data-set-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.setLang, true)));
+  const opt = (id, key, dflt) => { const el = $(id); el.checked = S[key] === undefined ? dflt : !!S[key]; el.addEventListener("change", () => { save({ [key]: el.checked }); if (key === "sound" && el.checked) startAudio(); render(); }); };
+  opt("optMistakes", "mist", false); opt("optClock", "clock", false); opt("optSound", "sound", true);
+  if (S.sound === undefined) S.sound = true;
+
+  window.addEventListener("dodojo-state-change", e => {
+    const next = { ...(e.detail || {}) };
+    const mine = cur && next[cur.key] !== undefined && next[cur.key] !== wrote[cur.key] && next[cur.key] !== S[cur.key];
+    S = next;
+    if (S.lang && S.lang !== lang && T[S.lang]) setLang(S.lang, false);
+    $("optMistakes").checked = !!S.mist; $("optClock").checked = !!S.clock; $("optSound").checked = S.sound !== false;
+    if (mine) open(cur.key, { quiet: true }); else if (cur) render();
+    renderSide();
+  });
+  let resizeTimer = 0;
+  window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (cur && !stroke) { build(); render(); } }, 120); });
+
+  function firstOpenLevel() { const recs = packRecs(); const L = LEVELS.find(l => !recs[l.id]); return "L" + (L ? L.id : LEVELS[0].id); }
+
+  try { document.fonts.ready.then(() => { if (cur && !stroke) { build(); render(); } }); } catch (e) {}
+  setLang(lang, false);
+  const start = S.cur && puzzleFor(S.cur) ? S.cur : firstOpenLevel();
+  open(start, { quiet: true });
+})();
+</script>
+<script>
+// Outside dodojo, show the attached photos from the folder beside the page.
+if (!window.dodojo) document.querySelectorAll('[src^="attachment:"]').forEach(el => { el.src = el.getAttribute('src').slice(11); });
+</script>
+</body>
+</html>

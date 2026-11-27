@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Story game · dodojo skills</title>
+<meta name="description" content="Make a story game as one webpage - a branching story where choices matter, a mystery solved from clues in a case file, an escape room of locks and codes, a text adventure, or a personal treasure hunt or birthday quest built from shared memories - with the story mapped before it is written, short scenes with real choices, puzzles clued fairly in the text, a hint ladder, a journal of what was found, several earned endings and progress kept scene by scene - saved into dodojo as a webpage Note, or as a standalone .html file. Use for 互动故事, 文字冒险, 剧情游戏, 推理, 密室逃脱, 解谜书, 寻宝游戏, 生日惊喜游戏 and any game told as a story.">
+<link rel="icon" href="../assets/icon.png">
+<link rel="stylesheet" href="../assets/site.css">
+<script>try{var l=localStorage.getItem("dodojo-skills-lang")}catch(e){}document.documentElement.dataset.lang=l==="zh"?"zh":"en"</script>
+</head>
+<body>
+<div class="wrap">
+<header class="bar">
+  <a class="brand" href="../index.html"><img src="../assets/icon.png" alt="" width="28" height="28" style="border-radius:7px">dodojo <span>/ skills</span></a>
+  <nav>
+    <span class="seg" role="group" aria-label="Language"><button type="button" data-set-lang="zh">中文</button><button type="button" data-set-lang="en">EN</button></span>
+    <a class="pill-button" href="https://github.com/dodojo-AI/dodojo-skills">GitHub ↗</a>
+  </nav>
+</header>
+
+<a class="crumb" href="../index.html">← <span data-l="zh">全部技能</span><span data-l="en">All skills</span></a>
+<section class="skill-head">
+  <h1><span class="mono">dodojo-story-game</span><span data-l="zh">互动故事</span><span data-l="en">Story game</span></h1>
+  <p><span data-l="zh">分支剧情、推理案卷、密室逃脱、文字冒险，还有用你们共同回忆做的寻宝和生日惊喜：先画好故事地图再动笔，每段短、选择算数，谜题线索都在文字里，提示一级一级给，几种结局都要自己挣来。</span><span data-l="en">Branching stories, mystery case files, escape rooms, text adventures, and treasure hunts or birthday quests built from your shared memories: the story mapped before it is written, short scenes with real choices, fair clues in the text, a hint ladder and endings that are earned.</span></p>
+  <div class="install"><code>npx skills add dodojo-AI/dodojo-skills --skill dodojo-story-game</code><button type="button" data-copy="npx skills add dodojo-AI/dodojo-skills --skill dodojo-story-game"><span data-l="zh">复制</span><span data-l="en">Copy</span></button></div>
+</section>
+<div data-examples>
+<div class="example" data-example="hollin-frost">
+<section class="flow" aria-label="The Hollin Frost">
+  <div class="stage">
+    <div class="stage-label"><b>1</b><span data-l="zh">喂给它</span><span data-l="en">Give it</span></div>
+    <div class="ask"><q lang="en">Make me a short mystery game I can solve on my phone in one evening: a case file, clues, and a few possible endings.</q></div>
+    <dl class="facts">
+      <div><dt><span data-l="zh">输入</span><span data-l="en">Input</span></dt><dd><span data-l="zh">想要什么样的故事、谁来玩、玩多久；连上 dodojo 时，还有可以写进去的旅行、地点和照片</span><span data-l="en">The kind of story, who plays, how long; plus trips, places and photos in dodojo to write into it when connected</span></dd></div>
+      <div><dt><span data-l="zh">产出</span><span data-l="en">Output</span></dt><dd><span data-l="zh">一页一段一段读下去的故事：场景和文字在上面，选项紧跟着，线索本、结局图和设置放在下面</span><span data-l="en">A story you read scene by scene: the scene and its text on top, the choices right under it, with the journal, endings and settings below</span></dd></div>
+      
+    </dl>
+  </div>
+  <div class="stage">
+    <div class="stage-label"><b>2</b><span data-l="zh">它怎么做</span><span data-l="en">How it works</span></div>
+    <ol class="steps">
+<li class=""><span class="n">1</span><div><b><span data-l="zh">先把故事定下来</span><span data-l="en">Pin down the story</span></b><span class="detail"><span data-l="zh">哪一种、谁玩给谁玩、玩家的身份和目标、多长，要不要用你自己的回忆来写</span><span data-l="en">the kind, who plays and for whom, the player's role and goal, the length, and whether it is built from the person's own memories.</span></span></div></li>
+<li class=""><span class="n">2</span><div><b><span data-l="zh">动笔前先画地图</span><span data-l="en">Map it before writing it</span></b><span class="detail"><span data-l="zh">几幕、每个场景、每个选择改变什么、线索在哪找到、每种结局怎么挣来</span><span data-l="en">the acts, the scenes, the choices and what each changes, the clues and where they are found, and the endings each earned.</span></span></div></li>
+<li class=""><span class="n">3</span><div><b><span data-l="zh">写短场景和真选择</span><span data-l="en">Write short scenes with real choices</span></b><span class="detail"><span data-l="zh">每段 40 到 150 字，具体的处境，两到四个各有分量的选项</span><span data-l="en">forty to a hundred and fifty words a scene, a concrete situation, two to four choices that each mean something.</span></span></div></li>
+<li class=""><span class="n">4</span><div><b><span data-l="zh">谜题要公平</span><span data-l="en">Make the puzzles fair</span></b><span class="detail"><span data-l="zh">答案都能从页面上推出来，答案框容得下小笔误，提示从点拨到答案一级一级给</span><span data-l="en">every answer reasoned from what the page shows, an answer box that forgives small slips, a hint ladder from a nudge to the answer.</span></span></div></li>
+<li class=""><span class="n">5</span><div><b><span data-l="zh">场景放在最上面</span><span data-l="en">Lay it out with the scene first</span></b><span class="detail"><span data-l="zh">场景的图和文字在上，选项紧跟着，然后是线索本、结局图和设置</span><span data-l="en">the scene's picture and text on top, the choices right under it, then the journal, the map of endings and the settings.</span></span></div></li>
+<li class=""><span class="n">6</span><div><b><span data-l="zh">把故事存住</span><span data-l="en">Keep the story</span></b><span class="detail"><span data-l="zh">当前场景、做过的选择、找到的线索和到过的结局都存在页面里，可以从某一章重玩</span><span data-l="en">the scene, the choices, the clues found and the endings reached kept with the page; a chapter can be replayed.</span></span></div></li>
+<li class="dodojo"><span class="n">7</span><div><b><span data-l="zh">走遍每条路再存</span><span data-l="en">Walk every path, then save</span> <span class="tag">dodojo</span></b><span class="detail"><span data-l="zh">脚本走遍每个场景和结局，亲手从头玩一遍，手机宽度截图后存成 dodojo 笔记</span><span data-l="en">a script that visits every scene and ending, a full play-through by hand, screenshots at phone width, then a dodojo Note.</span></span></div></li>
+    </ol>
+    <p class="from-skill"><span data-l="zh">步骤取自 SKILL.md 的 Workflow 一节，skill 改了，这里跟着变。金色步骤是和 dodojo 打交道的地方。</span><span data-l="en">Steps are read from the Workflow section of SKILL.md, so this page changes with the skill. Gold steps are where dodojo comes in.</span></p>
+  </div>
+  <div class="stage phone" data-phone>
+    <div class="toggles">
+      <div class="stage-label"><b>3</b><span data-l="zh">做出来</span><span data-l="en">What comes out</span></div>
+      <span class="seg" role="group" aria-label="Theme"><button type="button" data-scheme="light"><span data-l="zh">浅色</span><span data-l="en">Light</span></button><button type="button" data-scheme="dark"><span data-l="zh">深色</span><span data-l="en">Dark</span></button></span>
+    </div>
+    <div class="device"><div class="screen"><iframe data-src="../examples/dodojo-story-game/hollin-frost/index.html?theme=light" title="The Hollin Frost"></iframe></div></div>
+    <a class="open-link" href="../examples/dodojo-story-game/hollin-frost/index.html?theme=light" target="_blank" rel="noopener"><span data-l="zh">单独打开这页 ↗</span><span data-l="en">Open the page on its own ↗</span></a>
+  </div>
+</section>
+<section class="section">
+  <h2><span data-l="zh">存进 dodojo 之后</span><span data-l="en">Once it is in dodojo</span></h2>
+  <p class="sub"><span data-l="zh">左边是它在首页里的卡片（封面就是页面顶部那一块），右边是 Agent 一起写进笔记正文的要点，方便搜索和不打开页面时看。</span><span data-l="en">Left, its card in the library (the cover is the top of the page); right, the key facts the agent writes into the Note's body, so search finds them and they read without the page.</span></p>
+  <div class="indodojo">
+    <a class="tile" href="../examples/dodojo-story-game/hollin-frost/index.html?theme=light">
+  <div class="cover"><iframe data-src="../examples/dodojo-story-game/hollin-frost/index.html?theme=light" title="" tabindex="-1" aria-hidden="true" loading="lazy"></iframe></div>
+  <h3>The Hollin Frost</h3>
+  <div class="meta"><span>Claude</span>·<span><span data-l="zh">11月26日</span><span data-l="en">Nov 26</span></span></div>
+  
+</a>
+    <article class="note" lang="en"><h4>The Hollin Frost</h4><p>A case-file mystery for one evening on a phone, about 30 to 40 minutes. You are the insurance adjuster sent to the Hollin Winter Garden in December 1956, the morning after a frost killed its famous orchid: find out who let it freeze, and why, before the Inspector's four o'clock.</p>
+<p>Choose what to do under each scene; your notebook keeps every clue, and each lock has a hint ladder. Three endings to find.</p><div class="attach"><span class="chip">📎 index.html</span></div></article>
+  </div>
+</section>
+
+</div>
+</div>
+<section class="section">
+  <h2><span data-l="zh">Skill 里有什么</span><span data-l="en">What is in the skill</span></h2>
+  <p class="sub"><span data-l="zh">整个文件夹就是 skill：Agent 先读 SKILL.md，需要时再读 references。</span><span data-l="en">The folder is the skill: the agent reads SKILL.md first and the references when it needs them.</span></p>
+  <ul class="files">
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-story-game/SKILL.md">SKILL.md</a><span><span data-l="zh">192 行</span><span data-l="en">192 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-story-game/references/build.md">references/build.md</a><span><span data-l="zh">262 行</span><span data-l="en">262 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-story-game/references/design.md">references/design.md</a><span><span data-l="zh">68 行</span><span data-l="en">68 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-story-game/references/frame.md">references/frame.md</a><span><span data-l="zh">242 行</span><span data-l="en">242 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-story-game/references/fundamentals.md">references/fundamentals.md</a><span><span data-l="zh">59 行</span><span data-l="en">59 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-story-game/references/save-to-dodojo.md">references/save-to-dodojo.md</a><span><span data-l="zh">63 行</span><span data-l="en">63 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-story-game/references/writing.md">references/writing.md</a><span><span data-l="zh">70 行</span><span data-l="en">70 lines</span></span></li>
+<li><a href="https://github.com/dodojo-AI/dodojo-skills/blob/main/skills/dodojo-story-game/scripts/shoot.mjs">scripts/shoot.mjs</a><span><span data-l="zh">128 行</span><span data-l="en">128 lines</span></span></li>
+  </ul>
+</section>
+<section class="section">
+  <h2><span data-l="zh">其他技能</span><span data-l="en">Other skills</span></h2>
+  <div class="next"><a href="dodojo-travel.html"><b><span data-l="zh">旅行页</span><span data-l="en">Trip page</span></b><small class="mono">dodojo-travel</small></a><a href="dodojo-game.html"><b><span data-l="zh">棋牌对战</span><span data-l="en">Board game</span></b><small class="mono">dodojo-game</small></a><a href="dodojo-party-game.html"><b><span data-l="zh">聚会游戏</span><span data-l="en">Party game</span></b><small class="mono">dodojo-party-game</small></a><a href="dodojo-puzzle-game.html"><b><span data-l="zh">益智解谜</span><span data-l="en">Puzzle</span></b><small class="mono">dodojo-puzzle-game</small></a><a href="dodojo-arcade-game.html"><b><span data-l="zh">街机反应</span><span data-l="en">Arcade</span></b><small class="mono">dodojo-arcade-game</small></a></div>
+</section>
+<footer class="foot">
+  <div><span data-l="zh">MIT 开源 · 页面由 skill 生成，可视化由 <code>scripts/build-site.mjs</code> 从 skill 文件自动生成</span><span data-l="en">MIT licensed · Pages made by the skills; this gallery is generated from the skill files by <code>scripts/build-site.mjs</code></span></div>
+  <div><a href="https://github.com/dodojo-AI/dodojo-skills">dodojo-AI/dodojo-skills</a> · <a href="https://www.dodojo.ai">dodojo.ai</a> · <a href="https://github.com/dodojo-AI/dodojo-plugin">dodojo plugin</a></div>
+</footer>
+</div>
+<script src="../assets/site.js"></script>
+</body>
+</html>

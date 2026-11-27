@@ -37,7 +37,7 @@ canvas.addEventListener("pointerdown", e => { lastPointer = e.pointerType || "mo
 canvas.addEventListener("click", e => {
   const p = pointAt(e);                    // nearest point within ~0.6 of a cell, or null
   if (p === null || !canMove(p)) return;
-  if (lastPointer === "touch" && ghost !== p) { ghost = p; draw(); return; }   // first tap: ghost
+  if (lastPointer === "touch" && cellSize < 32 && ghost !== p) { ghost = p; draw(); return; }   // small cells: ghost first
   ghost = null; move(p);                   // second tap on the ghost, or a mouse click
 });
 canvas.addEventListener("keydown", e => {
@@ -89,6 +89,7 @@ a worker or, if a worker cannot start, on the page:
 
 ```js
 function makeAI() { /* tables, search … */ return { choose(cells, me, level) { /* … */ } }; }
+/* end AI */
 const local = makeAI();
 let worker = null, job = null;
 try {
@@ -109,8 +110,8 @@ try {
   blocks a win in one; the strongest searches a few moves ahead (alpha-beta
   over the best ten or so points at each step) with forced replies to a four.
 
-Check the levels in Node before saving: pull the function out of the page and
-play them against each other.
+Check the levels in Node before saving: pull the function out of the page
+(it ends at the `/* end AI */` comment) and play them against each other.
 
 ```js
 // node check-ai.mjs page.html

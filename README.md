@@ -31,27 +31,101 @@ Examples, each made by an agent following the skill:
 [a Saturday in Lisbon](examples/dodojo-travel/lisbon-saturday/) and
 [a day walking Kyoto's Higashiyama](examples/dodojo-travel/kyoto-higashiyama/) (in Chinese).
 
-## dodojo-game
+## Game skills
 
-[`skills/dodojo-game`](skills/dodojo-game/SKILL.md) makes a game people play on
-a phone or a computer: a board or card game, a puzzle, an arcade game, a word
-game, a party game passed around one phone.
+Five skills make games people play on one page, each for a different kind of
+game. They share dodojo's frame: the game first and the reading after it,
+input and sound that answer at once, a look taken from the game's own world,
+in light and dark, and play kept with the page so it reopens where it
+stopped, on any device.
 
-- the game first: a slim status strip, the board and its controls on one
-  screen, with how to play, settings, records and rules below, and nothing
-  that moves during play;
-- input that answers at once (touch, mouse and keyboard), feedback in
-  proportion to the moment, sound made in the page with Web Audio;
+### dodojo-game
+
+[`skills/dodojo-game`](skills/dodojo-game/SKILL.md) makes a board, card or
+tabletop game:
+
+- a slim status strip, the board and its controls on one screen, with how to
+  play, settings, records and rules below, and nothing that moves during
+  play;
 - a computer opponent with levels that really differ, checked against each
   other before saving;
-- every move kept, so a game left halfway reopens on the same move, on any
-  device; in a dodojo team space, people take turns from their own devices;
-- a look taken from the game's own materials (a kaya board, slate and shell
-  stones, green felt), in light and dark.
+- two people on one phone, or, in a dodojo team space, each on their own
+  device;
+- every move kept, and a look taken from the board and pieces (a kaya board,
+  slate and shell stones, green felt).
 
-Example, made by following the skill:
-[gomoku on a kaya board](examples/dodojo-game/gomoku/), against the computer at
-three levels or two people on one phone, with replay and a record of wins.
+Example: [gomoku on a kaya board](examples/dodojo-game/gomoku/), against the
+computer at three levels or two people on one phone, with replay and a record
+of wins.
+
+### dodojo-party-game
+
+[`skills/dodojo-party-game`](skills/dodojo-party-game/SKILL.md) makes a party
+game for two to ten people around one phone:
+
+- an engine chosen for the table (guess, bluff, push your luck, race, vote,
+  draw lots) and where the phone sits: passed round, flat in the middle or
+  held up;
+- the word that matters readable across the table, a cover screen before
+  every secret, a pad for each player at their edge of a phone in the middle;
+- a clock people hear, rounds that end on a moment and a tally across the
+  evening;
+- hundreds of prompts written natively for each language, never translated
+  word for word.
+
+Example: [Number Bomb](examples/dodojo-party-game/number-bomb/), a bomb box
+with a shrinking range and a fuse, for 2-10 players in English, 中文 and
+日本語.
+
+### dodojo-puzzle-game
+
+[`skills/dodojo-puzzle-game`](skills/dodojo-puzzle-game/SKILL.md) makes a
+puzzle to solve alone, one a day or in a pack of levels:
+
+- every puzzle proven by a solver run in Node: solvable, unique where logic
+  should decide, graded by the reasoning it needs;
+- levels that teach one idea at a time, with a curve and breathers;
+- marks, notes and unlimited undo, mistakes shown only when asked, hints that
+  point at the next deduction and say why.
+
+Example: [Low Tide](examples/dodojo-puzzle-game/low-tide/), picture logic set
+like a tide-table booklet: twelve shore pictures from 5 x 5 to 10 x 10 and a
+new puzzle every day, each proven unique, in English, 中文 and 日本語.
+
+### dodojo-arcade-game
+
+[`skills/dodojo-arcade-game`](skills/dodojo-arcade-game/SKILL.md) makes a
+quick action game for one thumb:
+
+- one verb learned in seconds, a setting that gives it a reason;
+- a fixed-step loop that plays the same at 60 and 120 Hz, input buffered to
+  the next step, controls for a thumb, a mouse and a keyboard;
+- juice in proportion, hitboxes kinder than sprites, a ramp over the first
+  minute, a restart in under a second, the best score kept;
+- a bot that plays hundreds of seeded runs in Node and frame times measured
+  on a throttled CPU before saving.
+
+Example: [Lamplight Spider](examples/dodojo-arcade-game/lamplight-spider/), a
+spider under a sodium streetlamp that drops on its thread to catch moths and
+climbs away from bats: hold to drop, let go to climb. In English, 中文 and
+日本語.
+
+### dodojo-story-game
+
+[`skills/dodojo-story-game`](skills/dodojo-story-game/SKILL.md) makes a game
+told as a story: a branching story, a mystery case file, an escape room, a
+text adventure, or a treasure hunt built from shared memories:
+
+- the story mapped before it is written, with choices that change something
+  later and endings that are earned;
+- short scenes, puzzles clued fairly in the text, an answer box that forgives
+  slips and a hint ladder;
+- every path walked by a script before saving: every scene and ending
+  reachable, no dead ends.
+
+Example: [The Hollin Frost](examples/dodojo-story-game/hollin-frost/), a 1956
+case file: an insurance adjuster has until four o'clock to find out who let a
+famous orchid freeze. Twenty-nine scenes, two locks and three endings.
 
 ## Install
 

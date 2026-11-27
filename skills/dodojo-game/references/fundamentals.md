@@ -37,6 +37,19 @@
   happens. No mannered asides, no "not X but Y", no stock phrases. Units and
   currencies as the place uses them, joined to their number with a no-break
   space (`93&nbsp;°C`, `1&nbsp;200&nbsp;¥`) so they never wrap apart.
+- **Several languages on one page.** When a page carries more than one
+  language, keep every sentence of each in the HTML, so search and the apps
+  that cannot run scripts still read them: mark each copy with its language
+  and show only the chosen one with CSS.
+  ```html
+  <p class="howto"><span lang="en">Tap a pit to sow.</span><span lang="zh">点一个坑开始播种。</span><span lang="ja">穴をタップして種をまく。</span></p>
+  <style>:root[data-lang="en"] [lang="zh"], :root[data-lang="en"] [lang="ja"], :root[data-lang="zh"] [lang="en"], :root[data-lang="zh"] [lang="ja"], :root[data-lang="ja"] [lang="en"], :root[data-lang="ja"] [lang="zh"] { display: none; }</style>
+  ```
+  Pick the default from `navigator.languages`, offer a small switch, keep the
+  choice with `setState`, and set `data-lang` and `lang` on `<html>`. Short
+  labels that script rewrites (a button's state) may live in a dictionary in
+  the script. Write each language for its readers rather than translating
+  word for word, and fit the longest label in each.
 - **Sources.** Link the source of every fact that could be wrong, with the
   date you checked it. When the primary source is closed (a members-only
   standard, a paywall), cite the public page that quotes it and say so; never

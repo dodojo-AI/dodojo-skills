@@ -1,0 +1,1067 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="../../../assets/dodojo-runtime.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="dodojo-page-id" content="party-number-bomb">
+<title>Number Bomb</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700;800&family=Saira+Stencil+One&display=swap" rel="stylesheet">
+<style>
+/* layout: status strip (whose turn · how many numbers left) → the bomb box (seat lamps, readout, fuse ruler, paper tape, rubber keypad)
+   → controls (restart / play again · players · sound) → language switch → how to play → tonight's tally → names, settings, full rules.
+   On a computer the tally and the reading go in a right-hand column. */
+/* materials (fixed, not themed; dimmed a little in dark): olive-drab painted aluminium case with a fine brushed grain and
+   slotted screws; a yellow-and-black hazard stripe around it; a smoked-glass window with red LED seven-segment digits whose
+   unlit segments still show faintly; a rope fuse that chars as the range closes, sparks at both ends; thermal paper tape
+   printing every call; dark rubber keys, the OK key red. */
+/* page colours: neutrals on dodojo tokens; accent = hazard yellow (main button, focus), near-black text on it. */
+/* type: Barlow (DIN-like, tabular figures) for English; Saira Stencil One for the labels stencilled on the case and the one
+   big BOOM. Chinese and Japanese use their own system faces (PingFang / Hiragino, then Noto Sans SC / JP), stamps in heavy weight. */
+:root {
+  --paper: var(--dodojo-bg, #f3f2ec);
+  --panel: var(--dodojo-surface, #ffffff);
+  --ink: var(--dodojo-fg, #1d1e19);
+  --soft: var(--dodojo-muted-fg, #5d5f55);
+  --line: var(--dodojo-border, rgba(29, 30, 25, .14));
+  --accent: #f2c200;
+  --accent-ink: #1b1a12;
+  --danger: #c8371f;
+  --font: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --stencil: "Saira Stencil One", "Barlow", system-ui, sans-serif;
+  /* the device itself: fixed material colours */
+  --olive: #666a3f; --olive-hi: #80845a; --olive-lo: #474a2c;
+  --stamp: #e2dfba;
+  --glass: #15170e;
+  --led: #ff5634; --led-off: rgba(255, 86, 52, .11);
+  --key: #2c2e22; --key-hi: #3c3f30; --key-ink: #eeebd2; --key-edge: #16170f;
+  --rope: #cfa86a; --rope-dk: #9a7642; --char: #24251d;
+  --tape: #f3eedc; --tape-ink: #36332a;
+  --bh: 64px; --sh: 22px;
+}
+:root:lang(zh) {
+  --font: "Barlow", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+  --stencil: "Barlow", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+:root:lang(ja) {
+  --font: "Barlow", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", Meiryo, system-ui, sans-serif;
+  --stencil: "Barlow", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", Meiryo, system-ui, sans-serif;
+}
+:root[data-dodojo-theme="dark"] {
+  --paper: var(--dodojo-bg, #141511);
+  --panel: var(--dodojo-surface, #1d1e19);
+  --ink: var(--dodojo-fg, #ecebe4);
+  --soft: var(--dodojo-muted-fg, #a5a69c);
+  --line: var(--dodojo-border, rgba(236, 235, 228, .14));
+  --danger: #e0583c;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-dodojo-theme]) {
+    --paper: #141511; --panel: #1d1e19; --ink: #ecebe4; --soft: #a5a69c;
+    --line: rgba(236, 235, 228, .14); --danger: #e0583c;
+  }
+  :root:not([data-dodojo-theme]) .device { filter: brightness(.9) saturate(.95); }
+}
+:root[data-dodojo-theme="dark"] .device { filter: brightness(.9) saturate(.95); }
+
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink); font-family: var(--font); -webkit-text-size-adjust: 100%; }
+button { font-family: inherit; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.wrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; max-width: 920px; margin: 0 auto; }
+.game { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; width: 100%; max-width: 520px; margin: 0 auto; min-width: 0; }
+.game > * { min-width: 0; }
+.side { display: grid; gap: 18px; min-width: 0; align-content: start; }
+@media (min-width: 780px) {
+  .wrap { grid-template-columns: minmax(0, 480px) minmax(0, 1fr); align-items: start; gap: 32px; }
+  .game { margin: 0; }
+  :root { --scale: 1.25; }
+  .lamps { height: 30px; } .lamps .lamp { width: 26px; height: 26px; font-size: 13px; }
+}
+
+/* ---------- status strip ---------- */
+.status { height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.who { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 auto; }
+.who-t { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
+.who-t small, .left small { font-size: 13px; font-weight: 600; color: var(--soft); white-space: nowrap; }
+.who-t b { font-size: 23px; font-weight: 800; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.left { display: flex; align-items: baseline; gap: 4px; white-space: nowrap; flex: 0 0 auto; }
+.left b { font-size: 30px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.left.hot b { color: var(--danger); }
+
+.lamp { --c: #ccc; display: inline-grid; place-items: center; flex: 0 0 auto; width: 21px; height: 21px; border-radius: 50%;
+  font: 800 12px/1 var(--font); color: #1b1a12; font-variant-numeric: tabular-nums;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .6), transparent 48%), var(--c);
+  box-shadow: inset 0 -2px 3px rgba(0, 0, 0, .28), 0 0 0 2px rgba(0, 0, 0, .28); }
+.lamp.big { width: 40px; height: 40px; font-size: 19px; }
+
+/* ---------- the device ---------- */
+.device { position: relative; border-radius: 18px; padding: 8px; outline: none;
+  background: repeating-linear-gradient(-45deg, #f2c200 0 11px, #1d1d19 11px 22px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), 0 12px 26px -14px rgba(0, 0, 0, .55); }
+.device:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.case { position: relative; display: grid; gap: 9px; border-radius: 12px; padding: 14px 12px 12px;
+  background:
+    radial-gradient(120% 70% at 25% 0%, rgba(255, 255, 255, .12), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, .028) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, var(--olive-hi), var(--olive) 28%, var(--olive-lo));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), inset 0 -2px 0 rgba(0, 0, 0, .28), 0 0 0 1px rgba(0, 0, 0, .35); }
+.screw { position: absolute; width: 8px; height: 8px; border-radius: 50%;
+  background: linear-gradient(var(--r, 30deg), transparent 43%, rgba(0, 0, 0, .55) 43% 57%, transparent 57%),
+              radial-gradient(circle at 35% 30%, #cfd0b4, #7d7f62 70%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .2), inset 0 -1px 1px rgba(0, 0, 0, .4); }
+.screw.tl { top: 4px; left: 4px; --r: 30deg; } .screw.tr { top: 4px; right: 4px; --r: 110deg; }
+.screw.bl { bottom: 4px; left: 4px; --r: 160deg; } .screw.br { bottom: 4px; right: 4px; --r: 70deg; }
+
+.stamp { font-family: var(--stencil); font-size: 12px; font-weight: 400; letter-spacing: .1em; text-transform: uppercase; color: var(--stamp); white-space: nowrap;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .4), 0 -1px 0 rgba(255, 255, 255, .08); }
+:lang(zh) .stamp, :lang(ja) .stamp { font-size: 11px; font-weight: 800; letter-spacing: .18em; }
+
+.lamps { display: flex; justify-content: center; gap: 4px; height: 24px; align-items: center; }
+.lamps .lamp { opacity: .34; transition: opacity .2s; }
+.lamps .lamp.on { opacity: 1; box-shadow: inset 0 -2px 3px rgba(0, 0, 0, .25), 0 0 0 2px #f4f1d8, 0 0 9px var(--c); }
+.lamps .lamp.hit { background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .5), transparent 48%), var(--led); color: #fff; }
+
+.labels { display: flex; justify-content: space-between; margin-bottom: -4px; padding: 0 2px; }
+.glass { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; border-radius: 8px; min-height: calc(var(--bh) * var(--scale, 1) + 20px);
+  background: linear-gradient(180deg, #0f110a, var(--glass));
+  box-shadow: inset 0 2px 7px rgba(0, 0, 0, .75), 0 1px 0 rgba(255, 255, 255, .14); }
+.range { display: grid; gap: 6px; }
+.range div { display: flex; align-items: center; gap: 5px; }
+.range i { font-style: normal; font-family: var(--stencil); font-size: 10px; font-weight: 400; color: rgba(255, 86, 52, .6); min-width: 1em; white-space: nowrap; }
+:lang(zh) .range i, :lang(ja) .range i { font-size: 11px; font-weight: 700; }
+.digits { display: flex; gap: 3px; }
+.digits svg { height: var(--sh); width: auto; aspect-ratio: .7; }
+.big svg { height: calc(var(--bh) * var(--scale, 1)); }
+.seg polygon { fill: var(--led-off); }
+.seg polygon.on { fill: var(--led); }
+.seg { filter: drop-shadow(0 0 2.5px rgba(255, 86, 52, .45)); overflow: visible; }
+.blink .big polygon.on { animation: blink 1s steps(2, jump-none) infinite; }
+@keyframes blink { 50% { fill: var(--led-off); } }
+
+.msg { margin: 0; height: 20px; line-height: 20px; font-size: 15px; font-weight: 650; color: var(--stamp);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 0 rgba(0, 0, 0, .35); }
+:lang(zh) .msg, :lang(ja) .msg { font-size: 14px; }
+.msg.warn { color: #ffd84a; }
+.msg.hot { color: #ffa48c; }
+
+.fuse { display: flex; align-items: center; gap: 6px; }
+.fuse .stamp { letter-spacing: 0; font-size: 12px; font-variant-numeric: tabular-nums; }
+.track { position: relative; flex: 1; height: 28px; }
+.ticks { position: absolute; left: 0; right: 0; top: 0; height: 6px; opacity: .65;
+  background: repeating-linear-gradient(90deg, var(--stamp) 0 1px, transparent 1px 10%); }
+.ticks::after { content: ""; position: absolute; right: 0; top: 0; width: 1px; height: 6px; background: var(--stamp); }
+.rope { position: absolute; left: 0; right: 0; top: 10px; height: 8px; border-radius: 4px; overflow: hidden;
+  background: repeating-linear-gradient(62deg, var(--rope) 0 4px, var(--rope-dk) 4px 7px);
+  box-shadow: inset 0 -1px 1px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .25); }
+.burn { position: absolute; inset: 0; transition: transform .55s cubic-bezier(.3, .7, .2, 1);
+  background: radial-gradient(circle at 20% 40%, rgba(255, 120, 60, .25) 0 1px, transparent 1.5px) 0 0 / 9px 6px, var(--char); }
+.burn.l { transform-origin: left center; } .burn.r { transform-origin: right center; }
+.sparkw { position: absolute; left: 0; right: 0; top: 10px; height: 8px; transition: transform .55s cubic-bezier(.3, .7, .2, 1); pointer-events: none; }
+.sparkw::before { content: ""; position: absolute; top: -2px; width: 12px; height: 12px; border-radius: 50%;
+  background: radial-gradient(circle, #fff6c4 0 18%, #ffb238 34%, rgba(255, 90, 40, .55) 55%, transparent 70%);
+  animation: flicker .35s infinite alternate; }
+.sparkw.l::before { left: -6px; } .sparkw.r::before { right: -6px; }
+.sparkw.off { opacity: 0; }
+@keyframes flicker { from { opacity: .65; } to { opacity: 1; } }
+.marks { position: absolute; left: 0; right: 0; bottom: 0; height: 8px; }
+.mk { position: absolute; bottom: 0; width: 0; height: 0; margin-left: -4px;
+  border-left: 4px solid transparent; border-right: 4px solid transparent; border-bottom: 7px solid var(--c); }
+.mk.x { border-bottom-color: #fff; }
+
+.tape { height: 32px; display: flex; align-items: center; gap: 12px; padding: 0 10px; overflow-x: auto; overflow-y: hidden;
+  white-space: nowrap; scrollbar-width: none; border-radius: 3px; background: var(--tape); color: var(--tape-ink);
+  border-top: 2px dotted rgba(0, 0, 0, .14); border-bottom: 2px dotted rgba(0, 0, 0, .14);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .16); font-variant-numeric: tabular-nums; touch-action: pan-x; }
+.tape::-webkit-scrollbar { display: none; }
+.tape .ph { font-size: 12px; font-weight: 500; color: rgba(54, 51, 42, .55); }
+.ti { display: inline-flex; align-items: center; gap: 4px; font-size: 15px; font-weight: 750; }
+.ti .lamp { width: 16px; height: 16px; font-size: 10px; box-shadow: inset 0 -1px 2px rgba(0, 0, 0, .25), 0 0 0 1px rgba(0, 0, 0, .3); }
+.ti.boom { color: #c4301a; }
+
+.padwrap { position: relative; }
+.done .pad { visibility: hidden; }
+.pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; touch-action: manipulation; }
+.k { height: 46px; border: 0; border-radius: 10px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  font: 750 24px/1 var(--font); color: var(--key-ink); font-variant-numeric: tabular-nums;
+  background: linear-gradient(180deg, var(--key-hi), var(--key));
+  box-shadow: 0 3px 0 var(--key-edge), 0 5px 7px rgba(0, 0, 0, .3), inset 0 1px 0 rgba(255, 255, 255, .09);
+  transition: transform .06s, box-shadow .06s; }
+.k:active:not(:disabled), .k.down { transform: translateY(2px); box-shadow: 0 1px 0 var(--key-edge), 0 2px 3px rgba(0, 0, 0, .3), inset 0 1px 0 rgba(255, 255, 255, .05); }
+.k.bk { font-size: 20px; color: #d6d3b8; }
+.k.ok { position: relative; font-size: 18px; color: #fff; letter-spacing: .05em; white-space: nowrap;
+  background: linear-gradient(180deg, #e4512f, #b2301a); box-shadow: 0 3px 0 #6c1c0e, 0 5px 7px rgba(0, 0, 0, .3), inset 0 1px 0 rgba(255, 255, 255, .2); }
+.k.ok:active:not(:disabled), .k.ok.down { box-shadow: 0 1px 0 #6c1c0e, inset 0 1px 0 rgba(255, 255, 255, .12); }
+.k:disabled { opacity: .32; cursor: default; }
+.k.ok.pulse::after { content: ""; position: absolute; inset: -3px; border-radius: 12px; border: 2px solid #ffb39f; animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+
+.banner { position: absolute; inset: 0; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-align: center;
+  background: linear-gradient(180deg, #12130c, #1a1b12);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .07), inset 0 3px 0 #f2c200; color: var(--stamp); }
+.banner > * { flex: 0 0 auto; }
+.banner .boomword { font-family: var(--stencil); font-size: 32px; font-weight: 400; color: var(--led); line-height: 1.05; letter-spacing: .06em; text-shadow: 0 0 12px rgba(255, 86, 52, .45); }
+:lang(zh) .banner .boomword, :lang(ja) .banner .boomword { font-size: 30px; font-weight: 900; }
+.banner .line1 { font-size: 19px; line-height: 1.3; font-weight: 800; color: #fbf8e4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.banner .line2 { font-size: 13px; line-height: 1.4; font-weight: 600; color: var(--stamp); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.dare { width: 100%; margin-top: 6px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 8px; text-align: left;
+  padding: 4px 6px 8px 10px; border-radius: 3px; background: var(--tape); color: var(--tape-ink); border-top: 2px dotted rgba(0, 0, 0, .15); }
+.dare small { grid-column: 1; grid-row: 1; font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #8a7f5c; }
+.dare p { grid-column: 1 / -1; grid-row: 2; margin: 0; font-size: 15px; line-height: 1.4; font-weight: 650; }
+:lang(zh) .dare p, :lang(ja) .dare p { line-break: strict; }
+.dare button { grid-column: 2; grid-row: 1; height: 34px; margin: 0 -2px 0 0; padding: 0 12px; border-radius: 8px; border: 1px solid rgba(0, 0, 0, .2); background: #fffaf0; color: var(--tape-ink); font-size: 13px; font-weight: 750; cursor: pointer; white-space: nowrap; }
+
+.flash { position: absolute; inset: 0; border-radius: 18px; background: #fff3c9; opacity: 0; pointer-events: none; }
+.device.boom .flash { animation: flash .55s ease-out; }
+.device.boom .case { animation: shake .5s cubic-bezier(.36, .07, .19, .97); }
+@keyframes flash { 0% { opacity: 0; } 12% { opacity: .9; } 100% { opacity: 0; } }
+@keyframes shake {
+  10%, 90% { transform: translate(-2px, 1px); } 20%, 80% { transform: translate(4px, -2px); }
+  30%, 50%, 70% { transform: translate(-7px, 2px) rotate(-.6deg); } 40%, 60% { transform: translate(7px, -2px) rotate(.6deg); }
+}
+.shake { animation: nudge .32s; }
+@keyframes nudge { 20% { transform: translateX(-6px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(2px); } }
+
+/* ---------- controls ---------- */
+.controls { display: flex; gap: 8px; height: 44px; }
+.btn { height: 44px; border-radius: 12px; border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+  font: 750 15px/1 var(--font); white-space: nowrap; padding: 0 12px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.btn:focus-visible, .stepper button:focus-visible, .seg-ctl label:focus-within, .dare button:focus-visible, .langs button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+#newBtn { flex: 0 0 104px; padding: 0 8px; }
+#newBtn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+#newBtn.arm { background: var(--danger); color: #fff; border-color: transparent; }
+.stepper { flex: 1; display: flex; align-items: center; min-width: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+.stepper button { flex: 0 0 44px; height: 42px; border: 0; background: transparent; color: var(--ink); font: 700 22px/1 var(--font); cursor: pointer; border-radius: 11px; }
+.stepper button:disabled { opacity: .3; cursor: default; }
+.stepper output { flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stepper output svg { width: 19px; height: 19px; color: var(--soft); flex: 0 0 auto; }
+.icon { flex: 0 0 44px; padding: 0; display: grid; place-items: center; }
+.icon svg { width: 22px; height: 22px; }
+.icon .waves { transition: opacity .15s; }
+.icon[aria-pressed="false"] .waves { opacity: 0; }
+.icon[aria-pressed="true"] .mute { opacity: 0; }
+
+/* ---------- language switch ---------- */
+.langs { display: inline-flex; justify-self: start; border: 1px solid var(--line); border-radius: 999px; padding: 2px; background: var(--panel); gap: 2px; }
+.langs button { height: 32px; min-width: 52px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: var(--soft); font: 700 13px/1 var(--font); cursor: pointer; white-space: nowrap; }
+.langs button:lang(zh) { font-family: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif; }
+.langs button:lang(ja) { font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", Meiryo, system-ui, sans-serif; }
+.langs button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+/* ---------- read, not played ---------- */
+.howto { margin: 0; font-size: 16px; line-height: 1.6; color: var(--soft); }
+:lang(zh) .howto, :lang(ja) .howto { font-size: 15px; line-height: 1.7; line-break: strict; }
+.howto b { color: var(--ink); }
+h2 { font-size: 17px; margin: 0 0 10px; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+h2 small { font-size: 13px; font-weight: 500; color: var(--soft); white-space: nowrap; }
+.board ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.board li { display: grid; grid-template-columns: 22px minmax(0, 5.5em) 1fr auto; align-items: center; gap: 8px; font-size: 15px; }
+.board li .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 650; }
+.board .bar { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.board .bar span { display: block; height: 100%; background: var(--danger); transform-origin: left; transition: transform .4s; border-radius: 4px; }
+.board .cnt { font-variant-numeric: tabular-nums; color: var(--soft); white-space: nowrap; font-size: 14px; }
+.board .tag { font-size: 12px; color: var(--danger); font-weight: 700; margin-left: 4px; }
+.board .row-btn { margin-top: 10px; height: 36px; font-size: 13px; padding: 0 12px; }
+details { border-top: 1px solid var(--line); padding-top: 12px; }
+summary { cursor: pointer; font-weight: 750; font-size: 15px; min-height: 32px; display: flex; align-items: center; }
+details > div { padding-top: 10px; display: grid; gap: 10px; }
+.names { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 8px; }
+.names label { display: flex; align-items: center; gap: 8px; }
+.names input { width: 100%; min-width: 0; height: 40px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: 600 16px var(--font); }
+.seg-ctl { display: flex; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+.seg-ctl label { flex: 1; position: relative; text-align: center; cursor: pointer; }
+.seg-ctl input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.seg-ctl span { display: block; padding: 10px 4px; font-size: 14px; font-weight: 650; white-space: nowrap; }
+.seg-ctl input:checked + span { background: var(--accent); color: var(--accent-ink); }
+.check { display: flex; align-items: center; gap: 10px; font-size: 15px; min-height: 40px; cursor: pointer; }
+.check input { width: 20px; height: 20px; accent-color: #b98f00; flex: 0 0 auto; }
+.note { margin: 0; font-size: 13px; color: var(--soft); line-height: 1.6; }
+.rules { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; font-size: 15px; line-height: 1.65; }
+:lang(zh) .rules, :lang(ja) .rules { line-height: 1.7; line-break: strict; }
+
+@media (prefers-reduced-motion: reduce) {
+  .device.boom .case, .device.boom .flash, .shake, .sparkw::before, .k.ok.pulse::after, .blink .big polygon.on { animation: none !important; }
+  .burn, .sparkw, .board .bar span { transition: none; }
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="game" aria-label="Number Bomb">
+    <div class="status" id="status" role="status" aria-live="polite">
+      <div class="who"><span class="lamp big" id="whoLamp" style="--c:#ff5a4e">1</span><span class="who-t"><small id="whoLabel">Starts</small><b id="whoName">P1</b></span></div>
+      <div class="left" id="leftBox"><small id="leftLabel"></small><b id="leftNum">100</b><small id="leftUnit">left</small></div>
+    </div>
+
+    <div class="device" id="device" tabindex="0" aria-label="Bomb box: type digits, Enter to call, Backspace to delete" data-i18n-aria="deviceAria">
+      <div class="case" id="case">
+        <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+        <div class="lamps" id="lamps" aria-hidden="true"></div>
+        <div class="labels"><span class="stamp" data-i18n="rangeStamp">Range</span><span class="stamp" data-i18n="readStamp">Readout</span></div>
+        <div class="glass" id="glass">
+          <div class="range" aria-hidden="true">
+            <div><i data-i18n="lo">LO</i><span class="digits" id="rLo"></span></div>
+            <div><i data-i18n="hi">HI</i><span class="digits" id="rHi"></span></div>
+          </div>
+          <div class="digits big" id="bigDigits" aria-hidden="true"></div>
+        </div>
+        <p class="msg" id="msg">P1 starts: pick 1–100</p>
+        <div class="fuse" aria-hidden="true">
+          <span class="stamp" id="fuseMin">1</span>
+          <div class="track">
+            <div class="ticks"></div>
+            <div class="rope"><div class="burn l" id="burnL" style="transform:scaleX(0)"></div><div class="burn r" id="burnR" style="transform:scaleX(0)"></div></div>
+            <div class="sparkw l off" id="sparkL"></div><div class="sparkw r off" id="sparkR"></div>
+            <div class="marks" id="marks"></div>
+          </div>
+          <span class="stamp" id="fuseMax">100</span>
+        </div>
+        <div class="tape" id="tape" aria-label="This round's calls" data-i18n-aria="tapeAria"><span class="ph">Paper tape · every call gets printed here</span></div>
+        <div class="padwrap">
+          <div class="pad" id="pad">
+            <button class="k" data-k="1" tabindex="-1">1</button><button class="k" data-k="2" tabindex="-1">2</button><button class="k" data-k="3" tabindex="-1">3</button>
+            <button class="k" data-k="4" tabindex="-1">4</button><button class="k" data-k="5" tabindex="-1">5</button><button class="k" data-k="6" tabindex="-1">6</button>
+            <button class="k" data-k="7" tabindex="-1">7</button><button class="k" data-k="8" tabindex="-1">8</button><button class="k" data-k="9" tabindex="-1">9</button>
+            <button class="k bk" data-k="back" tabindex="-1" aria-label="Delete" data-i18n-aria="del">⌫</button><button class="k" data-k="0" tabindex="-1">0</button><button class="k ok" data-k="ok" id="okKey" tabindex="-1">OK</button>
+          </div>
+          <div class="banner" id="banner" hidden>
+            <div class="boomword" data-i18n="boom">BOOM!</div>
+            <div class="line1" id="bLine1">P1 hit 42</div>
+            <div class="line2" id="bLine2">1st boom tonight · P1 starts next</div>
+            <div class="dare" id="dare"><small data-i18n="forfeit">Forfeit</small><p id="dareText"></p><button id="dareNext" type="button" data-i18n="swap">Swap</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="flash" id="flash"></div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="newBtn" type="button">Restart</button>
+      <div class="stepper" role="group" aria-label="Players" data-i18n-aria="playersAria">
+        <button id="minus" type="button" aria-label="One fewer player" data-i18n-aria="fewer">−</button>
+        <output id="count" aria-live="polite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c.6-3.3 2.8-5.2 5.5-5.2s4.9 1.9 5.5 5.2"/><circle cx="17" cy="9" r="2.6"/><path d="M16.3 14.3c2.3-.1 4 1.5 4.4 4.6"/></svg><span id="countNum">4</span><span class="sr" id="countWord">players</span></output>
+        <button id="plus" type="button" aria-label="One more player" data-i18n-aria="more">+</button>
+      </div>
+      <button class="btn icon" id="soundBtn" type="button" aria-pressed="true" aria-label="Sound on">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke-width="1.6"/><g class="waves"><path d="M15.5 9.2a4 4 0 0 1 0 5.6"/><path d="M18.2 6.6a7.6 7.6 0 0 1 0 10.8"/></g><g class="mute"><path d="M16 9.5l5 5M21 9.5l-5 5"/></g></svg>
+      </button>
+    </div>
+  </section>
+
+  <aside class="side">
+    <div class="langs" role="group" aria-label="Language" data-i18n-aria="langAria">
+      <button type="button" lang="en" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" lang="zh-CN" data-lang="zh" aria-pressed="false">中文</button>
+      <button type="button" lang="ja" data-lang="ja" aria-pressed="false">日本語</button>
+    </div>
+
+    <p class="howto" data-i18n-html="howto">Take turns calling a number inside the <b>range</b>. Miss, and the range shrinks toward the bomb; <b>whoever hits the bomb loses</b> and starts the next round. Pass the phone along, or leave it in the middle of the table.</p>
+
+    <section class="board" aria-label="Tonight's tally" data-i18n-aria="board">
+      <h2><span data-i18n="board">Tonight's tally</span> <small id="roundsInfo">No booms yet</small></h2>
+      <ol id="boardList"></ol>
+      <button class="btn row-btn" id="clearBtn" type="button">Reset tally</button>
+    </section>
+
+    <details id="namesBox">
+      <summary data-i18n="namesSum">Player names</summary>
+      <div>
+        <div class="names" id="names"></div>
+        <p class="note" data-i18n="namesNote">In seat order, up to 8 characters. Change the number of players with − / + under the game.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary data-i18n="settingsSum">Settings</summary>
+      <div>
+        <div class="seg-ctl" role="radiogroup" aria-label="Number range" data-i18n-aria="rangeAria">
+          <label><input type="radio" name="range" value="50"><span data-i18n="r50">1–50 quick</span></label>
+          <label><input type="radio" name="range" value="100"><span data-i18n="r100">1–100</span></label>
+          <label><input type="radio" name="range" value="1000"><span data-i18n="r1000">1–1000 long</span></label>
+        </div>
+        <p class="note" id="rangeNote">Switches now if nobody has called yet; otherwise from the next round.</p>
+        <label class="check"><input type="checkbox" id="dareToggle" checked> <span data-i18n="dareToggle">Draw a forfeit when someone blows up</span></label>
+      </div>
+    </details>
+
+    <details>
+      <summary data-i18n="rulesSum">Full rules</summary>
+      <div>
+        <ol class="rules" id="rules">
+          <li><b>Players:</b> 2–10, taking turns in seat order (P1, P2, …). The lit lamp shows whose turn it is.</li>
+          <li><b>The bomb:</b> at the start of each round the box hides a random number in the range (1–100 by default). Nobody can see it.</li>
+          <li><b>Calling:</b> punch in a number and press OK. It has to be inside the range. Miss, and the range shrinks to the bomb's side: if the bomb is 42 and someone calls 60, the range becomes 1–59; a call of 30 after that makes it 31–59.</li>
+          <li><b>Bad calls don't count:</b> a number outside the range, or OK with nothing typed, just shakes the readout. The same player tries again.</li>
+          <li><b>One number left:</b> that number is the bomb, and whoever is up has to call it.</li>
+          <li><b>Boom:</b> whoever calls the bomb loses, does a forfeit if forfeits are on, and starts the next round.</li>
+          <li><b>Tally:</b> the game counts how many times each player blew up tonight. "Reset tally" clears it.</li>
+          <li><b>Tip:</b> while the range is wide, numbers near the edges are safer; with three or four left, the pressure passes to the next player.</li>
+        </ol>
+        <p class="note" data-i18n="rulesNote">Close it halfway through and it opens on the same call next time. Each round's bomb comes from a random seed saved with the round.</p>
+      </div>
+    </details>
+  </aside>
+</main>
+
+<script>
+(() => {
+  "use strict";
+  const VERSION = 2;
+  const MAXES = [50, 100, 1000];
+  const COLORS = ["#ff5a4e", "#ff9f1c", "#ffd60a", "#a3e05a", "#2ec4b6", "#56c8f5", "#6b8cff", "#b07cff", "#ff78bb", "#ebe7d3"];
+  const ord = n => { const s = ["th", "st", "nd", "rd"], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+
+  const I18N = {
+    en: {
+      html: "en", title: "Number Bomb",
+      start: "Starts", turn: "Your turn", out: "Blew up",
+      leftPre: "", leftPreOne: "only", leftUnit: "left", bombPre: "Bomb",
+      deviceAria: "Bomb box: type digits, Enter to call, Backspace to delete",
+      rangeStamp: "Range", readStamp: "Readout", lo: "LO", hi: "HI",
+      msgDone: (n, b) => `${n} called ${b}. BOOM!`,
+      msgEmpty: "Punch in a number, then OK",
+      msgRange: (lo, hi) => `Pick from ${lo} to ${hi}`,
+      msgOne: lo => `One left… you have to call ${lo}`,
+      msgSafe: (n, v, lower) => `${n}: ${v} is safe · bomb is ${lower ? "lower" : "higher"}`,
+      msgStart: (n, lo, hi) => `${n} starts: pick ${lo}–${hi}`,
+      ok: "OK", okOne: "CALL IT", del: "Delete",
+      tape: "Paper tape · every call gets printed here", tapeAria: "This round's calls",
+      boom: "BOOM!", tapeBoom: "BOOM",
+      line1: (n, b) => `${n} hit ${b}`,
+      line2: (n, t) => `${ord(t)} boom tonight · ${n} starts next`,
+      forfeit: "Forfeit", swap: "Swap",
+      restart: "Restart", arm: "Tap again", again: "Play again",
+      playersAria: "Players", players: n => plural(n, "player", "players"),
+      fewer: "One fewer player", more: "One more player",
+      soundOn: "Sound on", soundOff: "Sound off", langAria: "Language",
+      howto: "Take turns calling a number inside the <b>range</b>. Miss, and the range shrinks toward the bomb; <b>whoever hits the bomb loses</b> and starts the next round. Pass the phone along, or leave it in the middle of the table.",
+      board: "Tonight's tally",
+      rounds: r => r ? `${plural(r, "round", "rounds")} played` : "No booms yet",
+      cnt: c => plural(c, "boom", "booms"), most: "most",
+      clear: "Reset tally", clearArm: "Tap again to reset",
+      namesSum: "Player names",
+      namesNote: "In seat order, up to 8 characters. Change the number of players with − / + under the game.",
+      defName: i => `P${i}`, nameAria: i => `Name for P${i}`,
+      settingsSum: "Settings", rangeAria: "Number range",
+      r50: "1–50 quick", r100: "1–100", r1000: "1–1000 long",
+      rangeNote: "Switches now if nobody has called yet; otherwise from the next round.",
+      rangePending: (m, x) => `This round stays 1–${m}; the next one uses 1–${x}.`,
+      dareToggle: "Draw a forfeit when someone blows up",
+      rulesSum: "Full rules",
+      rules: [
+        ["Players:", "2–10, taking turns in seat order (P1, P2, …). The lit lamp shows whose turn it is."],
+        ["The bomb:", "at the start of each round the box hides a random number in the range (1–100 by default). Nobody can see it."],
+        ["Calling:", "punch in a number and press OK. It has to be inside the range. Miss, and the range shrinks to the bomb's side: if the bomb is 42 and someone calls 60, the range becomes 1–59; a call of 30 after that makes it 31–59."],
+        ["Bad calls don't count:", "a number outside the range, or OK with nothing typed, just shakes the readout. The same player tries again."],
+        ["One number left:", "that number is the bomb, and whoever is up has to call it."],
+        ["Boom:", "whoever calls the bomb loses, does a forfeit if forfeits are on, and starts the next round."],
+        ["Tally:", "the game counts how many times each player blew up tonight. \"Reset tally\" clears it."],
+        ["Tip:", "while the range is wide, numbers near the edges are safer; with three or four left, the pressure passes to the next player."]
+      ],
+      rulesNote: "Close it halfway through and it opens on the same call next time. Each round's bomb comes from a random seed saved with the round.",
+      dares: [
+        "Say \"I'm totally fine\" in three different voices.",
+        "Make an animal noise. Everyone guesses the animal.",
+        "Give the player on your left three specific compliments.",
+        "Tell the funniest story from your year so far.",
+        "Do an impression of someone here. We guess who.",
+        "Make up a two-line rhyme about your own name.",
+        "Stand up and sit down in ten-second slow motion.",
+        "Narrate your day so far like a movie trailer.",
+        "Eyes closed: name the color everyone is wearing.",
+        "Commentate your own defeat like a sports announcer.",
+        "Share a fun fact nobody here knows.",
+        "Until your next turn, speak only in questions.",
+        "Pull your best funny face and hold it for 5 seconds.",
+        "Name three words with \"boom\" in them. No repeats.",
+        "Sell us your favorite dish in 20 seconds.",
+        "High-five the player on your right and thank them.",
+        "Rap every number called this round.",
+        "Next round, shout \"Safe!\" after every call.",
+        "Do tonight's weather report, with a chance of bombs.",
+        "Reveal a childhood nickname, or invent one now.",
+        "Speak in a whisper until your next turn.",
+        "Recommend a song and say why you love it."
+      ]
+    },
+    zh: {
+      html: "zh-CN", title: "数字炸弹",
+      start: "先报", turn: "轮到", out: "被炸了",
+      leftPre: "还剩", leftPreOne: "只剩", leftUnit: "个", bombPre: "炸弹是",
+      deviceAria: "拆弹器：用数字键输入，回车确定，退格删除",
+      rangeStamp: "可报范围", readStamp: "读数", lo: "从", hi: "到",
+      msgDone: (n, b) => `${n} 报了 ${b}，轰！`,
+      msgEmpty: "先按数字，再按确定",
+      msgRange: (lo, hi) => `要报 ${lo} 到 ${hi} 之间的数`,
+      msgOne: lo => `只剩一个数了……只能报 ${lo}`,
+      msgSafe: (n, v, lower) => `${n} 报 ${v} · 安全，炸弹比它${lower ? "小" : "大"}`,
+      msgStart: (n, lo, hi) => `${n} 先报：${lo} 到 ${hi} 里选一个`,
+      ok: "确定", okOne: "报它", del: "删除",
+      tape: "记录纸 · 每个人报的数会印在这里", tapeAria: "本局记录",
+      boom: "轰！", tapeBoom: "轰",
+      line1: (n, b) => `${n} 踩中了 ${b}`,
+      line2: (n, t) => `今晚第 ${t} 次 · 下一局由 ${n} 先报`,
+      forfeit: "小任务", swap: "换一张",
+      restart: "重开", arm: "再点重开", again: "再来一局",
+      playersAria: "人数", players: n => `${n} 人`,
+      fewer: "少一个人", more: "多一个人",
+      soundOn: "声音：开", soundOff: "声音：关", langAria: "语言",
+      howto: "轮流报一个<b>可报范围</b>里的数，没踩中，范围就缩到炸弹那一边；<b>踩中炸弹的人输</b>，下一局由他先报。手机传给下一位，或者放在桌子中间轮流按。",
+      board: "今晚战绩",
+      rounds: r => r ? `已经炸了 ${r} 局` : "还没人被炸",
+      cnt: c => `被炸 ${c} 次`, most: "最多",
+      clear: "战绩清零", clearArm: "再点一次清零",
+      namesSum: "玩家名字",
+      namesNote: "按座位顺序填，最多 8 个字。人数在游戏下面的加减器里改。",
+      defName: i => `${i}号`, nameAria: i => `${i}号的名字`,
+      settingsSum: "设置", rangeAria: "数字范围",
+      r50: "1–50 快局", r100: "1–100", r1000: "1–1000 长局",
+      rangeNote: "还没人报数时立刻换；这局已经开始的话，下一局生效。",
+      rangePending: (m, x) => `这局还是 1–${m}，下一局换成 1–${x}。`,
+      dareToggle: "被炸后抽一张小任务",
+      rulesSum: "完整规则",
+      rules: [
+        ["人数：", "2–10 人，按 1号、2号……的座位顺序轮流。座位灯亮着的就是该报数的人。"],
+        ["炸弹：", "每局开始，拆弹器在范围里（默认 1–100）随机藏一个数，谁也看不到。"],
+        ["报数：", "轮到的人按数字，再按「确定」。报的数必须在「可报范围」里。没踩中，范围就缩到炸弹那一边：比如炸弹是 42，有人报 60，范围变成 1–59；再有人报 30，范围变成 31–59。"],
+        ["报错了不算：", "超出范围或者什么都没按就按确定，读数会抖一下，不换人，重新报。"],
+        ["只剩一个数：", "那个数就是炸弹。轮到的人只能报它。"],
+        ["踩中：", "报到炸弹的人输，开了小任务就抽一张做完。下一局由他先报。"],
+        ["战绩：", "记下今晚每个人被炸几次，「战绩清零」重新算。"],
+        ["小技巧：", "范围大的时候报靠边的数更稳；剩三四个数时，压力就传给了下一位。"]
+      ],
+      rulesNote: "玩到一半关掉也没关系，下次打开还在同一步。每局的炸弹由一个随机种子决定，种子跟着这局一起存下。",
+      dares: [
+        "用三种不同的语气说「我没事」",
+        "学一种动物叫，让大家猜是什么",
+        "夸一夸左手边的人，说出三个具体的优点",
+        "讲一件今年让你笑出声的小事",
+        "模仿在场某个人的口头禅，让大家猜是谁",
+        "用自己的名字编一句顺口溜",
+        "表演 10 秒钟慢动作：从椅子上站起来再坐下",
+        "用一句带数字的话形容你今天的心情",
+        "闭上眼睛，说出在场每个人今天穿的颜色",
+        "用家乡话或者另一种语言说「我被炸了」",
+        "给大家分享一个冷知识",
+        "下一局你每次报数前，都要先说「报告长官」",
+        "做一个你最拿手的鬼脸，保持 5 秒",
+        "说出三个带「炸」字的词，不能和别人重复",
+        "用 20 秒介绍你最爱吃的一道菜，说到大家都馋了才算过",
+        "和右手边的人击个掌，再说一句真心的谢谢",
+        "用说唱的节奏，把这局报过的数念一遍",
+        "当下一局的播报员：每个人报完数，由你喊「安全」",
+        "假装自己是天气预报员，播报今晚的「炸弹天气」",
+        "说一个你小时候的外号，或者现场给自己起一个新的",
+        "用三个词形容这局游戏，让大家投票哪个最贴切",
+        "向大家推荐一首歌，并说出你喜欢它的理由"
+      ]
+    },
+    ja: {
+      html: "ja", title: "数字ボム",
+      start: "最初は", turn: "次は", out: "アウト",
+      leftPre: "残り", leftPreOne: "残り", leftUnit: "個", bombPre: "爆弾は",
+      deviceAria: "爆弾ボックス：数字キーで入力、Enterで決定、Backspaceで消す",
+      rangeStamp: "範囲", readStamp: "入力", lo: "から", hi: "まで",
+      msgDone: (n, b) => `${n}が${b}を言った。ドカン！`,
+      msgEmpty: "数字を押してから決定",
+      msgRange: (lo, hi) => `${lo}〜${hi}の中から選んで`,
+      msgOne: lo => `残り1個……${lo}を言うしかない`,
+      msgSafe: (n, v, lower) => `${n} ${v}でセーフ／爆弾はもっと${lower ? "下" : "上"}`,
+      msgStart: (n, lo, hi) => `${n}から：${lo}〜${hi}で1つ選んで`,
+      ok: "決定", okOne: "言う", del: "1文字消す",
+      tape: "記録テープ・言った数字がここに残ります", tapeAria: "このゲームの記録",
+      boom: "ドカン！", tapeBoom: "ドカン",
+      line1: (n, b) => `${n}が${b}を踏んだ`,
+      line2: (n, t) => `今夜${t}回目・次は${n}から`,
+      forfeit: "罰ゲーム", swap: "チェンジ",
+      restart: "やり直し", arm: "本当に？", again: "もう一回",
+      playersAria: "人数", players: n => `${n}人`,
+      fewer: "1人減らす", more: "1人増やす",
+      soundOn: "音：オン", soundOff: "音：オフ", langAria: "言語",
+      howto: "順番に<b>範囲</b>の中から数字を1つ言っていきます。セーフなら範囲が爆弾のほうへ狭まり、<b>爆弾の数字を言った人の負け</b>。次のゲームはその人からスタート。スマホを回すか、テーブルの真ん中に置いて順番に押してください。",
+      board: "今夜の戦績",
+      rounds: r => r ? `${r}ゲーム終了` : "まだ爆発なし",
+      cnt: c => `${c}回`, most: "最多",
+      clear: "戦績をリセット", clearArm: "もう一度押してリセット",
+      namesSum: "プレイヤーの名前",
+      namesNote: "席の順に入力（8文字まで）。人数はゲームの下の − / + で変えられます。",
+      defName: i => `${i}番`, nameAria: i => `${i}番の名前`,
+      settingsSum: "設定", rangeAria: "数字の範囲",
+      r50: "1–50 短め", r100: "1–100", r1000: "1–1000 長め",
+      rangeNote: "まだ誰も言っていなければすぐ切り替え。始まっていたら次のゲームから。",
+      rangePending: (m, x) => `このゲームは1–${m}のまま。次から1–${x}になります。`,
+      dareToggle: "爆発した人は罰ゲームを1枚引く",
+      rulesSum: "くわしいルール",
+      rules: [
+        ["人数：", "2〜10人。1番、2番……と席の順番に回します。ランプが光っている人の番です。"],
+        ["爆弾：", "ゲームが始まると、範囲（ふつうは1〜100）のどこかに爆弾の数字がひとつ隠れます。誰にも見えません。"],
+        ["コール：", "自分の番が来たら数字を押して「決定」。範囲の中の数字しか言えません。セーフなら範囲が爆弾のほうへ狭まります。たとえば爆弾が42で誰かが60と言えば範囲は1〜59、次に30なら31〜59。"],
+        ["ミスはノーカウント：", "範囲の外の数字や、何も入れずに決定を押したときは表示がブルッと揺れるだけ。同じ人がやり直します。"],
+        ["残り1個：", "その数字が爆弾です。番の人はそれを言うしかありません。"],
+        ["ドカン：", "爆弾の数字を言った人の負け。罰ゲームがオンなら1枚引いてやります。次のゲームはその人から。"],
+        ["戦績：", "今夜それぞれ何回爆発したかを記録します。「戦績をリセット」でゼロに。"],
+        ["コツ：", "範囲が広いうちは端のほうが安全。残り3〜4個になったら、プレッシャーは次の人へ。"]
+      ],
+      rulesNote: "途中で閉じても、次に開けば同じところから続きます。爆弾の数字はゲームごとのランダムなシードで決まり、ゲームと一緒に保存されます。",
+      dares: [
+        "「全然平気」を3種類の言い方で言う",
+        "動物の鳴きまねをして、何の動物か当ててもらう",
+        "左どなりの人のいいところを具体的に3つほめる",
+        "今年いちばん笑ったエピソードを話す",
+        "この中の誰かの口ぐせをまねて、誰か当ててもらう",
+        "自分の名前で一発ギャグを作る",
+        "10秒かけてスローモーションで立って座る",
+        "今日一日を映画の予告編風にナレーションする",
+        "目をつぶって、全員の今日の服の色を言う",
+        "スポーツ実況風に自分の負けを実況する",
+        "みんなが知らなそうな豆知識を1つ披露する",
+        "次のゲームの間、数字の前に「失礼します」をつける",
+        "いちばん得意な変顔を5秒キープ",
+        "「ばく」で始まる言葉を3つ言う（かぶりなし）",
+        "好きな食べ物を20秒で熱くプレゼン",
+        "右どなりの人とハイタッチして、本気のありがとうを一言",
+        "このゲームで出た数字をラップ調で読み上げる",
+        "次のゲームでは、誰かが言うたびに「セーフ！」と叫ぶ",
+        "お天気キャスターになりきって「今夜の爆弾予報」",
+        "子どものころのあだ名を発表する（なければ今つける）",
+        "次の自分の番まで語尾を「〜でござる」にする",
+        "最近ハマっている曲をおすすめして、好きな理由を言う"
+      ]
+    }
+  };
+  const LANGS = ["en", "zh", "ja"];
+
+  const $ = id => document.getElementById(id);
+  const api = window.dodojo || null;
+  const save = patch => { try { const p = api?.setState?.({ v: VERSION, ...patch }); p?.catch?.(() => {}); } catch {} };
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const reduceMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function mulberry32(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const newSeed = () => (Math.random() * 4294967296) >>> 0;
+  const clampInt = (v, lo, hi, d) => { const x = parseInt(v, 10); return Number.isFinite(x) ? Math.min(hi, Math.max(lo, x)) : d; };
+  const truthy = v => !(v === false || v === "0" || v === 0 || v === "false");
+  function deviceLang() {
+    let l = "en";
+    try { l = String((navigator.languages && navigator.languages[0]) || navigator.language || "en").toLowerCase(); } catch {}
+    return l.startsWith("zh") ? "zh" : l.startsWith("ja") ? "ja" : "en";
+  }
+
+  // ---------- state ----------
+  let n = 4, names = [], max = 100, nextMax = 100, seed = newSeed(), start = 0, turn = 0, g = [];
+  let losses = Array(10).fill(0), rounds = 0, dareOn = true, dareIx = 0, soundOn = true, chosenLang = null;
+  let entry = "", warnMsg = null, armed = false, armTimer = 0, clearArmed = false, clearTimer = 0;
+  let R = { bomb: 0, lo: 1, hi: 100, done: false, loser: -1 };
+  let lang = deviceLang(), T = I18N[lang];
+
+  const nameOf = i => (names[i] || "").trim() || T.defName(i + 1);
+  const bombOf = () => Math.floor(mulberry32(seed)() * max) + 1;
+
+  // Replays the calls; returns how many had to be dropped (a call outside the range at its time).
+  function recompute() {
+    const bomb = bombOf(); let lo = 1, hi = max, done = false, loser = -1; const ok = [];
+    for (const [s, v] of g) {
+      if (done) break;
+      if (!(v >= lo && v <= hi)) continue;
+      ok.push([s, v]);
+      if (v === bomb) { done = true; loser = s; } else if (v < bomb) lo = v + 1; else hi = v - 1;
+    }
+    const dropped = g.length - ok.length;
+    g = ok; R = { bomb, lo, hi, done, loser };
+    return dropped;
+  }
+  const roundPatch = () => ({ seed, max, start, turn, g: g.map(([s, v]) => s + ":" + v).join(",") });
+  function freshRound() { seed = newSeed(); g = []; start = start < n ? start : 0; turn = start; recompute(); }
+
+  // Reads saved state from this page (v2) or the earlier Chinese-only page (no v, same keys).
+  // Settings that read cleanly are kept; a round that cannot be replayed starts over.
+  function load(st) {
+    st = st && typeof st === "object" ? st : {};
+    if (LANGS.includes(st.lang)) chosenLang = st.lang;
+    try {
+      n = clampInt(st.n, 2, 10, n);
+      if (typeof st.names === "string") names = st.names.split("|").slice(0, 10).map(s => s.slice(0, 8));
+      if (typeof st.losses === "string") { const a = st.losses.split(",").map(x => clampInt(x, 0, 99999, 0)); losses = Array.from({ length: 10 }, (_, i) => a[i] || 0); }
+      rounds = clampInt(st.rounds, 0, 1e7, rounds);
+      if (st.dare !== undefined) dareOn = truthy(st.dare);
+      if (st.sound !== undefined) soundOn = truthy(st.sound);
+      if (MAXES.includes(+st.nextMax)) nextMax = +st.nextMax;
+    } catch {}
+    try {
+      if (st.max !== undefined) { if (!MAXES.includes(+st.max)) throw new Error("range"); max = +st.max; if (st.nextMax === undefined) nextMax = max; }
+      const hasSeed = st.seed !== undefined && st.seed !== null && st.seed !== "" && Number.isFinite(Number(st.seed));
+      if (hasSeed) seed = Number(st.seed) >>> 0;
+      start = clampInt(st.start, 0, 9, start);
+      turn = clampInt(st.turn, 0, 9, turn);
+      dareIx = clampInt(st.dareIx, 0, 21, dareIx);
+      if (typeof st.g === "string") {
+        const parts = st.g ? st.g.split(",") : [];
+        g = parts.map(x => x.split(":").map(Number));
+        if (g.some(p => p.length !== 2 || !Number.isInteger(p[0]) || p[0] < 0 || p[0] > 9 || !Number.isInteger(p[1]))) throw new Error("calls");
+        if (g.length && !hasSeed) throw new Error("no seed");
+      }
+      if (recompute() > 0) throw new Error("replay");
+      if (start >= n) start %= n;
+      if (turn >= n) turn %= n;
+    } catch {
+      freshRound();
+    }
+  }
+
+  // ---------- sound (Web Audio, made on first tap) ----------
+  let audio = null, noise = null, longNoise = null;
+  function startAudio() {
+    if (!soundOn) return null;
+    try {
+      audio ||= new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === "suspended") audio.resume();
+      if (!noise) {
+        noise = audio.createBuffer(1, Math.floor(audio.sampleRate * 0.08), audio.sampleRate);
+        const d = noise.getChannelData(0);
+        for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length) ** 3;
+        longNoise = audio.createBuffer(1, Math.floor(audio.sampleRate * 0.6), audio.sampleRate);
+        const e = longNoise.getChannelData(0); let last = 0;
+        for (let i = 0; i < e.length; i++) { last = (last + 0.06 * (Math.random() * 2 - 1)) / 1.06; e[i] = last * 3.2; }
+      }
+    } catch { audio = null; }
+    return audio;
+  }
+  function env(a, t, peak, len) { const g = a.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + len); g.connect(a.destination); return g; }
+  function click(freq = 3200, vol = 0.16) {
+    const a = audio && soundOn ? audio : null; if (!a || !noise) return;
+    const t = a.currentTime + 0.003, src = a.createBufferSource(), bp = a.createBiquadFilter();
+    src.buffer = noise; bp.type = "bandpass"; bp.frequency.value = freq; bp.Q.value = 2.2;
+    src.connect(bp).connect(env(a, t, vol, 0.05)); src.start(t); src.stop(t + 0.06);
+  }
+  function tone(freq, at, len, vol, type = "triangle") {
+    const a = audio; if (!a) return;
+    const t = a.currentTime + at, o = a.createOscillator(); o.type = type; o.frequency.setValueAtTime(freq, t);
+    o.connect(env(a, t, vol, len)); o.start(t); o.stop(t + len + 0.02);
+  }
+  function safeSound() { if (!audio || !soundOn) return; tone(660, 0.0, 0.09, 0.09, "square"); tone(990, 0.08, 0.12, 0.07, "square"); }
+  function buzz() { if (!audio || !soundOn) return; tone(118, 0, 0.18, 0.11, "sawtooth"); tone(112, 0.02, 0.16, 0.06, "square"); }
+  function tick() { click(5200, 0.06); }
+  function heart() {
+    if (!audio || !soundOn) return;
+    const a = audio;
+    [0, 0.16].forEach((at, i) => {
+      const t = a.currentTime + at, o = a.createOscillator(); o.type = "sine";
+      o.frequency.setValueAtTime(i ? 62 : 70, t); o.frequency.exponentialRampToValueAtTime(38, t + 0.12);
+      o.connect(env(a, t, i ? 0.32 : 0.42, 0.14)); o.start(t); o.stop(t + 0.16);
+    });
+  }
+  function boomSound() {
+    if (!audio || !soundOn || !longNoise) return;
+    const a = audio, t = a.currentTime + 0.005;
+    const src = a.createBufferSource(), lp = a.createBiquadFilter(), g = a.createGain();
+    src.buffer = longNoise; lp.type = "lowpass"; lp.frequency.setValueAtTime(1400, t); lp.frequency.exponentialRampToValueAtTime(90, t + 0.5);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.9, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+    src.connect(lp).connect(g).connect(a.destination); src.start(t); src.stop(t + 0.55);
+    const o = a.createOscillator(); o.type = "sine"; o.frequency.setValueAtTime(90, t); o.frequency.exponentialRampToValueAtTime(30, t + 0.42);
+    o.connect(env(a, t, 0.7, 0.45)); o.start(t); o.stop(t + 0.48);
+  }
+
+  // Ticking: faster as the range shrinks; heartbeat once five or fewer are left. Rests after 25s without a touch.
+  let tickTimer = 0, beat = 0, lastInputAt = 0;
+  function scheduleTick() {
+    clearTimeout(tickTimer);
+    if (!audio || !soundOn || R.done || document.hidden || !g.length || performance.now() - lastInputAt > 25000) return;
+    const left = R.hi - R.lo + 1;
+    const f = Math.log(left) / Math.log(max);
+    const iv = left <= 5 ? 360 : 300 + 800 * Math.max(0, Math.min(1, f));
+    tickTimer = setTimeout(() => { tick(); if (left <= 5 && beat++ % 2 === 0) heart(); scheduleTick(); }, iv);
+  }
+  const touched = () => { lastInputAt = performance.now(); scheduleTick(); };
+  document.addEventListener("visibilitychange", () => { if (document.hidden) clearTimeout(tickTimer); else scheduleTick(); });
+
+  // ---------- seven segments ----------
+  const H = y => `12,${y} 16,${y - 4} 44,${y - 4} 48,${y} 44,${y + 4} 16,${y + 4}`;
+  const V = (x, y1, y2) => `${x},${y1} ${x + 4},${y1 + 4} ${x + 4},${y2 - 4} ${x},${y2} ${x - 4},${y2 - 4} ${x - 4},${y1 + 4}`;
+  const SEGS = { a: H(6), b: V(52, 10, 47), c: V(52, 53, 90), d: H(94), e: V(8, 53, 90), f: V(8, 10, 47), g: H(50) };
+  const MAP = { "0": "abcdef", "1": "bc", "2": "abged", "3": "abgcd", "4": "fgbc", "5": "afgcd", "6": "afgedc", "7": "abc", "8": "abcdefg", "9": "abcdfg", "-": "g", " ": "" };
+  const digitSVG = ch => { const on = MAP[ch] ?? ""; let s = '<svg class="seg" viewBox="0 0 70 100"><g transform="translate(10 0) skewX(-6)">'; for (const k in SEGS) s += `<polygon points="${SEGS[k]}"${on.includes(k) ? ' class="on"' : ""}/>`; return s + "</g></svg>"; };
+  const showDigits = (el, str, width) => { const p = String(str).padStart(width, " ").slice(-width); if (el.dataset.v === p) return; el.dataset.v = p; el.innerHTML = [...p].map(digitSVG).join(""); };
+
+  // ---------- effects ----------
+  function restart(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+  function nudge() { restart($("glass"), "shake"); }
+  function boomFx() { boomSound(); if (!reduceMotion()) restart($("device"), "boom"); }
+
+  // ---------- actions ----------
+  const lastOne = () => !R.done && R.lo === R.hi;
+  function input(d) {
+    startAudio(); touched();
+    if (R.done || lastOne()) { nudge(); return; }
+    warnMsg = null;
+    if (entry.length >= String(max).length || (entry === "" && d === "0")) { nudge(); click(1800); render(); return; }
+    entry += d; click(); render();
+  }
+  function back() {
+    startAudio(); touched();
+    if (R.done || lastOne()) return;
+    entry = entry.slice(0, -1); warnMsg = null; click(1900); render();
+  }
+  function warn(kind) { warnMsg = kind; buzz(); nudge(); render(); }
+  function enter() {
+    startAudio(); touched();
+    if (R.done) { nudge(); return; }
+    if (lastOne()) { commit(R.lo); return; }
+    if (!entry) { warn({ k: "empty" }); return; }
+    const v = Number(entry);
+    if (v < R.lo || v > R.hi) { entry = ""; warn({ k: "range", lo: R.lo, hi: R.hi }); return; }
+    commit(v);
+  }
+  function commit(v) {
+    const who = turn;
+    g.push([who, v]); entry = ""; warnMsg = null; disarm();
+    recompute();
+    if (R.done) {
+      losses[who] = (losses[who] || 0) + 1; rounds++;
+      dareIx = Math.floor(Math.random() * 22);
+      save({ ...roundPatch(), losses: losses.join(","), rounds, dareIx });
+      render(); boomFx(); clearTimeout(tickTimer);
+    } else {
+      turn = (turn + 1) % n;
+      save(roundPatch());
+      safeSound(); render(); scheduleTick();
+      if (lastOne()) heart();
+    }
+  }
+  function newRound() {
+    if (R.done) start = R.loser >= 0 && R.loser < n ? R.loser : 0;
+    seed = newSeed(); max = nextMax; turn = start; g = []; entry = ""; warnMsg = null;
+    disarm(); recompute(); save({ ...roundPatch(), nextMax });
+    clearTimeout(tickTimer);
+    if (audio && soundOn) { tone(520, 0, 0.08, 0.06, "square"); tone(780, 0.07, 0.1, 0.05, "square"); }
+    $("device").classList.remove("boom");
+    render();
+  }
+  function disarm() { armed = false; clearTimeout(armTimer); }
+  function setN(k) {
+    startAudio();
+    const m = Math.min(10, Math.max(2, k));
+    if (m === n) { nudge(); return; }
+    n = m;
+    if (turn >= n) turn = 0;
+    if (start >= n) start = 0;
+    save({ n, turn, start }); click(2400); render(); renderNames(true);
+  }
+  function setLang(l, persist) {
+    if (!LANGS.includes(l)) l = "en";
+    lang = l; T = I18N[l];
+    document.documentElement.lang = T.html;
+    document.title = T.title;
+    if (persist) { chosenLang = l; save({ lang: l }); }
+    applyStatic(); render(); renderNames(true);
+  }
+
+  // ---------- render ----------
+  function applyStatic() {
+    document.querySelectorAll("[data-i18n]").forEach(el => { const v = T[el.dataset.i18n]; if (typeof v === "string") el.textContent = v; });
+    document.querySelectorAll("[data-i18n-html]").forEach(el => { const v = T[el.dataset.i18nHtml]; if (typeof v === "string") el.innerHTML = v; });
+    document.querySelectorAll("[data-i18n-aria]").forEach(el => { const v = T[el.dataset.i18nAria]; if (typeof v === "string") el.setAttribute("aria-label", v); });
+    document.querySelector(".game").setAttribute("aria-label", T.title);
+    $("rules").innerHTML = T.rules.map(([b, t]) => `<li><b>${b}</b>${lang === "en" ? " " : ""}${t}</li>`).join("");
+    document.querySelectorAll(".langs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+    $("tape").dataset.v = "";
+  }
+
+  function message() {
+    if (R.done) return [T.msgDone(nameOf(R.loser), R.bomb), "hot"];
+    if (warnMsg) return [warnMsg.k === "empty" ? T.msgEmpty : T.msgRange(warnMsg.lo, warnMsg.hi), "warn"];
+    if (lastOne()) return [T.msgOne(R.lo), "hot"];
+    if (g.length) { const [s, v] = g[g.length - 1]; return [T.msgSafe(nameOf(s), v, v > R.bomb), ""]; }
+    return [T.msgStart(nameOf(turn), R.lo, R.hi), ""];
+  }
+
+  function render() {
+    const D = String(max).length;
+    document.documentElement.style.setProperty("--bh", D >= 4 ? "46px" : "64px");
+    document.documentElement.style.setProperty("--sh", D >= 4 ? "17px" : "22px");
+    const left = R.hi - R.lo + 1;
+
+    // status
+    const seat = R.done ? R.loser : turn;
+    $("whoLamp").style.setProperty("--c", COLORS[seat] || COLORS[0]);
+    $("whoLamp").textContent = seat + 1;
+    $("whoLabel").textContent = R.done ? T.out : g.length === 0 ? T.start : T.turn;
+    $("whoName").textContent = nameOf(seat);
+    if (R.done) { $("leftLabel").textContent = T.bombPre; $("leftNum").textContent = R.bomb; $("leftUnit").textContent = ""; }
+    else { $("leftLabel").textContent = left === 1 ? T.leftPreOne : T.leftPre; $("leftNum").textContent = left; $("leftUnit").textContent = T.leftUnit; }
+    $("leftLabel").hidden = !$("leftLabel").textContent;
+    $("leftBox").classList.toggle("hot", R.done || left <= 5);
+
+    // lamps
+    let lamps = "";
+    for (let i = 0; i < n; i++) lamps += `<span class="lamp${i === seat ? " on" : ""}${R.done && i === seat ? " hit" : ""}" style="--c:${COLORS[i]}">${i + 1}</span>`;
+    $("lamps").innerHTML = lamps;
+
+    // readout
+    showDigits($("rLo"), R.done ? R.bomb : R.lo, D);
+    showDigits($("rHi"), R.done ? R.bomb : R.hi, D);
+    showDigits($("bigDigits"), R.done ? R.bomb : lastOne() ? R.lo : entry, D);
+    $("glass").classList.toggle("blink", R.done || lastOne());
+
+    const [m, cls] = message();
+    $("msg").textContent = m; $("msg").className = "msg " + cls;
+
+    // fuse
+    $("fuseMin").textContent = 1; $("fuseMax").textContent = max;
+    const fl = R.done ? 1 : (R.lo - 1) / max, fr = R.done ? 0 : (max - R.hi) / max;
+    $("burnL").style.transform = `scaleX(${fl})`;
+    $("burnR").style.transform = `scaleX(${fr})`;
+    $("sparkL").style.transform = `translateX(${fl * 100}%)`;
+    $("sparkR").style.transform = `translateX(${-fr * 100}%)`;
+    $("sparkL").classList.toggle("off", R.done || fl === 0);
+    $("sparkR").classList.toggle("off", R.done || fr === 0);
+    $("marks").innerHTML = g.map(([s, v]) => `<span class="mk${v === R.bomb ? " x" : ""}" style="left:${((v - 0.5) / max) * 100}%;--c:${COLORS[s]}"></span>`).join("");
+
+    // tape
+    const tape = $("tape");
+    const tapeHTML = g.length
+      ? g.map(([s, v]) => `<span class="ti${v === R.bomb ? " boom" : ""}"><span class="lamp" style="--c:${COLORS[s]}">${s + 1}</span>${v}${v === R.bomb ? " " + esc(T.tapeBoom) : ""}</span>`).join("")
+      : `<span class="ph">${esc(T.tape)}</span>`;
+    if (tape.dataset.v !== tapeHTML) { tape.dataset.v = tapeHTML; tape.innerHTML = tapeHTML; tape.scrollLeft = tape.scrollWidth; }
+
+    // keypad
+    const lone = lastOne();
+    $("pad").querySelectorAll(".k").forEach(b => { b.disabled = R.done || (lone && b.dataset.k !== "ok"); });
+    $("okKey").textContent = lone ? T.okOne : T.ok;
+    $("okKey").classList.toggle("pulse", lone);
+
+    // banner
+    $("banner").hidden = !R.done;
+    $("case").classList.toggle("done", R.done);
+    if (R.done) {
+      const nm = nameOf(R.loser), times = losses[R.loser] || 1;
+      $("bLine1").textContent = T.line1(nm, R.bomb);
+      $("bLine2").textContent = T.line2(nm, times);
+      $("dare").hidden = !dareOn;
+      $("dareText").textContent = T.dares[dareIx] || T.dares[0];
+    }
+
+    // controls
+    const nb = $("newBtn");
+    nb.textContent = R.done ? T.again : armed ? T.arm : T.restart;
+    nb.className = "btn" + (R.done ? " primary" : armed ? " arm" : "");
+    $("countNum").textContent = n;
+    $("countWord").textContent = " " + T.players(n);
+    $("minus").disabled = n <= 2; $("plus").disabled = n >= 10;
+    $("soundBtn").setAttribute("aria-pressed", String(soundOn));
+    $("soundBtn").setAttribute("aria-label", soundOn ? T.soundOn : T.soundOff);
+
+    // settings
+    document.querySelectorAll('input[name="range"]').forEach(r => { r.checked = Number(r.value) === nextMax; });
+    $("rangeNote").textContent = nextMax !== max ? T.rangePending(max, nextMax) : T.rangeNote;
+    $("dareToggle").checked = dareOn;
+
+    renderBoard();
+  }
+
+  function renderBoard() {
+    const seats = Array.from({ length: n }, (_, i) => i).sort((a, b) => (losses[b] || 0) - (losses[a] || 0) || a - b);
+    const top = Math.max(1, ...seats.map(i => losses[i] || 0));
+    const most = Math.max(...seats.map(i => losses[i] || 0));
+    $("boardList").innerHTML = seats.map(i => {
+      const c = losses[i] || 0;
+      return `<li><span class="lamp" style="--c:${COLORS[i]}">${i + 1}</span><span class="nm">${esc(nameOf(i))}</span><span class="bar"><span style="transform:scaleX(${c / top})"></span></span><span class="cnt">${esc(T.cnt(c))}${c > 0 && c === most ? `<span class="tag">${esc(T.most)}</span>` : ""}</span></li>`;
+    }).join("");
+    $("roundsInfo").textContent = T.rounds(rounds);
+    $("clearBtn").textContent = clearArmed ? T.clearArm : T.clear;
+  }
+
+  function renderNames(force) {
+    const box = $("names");
+    if (!force && box.contains(document.activeElement) && box.children.length === n) return;
+    let html = "";
+    for (let i = 0; i < n; i++) html += `<label><span class="lamp" style="--c:${COLORS[i]}">${i + 1}</span><input type="text" maxlength="8" data-i="${i}" placeholder="${esc(T.defName(i + 1))}" value="${esc((names[i] || "").trim())}" aria-label="${esc(T.nameAria(i + 1))}" enterkeyhint="done" autocomplete="off"></label>`;
+    box.innerHTML = html;
+  }
+
+  // ---------- wiring ----------
+  const device = $("device");
+  $("pad").addEventListener("mousedown", e => { if (e.target.closest(".k")) e.preventDefault(); });
+  $("pad").addEventListener("click", e => {
+    const b = e.target.closest(".k"); if (!b || b.disabled) return;
+    const k = b.dataset.k;
+    if (k === "back") back(); else if (k === "ok") enter(); else input(k);
+    try { device.focus({ preventScroll: true }); } catch {}
+  });
+  function flashKey(k) { const b = $("pad").querySelector(`[data-k="${k}"]`); if (!b || b.disabled) return; b.classList.add("down"); setTimeout(() => b.classList.remove("down"), 110); }
+  device.addEventListener("keydown", e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target.closest && e.target.closest("button:not(.k)")) return;
+    if (/^[0-9]$/.test(e.key)) { e.preventDefault(); flashKey(e.key); input(e.key); }
+    else if (e.key === "Backspace" || e.key === "Delete") { e.preventDefault(); flashKey("back"); back(); }
+    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flashKey("ok"); enter(); }
+  });
+  device.addEventListener("pointerdown", () => startAudio());
+
+  $("newBtn").addEventListener("click", () => {
+    startAudio();
+    if (R.done || g.length === 0 || armed) { newRound(); return; }
+    armed = true; render();
+    clearTimeout(armTimer); armTimer = setTimeout(() => { armed = false; render(); }, 3000);
+  });
+  $("minus").addEventListener("click", () => setN(n - 1));
+  $("plus").addEventListener("click", () => setN(n + 1));
+  $("soundBtn").addEventListener("click", () => {
+    soundOn = !soundOn; save({ sound: soundOn });
+    if (soundOn) { startAudio(); click(2600); touched(); } else clearTimeout(tickTimer);
+    render();
+  });
+  document.querySelectorAll(".langs button").forEach(b => b.addEventListener("click", () => { if (b.dataset.lang !== lang || chosenLang !== lang) setLang(b.dataset.lang, true); }));
+  $("dareNext").addEventListener("click", () => {
+    startAudio();
+    dareIx = (dareIx + 1 + Math.floor(Math.random() * 21)) % 22;
+    save({ dareIx }); click(2600); render();
+  });
+  $("clearBtn").addEventListener("click", () => {
+    if (!clearArmed) { clearArmed = true; renderBoard(); clearTimeout(clearTimer); clearTimer = setTimeout(() => { clearArmed = false; renderBoard(); }, 3000); return; }
+    clearArmed = false; clearTimeout(clearTimer);
+    losses = Array(10).fill(0); rounds = 0;
+    save({ losses: losses.join(","), rounds }); render();
+  });
+  document.querySelectorAll('input[name="range"]').forEach(r => r.addEventListener("change", () => {
+    if (!r.checked) return;
+    nextMax = Number(r.value);
+    if (!R.done && g.length === 0) { max = nextMax; seed = newSeed(); entry = ""; recompute(); save({ ...roundPatch(), nextMax }); }
+    else save({ nextMax });
+    render();
+  }));
+  $("dareToggle").addEventListener("change", e => { dareOn = e.target.checked; save({ dare: dareOn }); render(); });
+  let nameTimer = 0;
+  $("names").addEventListener("input", e => {
+    const i = Number(e.target.dataset.i); if (!Number.isInteger(i)) return;
+    names[i] = e.target.value.replace(/\|/g, "").trim();
+    while (names.length < 10) names.push("");
+    clearTimeout(nameTimer); nameTimer = setTimeout(() => save({ names: names.slice(0, 10).join("|") }), 300);
+    render();
+  });
+
+  let initial = {};
+  try { initial = api?.getState?.() || {}; } catch {}
+  load(initial);
+  setLang(chosenLang || deviceLang(), false);
+  window.addEventListener("dodojo-state-change", e => {
+    const before = seed + ":" + g.length;
+    load(e.detail || {});
+    if (before !== seed + ":" + g.length) { entry = ""; warnMsg = null; disarm(); }
+    const want = chosenLang || deviceLang();
+    if (want !== lang) setLang(want, false); else { render(); renderNames(); }
+    scheduleTick();
+  });
+})();
+</script>
+<script>
+// Outside dodojo, show the attached photos from the folder beside the page.
+if (!window.dodojo) document.querySelectorAll('[src^="attachment:"]').forEach(el => { el.src = el.getAttribute('src').slice(11); });
+</script>
+</body>
+</html>

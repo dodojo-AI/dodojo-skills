@@ -1,6 +1,6 @@
 {
   "name": "dodojo-skills",
-  "description": "Open agent skills from dodojo: dodojo-travel, trip pages checked for your dates with a map and real photos, and dodojo-game, games you play on one page.",
+  "description": "Open agent skills from dodojo: dodojo-travel, trip pages checked for your dates with a map and real photos, and five game skills for board games, party games, puzzles, arcade games and story games you play on one page.",
   "owner": {
     "name": "dodojo",
     "email": "contact@dodojo.ai",
@@ -11,10 +11,14 @@
       "name": "dodojo-skills",
       "source": "./",
       "strict": false,
-      "description": "dodojo-travel: plan a trip or a day out as a phone-first page with checked hours and tickets, a map of each day and real photos. dodojo-game: make a game people play on a phone or a computer, with the game first, a computer opponent and every move kept. Both save into dodojo or stand on their own.",
+      "description": "dodojo-travel: plan a trip or a day out as a phone-first page with checked hours and tickets, a map of each day and real photos. Game skills: dodojo-game (board and card games with a computer opponent), dodojo-party-game (a group around one phone), dodojo-puzzle-game (puzzles proven by a solver), dodojo-arcade-game (one-thumb action) and dodojo-story-game (branching stories, mysteries, escape rooms). All save into dodojo or stand on their own.",
       "skills": [
         "./skills/dodojo-travel",
-        "./skills/dodojo-game"
+        "./skills/dodojo-game",
+        "./skills/dodojo-party-game",
+        "./skills/dodojo-puzzle-game",
+        "./skills/dodojo-arcade-game",
+        "./skills/dodojo-story-game"
       ]
     }
   ]
